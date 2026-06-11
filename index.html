@@ -164,6 +164,13 @@ body {
 }
 .who-btn.active-me { background: var(--mint-soft); color: var(--mint-deep); }
 .who-btn.active-partner { background: var(--lav-soft); color: var(--lav-deep); }
+.inp-date {
+  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-xs);
+  padding: 10px 14px; font-family: 'Sarabun', sans-serif; font-size: 14px;
+  color: var(--text); background: var(--bg); outline: none;
+  margin-top: 8px; transition: border-color 0.2s;
+}
+.inp-date:focus { border-color: var(--pink); }
 .btn-add-wrap { margin-top: 10px; }
 .btn-add {
   width: 100%; padding: 13px;
@@ -305,6 +312,7 @@ body {
           <button class="who-btn" id="who-partner" onclick="selectWho('partner')">แฟน</button>
         </div>
       </div>
+      <input class="inp-date" type="date" id="inp-date">
       <div class="btn-add-wrap">
         <button class="btn-add" onclick="addEntry()">+ เพิ่มรายการ</button>
       </div>
@@ -454,17 +462,24 @@ document.getElementById('name-partner')?.addEventListener('input', () => { selec
 document.getElementById('inp-desc')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('inp-amt').focus(); });
 document.getElementById('inp-amt')?.addEventListener('keydown', e => { if(e.key==='Enter') window.addEntry(); });
 
+const todayStr = new Date().toISOString().split('T')[0];
+const inpDate = document.getElementById('inp-date');
+if (inpDate) inpDate.value = todayStr;
+
 window.addEntry = () => {
   if (!entriesRef) { showToast('ยังไม่ได้เชื่อมต่อ'); return; }
   const desc = document.getElementById('inp-desc').value.trim();
   const amt = parseFloat(document.getElementById('inp-amt').value);
+  const dateVal = document.getElementById('inp-date').value;
   if (!desc) { document.getElementById('inp-desc').focus(); showToast('ใส่ชื่อรายการด้วยนะ 🌸'); return; }
   if (isNaN(amt) || amt <= 0) { document.getElementById('inp-amt').focus(); showToast('ใส่จำนวนเงินด้วยนะ'); return; }
+  const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : new Date();
+  const dateDisplay = dateObj.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'2-digit'});
   setStatus('syncing', 'กำลังบันทึก...');
   push(entriesRef, {
     desc, amt, who: selectedWho,
-    date: new Date().toLocaleDateString('th-TH',{day:'numeric',month:'short'}),
-    ts: Date.now()
+    date: dateDisplay,
+    ts: dateObj.getTime()
   });
   document.getElementById('inp-desc').value = '';
   document.getElementById('inp-amt').value = '';
