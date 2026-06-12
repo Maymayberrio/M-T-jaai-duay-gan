@@ -1684,31 +1684,67 @@ window.deskAddEntry=()=>{
 window.openNewProjForm=()=>{
   modalCat='family';
   if(isDesktop()){
-    // desktop: ใช้ prompt แบบง่ายๆ ก่อน
-    const name=prompt('ชื่อโปรเจค:','');
-    if(name===null)return;
-    const cat=confirm('เป็นโปรเจคร้านคาเฟ่ไหม?\nOK = ร้านคาเฟ่, Cancel = ครอบครัว')?'cafe':'family';
-    const emoji=prompt('Emoji (ไม่บังคับ):',cat==='cafe'?'☕':'🌸')||( cat==='cafe'?'☕':'🌸');
-    if(!db)return;
-    const newRef=push(rootRef);
-    set(newRef,{name:name.trim()||'โปรเจคใหม่',emoji,category:cat,entries:{}});
-    deskOpenProject(newRef.key);
-    showToast('เพิ่มโปรเจคแล้ว 🌸');
+    // desktop: แสดง detail view เป็น new project form
+    currentProjId=null;
+    document.getElementById('desk-view-dashboard').style.display='none';
+    document.getElementById('desk-view-detail').style.display='block';
+    document.getElementById('desk-detail-content').innerHTML=`
+      <div style="max-width:400px;">
+        <div class="desk-back-btn" onclick="showDashboard('family')" style="cursor:pointer;margin-bottom:.75rem;">← กลับ</div>
+        <div class="desk-box">
+          <div class="desk-box-lbl">➕ เพิ่มโปรเจคใหม่</div>
+          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">เลือกประเภท</div>
+          <div style="display:flex;gap:8px;margin-bottom:.875rem;">
+            <button id="desk-new-cat-fam" onclick="deskNewSelectCat('family')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--pink);border-radius:10px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;"><span style="font-size:22px;display:block;margin-bottom:4px;">🏠</span>ครอบครัว</button>
+            <button id="desk-new-cat-cafe" onclick="deskNewSelectCat('cafe')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:white;color:var(--muted);text-align:center;cursor:pointer;"><span style="font-size:22px;display:block;margin-bottom:4px;">☕</span>ร้านคาเฟ่</button>
+          </div>
+          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">ชื่อโปรเจค</div>
+          <input class="desk-inp" type="text" id="desk-new-proj-name" placeholder="เช่น ค่าวัตถุดิบ, เที่ยวทะเล..." style="margin-bottom:.75rem;">
+          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">Emoji (ไม่บังคับ)</div>
+          <input class="desk-inp" type="text" id="desk-new-proj-emoji" placeholder="เช่น 🏖️ ☕ 🧁" maxlength="2" style="margin-bottom:.875rem;">
+          <div style="display:flex;gap:8px;">
+            <button onclick="showDashboard('family')" style="flex:1;padding:9px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;color:var(--muted);cursor:pointer;">ยกเลิก</button>
+            <button onclick="deskCreateProject()" style="flex:1;padding:9px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:600;cursor:pointer;" id="desk-new-create-btn">+ สร้าง</button>
+          </div>
+        </div>
+      </div>
+    `;
+    setTimeout(()=>document.getElementById('desk-new-proj-name')?.focus(),100);
   } else {
-    // mobile: แสดง view form
     document.getElementById('mob-view-home').style.display='none';
     document.getElementById('mob-view-detail').style.display='none';
     document.getElementById('mob-view-newproj').style.display='block';
+    modalCat='family';
     const fam=document.getElementById('mob-modal-cat-fam');
     const cafe=document.getElementById('mob-modal-cat-cafe');
-    const nameInp=document.getElementById('mob-modal-proj-name');
-    const emojiInp=document.getElementById('mob-modal-emoji-inp');
     if(fam){fam.style.borderColor='var(--pink)';fam.style.background='var(--pink-soft)';fam.style.color='var(--pink-deep)';}
     if(cafe){cafe.style.borderColor='var(--border)';cafe.style.background='white';cafe.style.color='var(--muted)';}
+    const nameInp=document.getElementById('mob-modal-proj-name');
+    const emojiInp=document.getElementById('mob-modal-emoji-inp');
     if(nameInp)nameInp.value='';
     if(emojiInp)emojiInp.value='';
     window.scrollTo(0,0);
   }
+};
+
+window.deskNewSelectCat=(cat)=>{
+  modalCat=cat;
+  const fam=document.getElementById('desk-new-cat-fam');
+  const cafe=document.getElementById('desk-new-cat-cafe');
+  if(fam){fam.style.borderColor=cat==='family'?'var(--pink)':'var(--border)';fam.style.background=cat==='family'?'var(--pink-soft)':'white';fam.style.color=cat==='family'?'var(--pink-deep)':'var(--muted)';}
+  if(cafe){cafe.style.borderColor=cat==='cafe'?'var(--orange)':'var(--border)';cafe.style.background=cat==='cafe'?'var(--orange-soft)':'white';cafe.style.color=cat==='cafe'?'var(--orange-deep)':'var(--muted)';}
+  const btn=document.getElementById('desk-new-create-btn');
+  if(btn)btn.style.background=cat==='cafe'?'linear-gradient(135deg,#FFD4A0,#FFB347)':'linear-gradient(135deg,#F472A8,#C4608A)';
+};
+
+window.deskCreateProject=()=>{
+  if(!db)return;
+  const name=(document.getElementById('desk-new-proj-name')?.value.trim())||'โปรเจคใหม่';
+  const emoji=(document.getElementById('desk-new-proj-emoji')?.value.trim())||(modalCat==='cafe'?'☕':'🌸');
+  const newRef=push(rootRef);
+  set(newRef,{name,emoji,category:modalCat,entries:{}});
+  deskOpenProject(newRef.key);
+  showToast('เพิ่มโปรเจคแล้ว 🌸');
 };
 
 window.closeNewProjForm=()=>{
