@@ -16,7 +16,6 @@
   --lav:#D4C5F9;--lav-soft:#F0ECFF;--lav-deep:#6B50C4;
   --yellow:#FFE9A0;--yellow-soft:#FFF5CC;--yellow-deep:#7A6010;
   --blue-soft:#E8F4FF;--blue-deep:#1A6FC4;
-  --orange:#FFB347;--orange-soft:#FFF5E6;--orange-deep:#C47020;
   --bg:#FFF8FB;--surface:#FFFFFF;--border:#F2E0EC;
   --text:#3D2535;--muted:#B89AAA;
   --radius:20px;--radius-sm:14px;--radius-xs:10px;
@@ -285,47 +284,7 @@ input,select{font-family:'Sarabun',sans-serif;}
   .desk-edate{font-size:9px;color:var(--muted);}
   .desk-eamt{font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;}
 
-  /* CAFE STYLES */
-  .cafe-section-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:var(--orange-deep);font-weight:700;padding:4px 0;display:flex;align-items:center;gap:4px;margin-top:.4rem;}
-  .desk-proj-item.cafe-active{background:var(--orange-soft);border-color:var(--orange);}
-  .desk-proj-item.cafe-dash{background:var(--orange-soft);border-color:var(--orange);}
-  .desk-proj-amt.cafe{color:var(--orange-deep);}
-  .cafe-year-tab.active{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
-  .who-pay-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
-  .who-pay-btn{padding:7px 8px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);text-align:center;}
-  .who-pay-btn.active-may{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
-  .who-pay-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
-  .who-pay-btn.active-pool{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
-  .who-pay-btn.active-other{background:#F3F4F6;border-color:#D1D5DB;color:#374151;}
-  .other-name-inp{width:100%;border:1.5px solid var(--orange);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;}
-  .btn-add-cafe{width:100%;padding:9px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;}
-  .btn-export-cafe{width:100%;padding:8px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:8px;font-size:11px;font-weight:700;margin-top:6px;}
-  .who-summary-row{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;border-radius:8px;margin-bottom:5px;}
-  .who-summary-row:last-child{margin-bottom:0;}
-  .who-s-may{background:var(--pink-soft);}
-  .who-s-partner{background:var(--lav-soft);}
-  .who-s-pool{background:var(--orange-soft);}
-  .who-s-other{background:#F3F4F6;}
-  .who-s-name{font-size:10px;font-weight:700;color:var(--text);}
-  .who-s-sub{font-size:8px;color:var(--muted);}
-  .who-s-amt{font-size:13px;font-weight:800;}
-  /* MODAL */
-  .modal-overlay{visibility:hidden;pointer-events:none;position:fixed;inset:0;background:rgba(61,37,53,.5);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
-  .modal-overlay.show{visibility:visible;pointer-events:auto;opacity:1;}
-  .modal-box{background:white;border-radius:var(--radius-sm);padding:1.25rem;width:90%;max-width:320px;}
-  .modal-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:.875rem;}
-  .cat-row{display:flex;gap:8px;margin-bottom:.875rem;}
-  .cat-btn{flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--muted);text-align:center;cursor:pointer;}
-  .cat-btn.active-fam{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
-  .cat-btn.active-cafe{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
-  .cat-emoji{font-size:22px;display:block;margin-bottom:4px;}
-  .emoji-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.875rem;}
-  .emoji-opt{font-size:20px;cursor:pointer;padding:4px;border-radius:6px;border:1.5px solid transparent;}
-  .emoji-opt.selected{border-color:var(--pink);}
-  .modal-btns{display:flex;gap:8px;}
-  .btn-cancel{flex:1;padding:9px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;color:var(--muted);}
-  .btn-create-fam{flex:1;padding:9px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:600;}
-  .btn-create-cafe{flex:1;padding:9px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:600;}
+  /* EXPORT BANNER */
   .export-banner{background:linear-gradient(135deg,#FFF5CC,#FDE8F2);border:1.5px solid var(--pink);border-radius:var(--radius-sm);padding:.875rem 1rem;margin-bottom:.875rem;display:flex;align-items:center;justify-content:space-between;gap:10px;}
   .export-banner-txt{font-size:13px;color:var(--text);font-weight:600;}
   .export-banner-sub{font-size:11px;color:var(--muted);margin-top:2px;}
@@ -416,50 +375,22 @@ input,select{font-family:'Sarabun',sans-serif;}
         <button class="btn-link" onclick="resetConfig()">เปลี่ยน config</button>
       </div>
 
+      <!-- NAMES -->
+      <div class="card">
+        <div class="card-title">💕 ชื่อของเรา</div>
+        <div class="names-row">
+          <div class="name-box"><label>ฉัน</label><input class="name-input" type="text" id="mob-name-me" value="ฉัน" maxlength="12"></div>
+          <div class="names-heart">♡</div>
+          <div class="name-box"><label>แฟน</label><input class="name-input" type="text" id="mob-name-partner" value="แฟน" maxlength="12"></div>
+        </div>
+      </div>
+
       <!-- HOME VIEW -->
       <div id="mob-view-home">
         <div id="mob-sum-debt" class="mob-sum-box pink" style="display:none"></div>
         <div id="mob-sum-month" class="mob-sum-box lav"></div>
-        <div id="mob-fam-section">
-          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--pink-deep);font-weight:700;margin-bottom:.5rem;margin-top:.25rem;">🏠 ครอบครัว</div>
-          <div class="proj-grid" id="mob-proj-grid-fam"></div>
-        </div>
-        <div id="mob-cafe-section">
-          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--orange-deep);font-weight:700;margin-bottom:.5rem;margin-top:.25rem;">☕ ร้านคาเฟ่</div>
-          <div class="proj-grid" id="mob-proj-grid-cafe"></div>
-        </div>
-        <button style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:none;border:1.5px dashed var(--pink);border-radius:var(--radius-sm);cursor:pointer;margin-top:-.25rem;" onclick="openNewProjForm()">
-          <span style="font-size:16px;color:var(--pink);">+</span>
-          <span style="font-size:12px;color:var(--pink-deep);font-weight:700;">เพิ่มโปรเจค</span>
-        </button>
-      </div>
-
-      <!-- NEW PROJECT FORM VIEW (mobile) -->
-      <div id="mob-view-newproj" style="display:none">
-        <button class="back-btn" onclick="closeNewProjForm()">← กลับหน้าหลัก</button>
-        <div class="card">
-          <div class="card-title">➕ เพิ่มโปรเจคใหม่</div>
-          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">เลือกประเภท</div>
-          <div class="cat-row" style="display:flex;gap:8px;margin-bottom:.875rem;">
-            <button class="cat-btn active-fam" id="mob-modal-cat-fam" onclick="modalSelectCat('family')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--pink);border-radius:10px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;">
-              <span style="font-size:22px;display:block;margin-bottom:4px;">🏠</span>ครอบครัว
-            </button>
-            <button class="cat-btn" id="mob-modal-cat-cafe" onclick="modalSelectCat('cafe')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:white;color:var(--muted);text-align:center;cursor:pointer;">
-              <span style="font-size:22px;display:block;margin-bottom:4px;">☕</span>ร้านคาเฟ่
-            </button>
-          </div>
-          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">ชื่อโปรเจค</div>
-          <input class="inp-desc" type="text" id="mob-modal-proj-name" placeholder="เช่น ค่าวัตถุดิบ, เที่ยวทะเล...">
-          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">Emoji</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;font-size:22px;">
-            🏠 🌸 🏖️ 🍜 🎉 ✈️ 🎁 🍰 ☕ 🧁 🥐 🧾 💰 🛒 🐾 💡
-          </div>
-          <input class="inp-desc" id="mob-modal-emoji-inp" type="text" placeholder="หรือพิมพ์ emoji เอง" maxlength="2">
-          <div style="display:flex;gap:8px;margin-top:.75rem;">
-            <button class="back-btn" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;color:var(--muted);justify-content:center;" onclick="closeNewProjForm()">ยกเลิก</button>
-            <button class="btn-add" style="flex:1;" id="mob-modal-create-btn" onclick="createProject()">+ สร้าง</button>
-          </div>
-        </div>
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:.5rem;margin-top:.25rem;">📂 โปรเจค</div>
+        <div class="proj-grid" id="mob-proj-grid"></div>
       </div>
 
       <!-- DETAIL VIEW -->
@@ -492,22 +423,19 @@ input,select{font-family:'Sarabun',sans-serif;}
   <div class="desk-body">
     <!-- SIDEBAR -->
     <div class="desk-sidebar">
-      <button style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--pink);background:var(--pink-soft);cursor:pointer;width:100%;margin-bottom:.5rem;" onclick="openNewProjModal()">
-        <span style="color:var(--pink-deep);font-size:14px;font-weight:700;">+</span>
-        <span style="font-size:11px;color:var(--pink-deep);font-weight:700;">เพิ่มโปรเจค</span>
-      </button>
-      <div class="desk-sb-lbl" style="color:var(--pink-deep);">🏠 ครอบครัว</div>
-      <div class="desk-proj-item dash-item" onclick="showDashboard('family')">
+      <div class="desk-sb-lbl">เมนู</div>
+      <div class="desk-proj-item dash-item" onclick="showDashboard()">
         <span class="desk-proj-emoji">📊</span>
-        <div><div class="desk-proj-name">Dashboard</div></div>
+        <div>
+          <div class="desk-proj-name">Dashboard</div>
+        </div>
       </div>
-      <div id="desk-sidebar-fam"></div>
-      <div class="desk-sb-lbl" style="color:var(--orange-deep);margin-top:.5rem;">☕ ร้านคาเฟ่</div>
-      <div class="desk-proj-item" style="background:var(--orange-soft);border-color:var(--orange);" onclick="showDashboard('cafe')">
-        <span class="desk-proj-emoji">📊</span>
-        <div><div class="desk-proj-name">Dashboard</div></div>
+      <div class="desk-sb-lbl" style="margin-top:.5rem;">📂 โปรเจค</div>
+      <div id="desk-sidebar-projs"></div>
+      <div class="desk-add-proj" onclick="addProject()">
+        <span style="color:var(--pink);font-size:13px;font-weight:700;">+</span>
+        <span class="desk-add-proj-txt">เพิ่มโปรเจค</span>
       </div>
-      <div id="desk-sidebar-cafe"></div>
       <div style="margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border);">
         <div class="card-title" style="margin-bottom:.5rem;">💕 ชื่อของเรา</div>
         <div class="names-row">
@@ -536,12 +464,6 @@ input,select{font-family:'Sarabun',sans-serif;}
       <!-- DASHBOARD VIEW -->
       <div id="desk-view-dashboard" style="display:none;">
         <div id="desk-export-banner" style="display:none;"></div>
-        <div id="desk-cafe-export-box" style="display:none;" class="desk-box" style="margin-bottom:.875rem;">
-          <div class="desk-box-lbl">📦 Export ข้อมูลร้านคาเฟ่</div>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Export ได้ตลอดเวลา ไม่ต้องรอปลายปีค่ะ</div>
-          <div class="year-tabs" id="desk-cafe-export-years" style="margin-bottom:8px;"></div>
-          <button class="btn-export-cafe" onclick="exportCafe()">📦 Export Excel + PDF</button>
-        </div>
         <div class="dash-scards" id="desk-dash-cards"></div>
         <div class="dash-mid">
           <div class="desk-box">
@@ -581,10 +503,6 @@ import { getDatabase, ref, onValue, push, remove, update, set } from 'https://ww
 let db, rootRef, settingsRef;
 let projects = {};
 let currentProjId = null;
-let currentDashCat = 'family'; // 'family' | 'cafe'
-let modalCat = 'family';
-let modalEmoji = '🌸';
-let cafeExportYear = new Date().getFullYear();
 let nameMe = 'ฉัน', namePartner = 'แฟน';
 let selectedType = 'split', selectedWho = 'me', selectedPayMethod = '', selectedBank = '';
 let deskSelectedType = 'split', deskSelectedWho = 'me', deskSelectedPayMethod = '', deskSelectedBank = '';
@@ -677,11 +595,13 @@ function initFB(cfg){
 
 function setNameInputs(field,val){
   if(field==='nameMe'){
+    const m=document.getElementById('mob-name-me');
     const dk=document.getElementById('desk-name-me');
-    if(dk)dk.value=val;
+    if(m)m.value=val;if(dk)dk.value=val;
   } else {
+    const m=document.getElementById('mob-name-partner');
     const dk=document.getElementById('desk-name-partner');
-    if(dk)dk.value=val;
+    if(m)m.value=val;if(dk)dk.value=val;
   }
 }
 
@@ -697,14 +617,14 @@ function saveSetting(){
   update(settingsRef,{nameMe,namePartner});
 }
 
-['desk-name-me'].forEach(id=>{
+['mob-name-me','desk-name-me'].forEach(id=>{
   document.getElementById(id)?.addEventListener('input',e=>{
     nameMe=e.target.value.trim()||'ฉัน';
     updateHeaderNames();saveSetting();
     if(isDesktop())renderDeskSidebar();else renderMobHome();
   });
 });
-['desk-name-partner'].forEach(id=>{
+['mob-name-partner','desk-name-partner'].forEach(id=>{
   document.getElementById(id)?.addEventListener('input',e=>{
     namePartner=e.target.value.trim()||'แฟน';
     updateHeaderNames();saveSetting();
@@ -804,13 +724,16 @@ function setTodayDate(id){const el=document.getElementById(id);if(el&&!el.value)
 ═══════════════════════════ */
 function renderMobHome(){
   /* summary boxes */
-  const famNet=getGlobalNet();
+  const net=getGlobalNet();
   const debtBox=document.getElementById('mob-sum-debt');
   const monthBox=document.getElementById('mob-sum-month');
-  if(Math.abs(famNet)>=1){
+  if(Math.abs(net)>=1){
     debtBox.style.display='flex';
-    if(famNet>0){debtBox.innerHTML=`<div><div class="mob-sum-lbl">${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}</div><div class="mob-sum-amt">${fmt(famNet)}</div></div><div class="mob-sum-emoji">💸</div>`;}
-    else{debtBox.innerHTML=`<div><div class="mob-sum-lbl">${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</div><div class="mob-sum-amt" style="color:var(--lav-deep)">${fmt(Math.abs(famNet))}</div></div><div class="mob-sum-emoji">💸</div>`;}
+    if(net>0){
+      debtBox.innerHTML=`<div><div class="mob-sum-lbl">${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}</div><div class="mob-sum-amt">${fmt(net)}</div></div><div class="mob-sum-emoji">💸</div>`;
+    } else {
+      debtBox.innerHTML=`<div><div class="mob-sum-lbl">${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</div><div class="mob-sum-amt" style="color:var(--lav-deep)">${fmt(Math.abs(net))}</div></div><div class="mob-sum-emoji">💸</div>`;
+    }
   } else {
     debtBox.style.display='flex';
     debtBox.innerHTML=`<div><div class="mob-sum-lbl">ยอดค้างชำระ</div><div class="mob-sum-amt" style="color:var(--mint-deep)">เสมอกัน 🎉</div></div><div class="mob-sum-emoji">✅</div>`;
@@ -818,22 +741,15 @@ function renderMobHome(){
   const monthTotal=getThisMonthTotal();
   monthBox.innerHTML=`<div><div class="mob-sum-lbl lav">📅 เดือนนี้ใช้ไป</div><div class="mob-sum-amt lav">${fmt(monthTotal)}</div></div><div class="mob-sum-emoji">📊</div>`;
 
-  /* render project cards helper */
-  const renderCards=(ids,isCafe)=>ids.map((id,i)=>{
+  /* project grid */
+  const grid=document.getElementById('mob-proj-grid');
+  const keys=Object.keys(projects);
+  grid.innerHTML=keys.map((id,i)=>{
     const p=projects[id];
+    const net=calcNet(p.entries||{});
+    const count=Object.keys(p.entries||{}).length;
     const color=COLORS[i%COLORS.length];
     const emoji=p.emoji||EMOJIS[i%EMOJIS.length];
-    if(isCafe){
-      const total=Object.values(p.entries||{}).reduce((s,e)=>s+e.amt,0);
-      return `<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')">
-        <div class="proj-home-emoji">${emoji}</div>
-        <div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div>
-        <div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div>
-        <div class="proj-home-lbl">รวม</div>
-        <div class="proj-home-amt" style="color:var(--orange-deep);">${fmt(total)}</div>
-      </div>`;
-    }
-    const net=calcNet(p.entries||{});
     let amtClass='amt-balanced',amtLbl='เสมอกัน',amtVal='฿0';
     if(Math.abs(net)>=1){
       if(net>0){amtClass='amt-partner';amtLbl=namePartner+' ต้องโอน';amtVal=fmt(net);}
@@ -842,19 +758,11 @@ function renderMobHome(){
     return `<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')">
       <div class="proj-home-emoji">${emoji}</div>
       <div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div>
-      <div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div>
+      <div class="proj-home-count">${count} รายการ</div>
       <div class="proj-home-lbl">${amtLbl}</div>
       <div class="proj-home-amt ${amtClass}">${amtVal}</div>
     </div>`;
-  }).join('');
-
-  const famIds=Object.keys(projects).filter(id=>projects[id].category!=='cafe');
-  const cafeIds=Object.keys(projects).filter(id=>projects[id].category==='cafe');
-
-  document.getElementById('mob-proj-grid-fam').innerHTML=renderCards(famIds,false);
-  document.getElementById('mob-proj-grid-cafe').innerHTML=renderCards(cafeIds,true);
-  document.getElementById('mob-fam-section').style.display=famIds.length?'block':'none';
-  document.getElementById('mob-cafe-section').style.display=cafeIds.length?'block':'none';
+  }).join('')+`<button class="add-card-home" onclick="addProject()"><div style="font-size:20px;color:var(--pink);margin-bottom:4px;">+</div><div style="font-size:10px;color:var(--pink-deep);font-weight:700;">เพิ่มโปรเจค</div></button>`;
 }
 
 window.mobOpenProject=(id)=>{
@@ -1019,26 +927,18 @@ window.mobAddEntry=()=>{
    DESKTOP RENDER
 ═══════════════════════════ */
 function renderDeskSidebar(){
-  const famEl=document.getElementById('desk-sidebar-fam');
-  const cafeEl=document.getElementById('desk-sidebar-cafe');
-  if(!famEl||!cafeEl)return;
-  const famProjs=Object.keys(projects).filter(id=>projects[id].category!=='cafe');
-  const cafeProjs=Object.keys(projects).filter(id=>projects[id].category==='cafe');
-
-  const renderItems=(ids)=>ids.map((id,i)=>{
+  const el=document.getElementById('desk-sidebar-projs');
+  el.innerHTML=Object.keys(projects).map((id,i)=>{
     const p=projects[id];
     const net=calcNet(p.entries||{});
     const emoji=p.emoji||EMOJIS[i%EMOJIS.length];
-    const isCafe=p.category==='cafe';
     let amtTxt='เสมอกัน',amtClass='ok';
-    if(isCafe){
-      const total=Object.values(p.entries||{}).reduce((s,e)=>s+e.amt,0);
-      amtTxt=fmt(total);amtClass='cafe';
-    } else {
-      if(Math.abs(net)>=1){amtTxt=(net>0?namePartner:nameMe)+' ต้องโอน '+fmt(Math.abs(net));amtClass='';}
+    if(Math.abs(net)>=1){
+      amtTxt=(net>0?namePartner:nameMe)+' ต้องโอน '+fmt(Math.abs(net));
+      amtClass='';
     }
     const isActive=currentProjId===id&&document.getElementById('desk-view-detail').style.display!=='none';
-    return `<div class="desk-proj-item${isActive?(isCafe?' cafe-active':' active'):''}" onclick="deskOpenProject('${id}')">
+    return `<div class="desk-proj-item${isActive?' active':''}" onclick="deskOpenProject('${id}')">
       <span class="desk-proj-emoji">${emoji}</span>
       <div style="min-width:0;flex:1;">
         <div class="desk-proj-name">${esc(p.name||'โปรเจคใหม่')}</div>
@@ -1046,14 +946,10 @@ function renderDeskSidebar(){
       </div>
     </div>`;
   }).join('');
-
-  famEl.innerHTML=renderItems(famProjs);
-  cafeEl.innerHTML=renderItems(cafeProjs);
 }
 
-window.showDashboard=(cat='family')=>{
+window.showDashboard=()=>{
   currentProjId=null;
-  currentDashCat=cat;
   document.getElementById('desk-view-dashboard').style.display='block';
   document.getElementById('desk-view-detail').style.display='none';
   renderDeskSidebar();
@@ -1063,167 +959,41 @@ window.showDashboard=(cat='family')=>{
 const MONTH_NAMES=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 const MONTH_NAMES_FULL=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 
-function calcMonthStats(year,month,cat=null){
-  // month = null หมายถึงทั้งปี, cat = null หมายถึงทุก category
-  let total=0,mePaid=0,partnerPaid=0,poolPaid=0,otherPaid={},meOwes=0,partnerOwes=0;
+function calcMonthStats(year,month){
+  // month = null หมายถึงทั้งปี
+  let total=0,mePaid=0,partnerPaid=0,meOwes=0,partnerOwes=0;
   const entries=[];
   Object.entries(projects).forEach(([pid,p])=>{
-    if(cat&&p.category!==cat)return;
-    if(!cat&&p.category==='cafe')return; // family dashboard ไม่รวม cafe
     Object.entries(p.entries||{}).forEach(([k,e])=>{
       const d=e.ts?new Date(e.ts):null;
       const matchYear=d&&d.getFullYear()===year;
-      const matchMonth=month===null||(d&&d.getMonth()===month);
+      const matchMonth=month===null||( d&&d.getMonth()===month);
       if(!matchYear||!matchMonth)return;
       entries.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่'});
       total+=e.amt;
-      if(p.category==='cafe'){
-        if(e.who==='me')mePaid+=e.amt;
-        else if(e.who==='partner')partnerPaid+=e.amt;
-        else if(e.who==='pool')poolPaid+=e.amt;
-        else if(e.who==='other'&&e.otherName){
-          otherPaid[e.otherName]=(otherPaid[e.otherName]||0)+e.amt;
-        }
-      } else {
-        if((e.type==='split'||e.type==='paid')&&e.who==='me')mePaid+=e.amt;
-        else if((e.type==='split'||e.type==='paid')&&e.who==='partner')partnerPaid+=e.amt;
-        if(!e.cleared){
-          if(e.type==='split'){if(e.who==='me')partnerOwes+=e.amt/2;else meOwes+=e.amt/2;}
-          else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
-        }
+      if((e.type==='split'||e.type==='paid')&&e.who==='me')mePaid+=e.amt;
+      else if((e.type==='split'||e.type==='paid')&&e.who==='partner')partnerPaid+=e.amt;
+      if(!e.cleared){
+        if(e.type==='split'){if(e.who==='me')partnerOwes+=e.amt/2;else meOwes+=e.amt/2;}
+        else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
       }
     });
   });
   const net=partnerOwes-meOwes;
   const days=month===null?365:new Date(year,month+1,0).getDate();
-  return {total,mePaid,partnerPaid,poolPaid,otherPaid,net,entries,avgPerDay:total>0?Math.round(total/days):0};
+  return {total,mePaid,partnerPaid,net,entries,avgPerDay:total>0?Math.round(total/days):0};
 }
 
 function renderDashboard(){
-  const isCafe=currentDashCat==='cafe';
-  const accentColor=isCafe?'var(--orange-deep)':'var(--pink-deep)';
-
-  /* cafe export box */
-  const cafeExBox=document.getElementById('desk-cafe-export-box');
-  if(cafeExBox){
-    if(isCafe){
-      cafeExBox.style.display='block';
-      const years=getYears();
-      document.getElementById('desk-cafe-export-years').innerHTML=years.map(y=>`
-        <button class="year-tab${cafeExportYear===y?' active':''}" style="${cafeExportYear===y?'background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep)':''}" onclick="setCafeExportYear(${y})">${y}</button>
-      `).join('');
-    } else {
-      cafeExBox.style.display='none';
-    }
-  }
-
   /* year tabs */
   const years=getYears();
   if(!years.includes(selectedYear)){selectedYear=years[2];selectedMonth=null;}
   document.getElementById('desk-year-tabs').innerHTML=years.map(y=>`
-    <button class="year-tab${selectedYear===y?' active':''}" style="${selectedYear===y&&isCafe?'background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep)':''}" onclick="selectYear(${y})">${y}</button>
+    <button class="year-tab${selectedYear===y?' active':''}" onclick="selectYear(${y})">${y}</button>
   `).join('');
 
   /* stats */
-  const stats=calcMonthStats(selectedYear,selectedMonth,isCafe?'cafe':null);
-  const subLbl=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]+' '+selectedYear:'ทั้งปี '+selectedYear;
-
-  /* summary cards */
-  if(isCafe){
-    document.getElementById('desk-dash-cards').innerHTML=`
-      <div class="dash-sc" style="background:var(--yellow-soft);"><div class="dash-sc-lbl">รวมทั้งหมด</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
-      <div class="dash-sc" style="background:var(--pink-soft);"><div class="dash-sc-lbl">${esc(nameMe)} สำรองจ่าย</div><div class="dash-sc-val">${fmt(stats.mePaid)}</div></div>
-      <div class="dash-sc" style="background:var(--lav-soft);"><div class="dash-sc-lbl">${esc(namePartner)} สำรองจ่าย</div><div class="dash-sc-val">${fmt(stats.partnerPaid)}</div></div>
-      <div class="dash-sc" style="background:var(--orange-soft);"><div class="dash-sc-lbl">ส่วนกลางร้าน</div><div class="dash-sc-val">${fmt(stats.poolPaid)}</div></div>
-    `;
-  } else {
-    let debtTxt='เสมอกัน',debtColor='var(--mint-deep)';
-    if(Math.abs(stats.net)>=1){debtTxt=fmt(Math.abs(stats.net));debtColor=stats.net>0?'var(--pink-deep)':'var(--lav-deep)';}
-    document.getElementById('desk-dash-cards').innerHTML=`
-      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวม</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
-      <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">${esc(nameMe)} จ่าย</div><div class="dash-sc-val">${fmt(stats.mePaid)}</div></div>
-      <div class="dash-sc dash-sc-l"><div class="dash-sc-lbl">${esc(namePartner)} จ่าย</div><div class="dash-sc-val">${fmt(stats.partnerPaid)}</div></div>
-      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">ยอดค้าง</div><div class="dash-sc-val" style="color:${debtColor}">${debtTxt}</div></div>
-    `;
-  }
-
-  renderChart();
-
-  /* comparison */
-  let cmpHtml='';
-  if(selectedMonth!==null){
-    const prevMonth=selectedMonth===0?11:selectedMonth-1;
-    const prevYear=selectedMonth===0?selectedYear-1:selectedYear;
-    const prevStats=calcMonthStats(prevYear,prevMonth,isCafe?'cafe':null);
-    const prevName=MONTH_NAMES_FULL[prevMonth]+(selectedMonth===0?' '+(selectedYear-1):'');
-    const diff=prevStats.total>0?Math.round(((stats.total-prevStats.total)/prevStats.total)*100):null;
-    const badgeHtml=diff===null?`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`:diff>0?`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`:diff<0?`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`:`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;
-    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div><div class="desk-box-lbl">📊 เทียบ${prevName}</div><div class="dash-cmp-row"><div><div class="dash-cmp-lbl">${prevName} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevStats.total)}</div></div>${badgeHtml}</div>`;
-  } else {
-    const prevYearStats=calcMonthStats(selectedYear-1,null,isCafe?'cafe':null);
-    const diff=prevYearStats.total>0?Math.round(((stats.total-prevYearStats.total)/prevYearStats.total)*100):null;
-    const badgeHtml=diff===null?`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`:diff>0?`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`:diff<0?`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`:`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;
-    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div><div class="desk-box-lbl">📊 เทียบปี ${selectedYear-1}</div><div class="dash-cmp-row"><div><div class="dash-cmp-lbl">ปี ${selectedYear-1} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevYearStats.total)}</div></div>${badgeHtml}</div>`;
-  }
-
-  /* summary side */
-  const summaryTitle=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]:('ปี '+selectedYear);
-  let summaryHtml='';
-  if(isCafe){
-    // cafe: แสดงใครสำรองจ่าย
-    summaryHtml+=`<div class="who-summary-row who-s-may"><div><div class="who-s-name">🩷 ${esc(nameMe)} สำรองจ่าย</div><div class="who-s-sub">ร้านต้องคืน</div></div><div class="who-s-amt" style="color:var(--pink-deep);">${fmt(stats.mePaid)}</div></div>`;
-    summaryHtml+=`<div class="who-summary-row who-s-partner"><div><div class="who-s-name">💜 ${esc(namePartner)} สำรองจ่าย</div><div class="who-s-sub">ร้านต้องคืน</div></div><div class="who-s-amt" style="color:var(--lav-deep);">${fmt(stats.partnerPaid)}</div></div>`;
-    summaryHtml+=`<div class="who-summary-row who-s-pool"><div><div class="who-s-name">🏦 ส่วนกลางร้าน</div><div class="who-s-sub">ไม่ต้องคืน</div></div><div class="who-s-amt" style="color:var(--orange-deep);">${fmt(stats.poolPaid)}</div></div>`;
-    Object.entries(stats.otherPaid).forEach(([name,amt])=>{
-      summaryHtml+=`<div class="who-summary-row who-s-other"><div><div class="who-s-name">👤 ${esc(name)}</div><div class="who-s-sub">ร้านต้องคืน</div></div><div class="who-s-amt" style="color:#6B7280;">${fmt(amt)}</div></div>`;
-    });
-  } else {
-    if(Math.abs(stats.net)>=1){
-      summaryHtml+=`<div class="dash-rrow dash-rrow-p"><div class="dash-rtxt">${stats.net>0?`💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}`:`💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}`}</div><div class="dash-ramt">${fmt(Math.abs(stats.net))}</div></div>`;
-    } else {
-      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">🎉 เสมอกันพอดี!</div><div class="dash-ramt dash-ramt-m">ไม่มีใครต้องโอน</div></div>`;
-    }
-    summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
-    if(selectedMonth!==null){
-      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
-    } else {
-      const months=new Date().getMonth()+1;
-      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อเดือน</div><div class="dash-ramt dash-ramt-m">${fmt(Math.round(stats.total/months))}</div></div>`;
-    }
-  }
-  summaryHtml+=cmpHtml;
-  document.getElementById('desk-dash-summary').innerHTML=`<div class="desk-box-lbl">✨ สรุป — ${summaryTitle}</div>`+summaryHtml;
-
-  /* recent */
-  const allEntries=selectedMonth!==null?
-    stats.entries.sort((a,b)=>(b.ts||0)-(a.ts||0)):
-    (()=>{
-      const arr=[];
-      Object.entries(projects).forEach(([pid,p])=>{
-        if(isCafe&&p.category!=='cafe')return;
-        if(!isCafe&&p.category==='cafe')return;
-        Object.entries(p.entries||{}).forEach(([k,e])=>{arr.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่',isCafe:p.category==='cafe'});});
-      });
-      return arr.sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,8);
-    })();
-
-  const recentLabel=selectedMonth!==null?`🧾 รายการ${MONTH_NAMES_FULL[selectedMonth]}`:'🧾 รายการล่าสุด';
-  document.getElementById('desk-recent-label').textContent=recentLabel;
-  document.getElementById('desk-recent-entries').innerHTML=allEntries.length===0?
-    `<div class="empty-state"><span class="big">🌷</span><p>ยังไม่มีรายการ</p></div>`:
-    allEntries.map(e=>{
-      if(e.isCafe||projects[e.projId]?.category==='cafe'){
-        const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
-        const dotColor=e.who==='me'?'#FDE8F2':e.who==='partner'?'#F0ECFF':e.who==='pool'?'#FFF5E6':'#F3F4F6';
-        const pillStyle=e.who==='me'?'background:#FDE8F2;color:#C4608A;':e.who==='partner'?'background:#F0ECFF;color:#6B50C4;':e.who==='pool'?'background:#FFF5E6;color:#C47020;':'background:#F3F4F6;color:#6B7280;';
-        return `<div class="desk-erow"><div class="desk-edot" style="background:${dotColor};"></div><div class="desk-eleft"><div class="desk-edesc">${esc(e.desc)}</div><div class="desk-edate">${esc(e.projName)} • ${e.date||''}</div></div><div class="desk-eamt">${fmt(e.amt)}</div><span class="pill" style="font-size:9px;padding:2px 7px;${pillStyle}">${whoTxt}</span></div>`;
-      }
-      const pi=getPillInfo(e);
-      return `<div class="desk-erow"><div class="desk-edot" style="background:${pi.dotColor};"></div><div class="desk-eleft"><div class="desk-edesc">${esc(e.desc)}</div><div class="desk-edate">${esc(e.projName)} • ${getEntrySubText(e)}</div></div><div class="desk-eamt">${fmt(e.amt)}</div><span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅ เคลียร์':pi.txt}</span></div>`;
-    }).join('');
-
-  if(!isCafe)checkExportBanner();
-}
+  const stats=calcMonthStats(selectedYear,selectedMonth);
 
   /* summary cards */
   const subLbl=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]+' '+selectedYear:'ทั้งปี '+selectedYear;
@@ -1275,20 +1045,59 @@ function renderDashboard(){
     </div>`;
   }
 
-function renderChart(){
-  const isCafe=currentDashCat==='cafe';
-  const values=MONTH_NAMES.map((_,i)=>{
-    let total=0;
-    Object.values(projects).forEach(p=>{
-      if(isCafe&&p.category!=='cafe')return;
-      if(!isCafe&&p.category==='cafe')return;
-      Object.values(p.entries||{}).forEach(e=>{
-        const d=e.ts?new Date(e.ts):null;
-        if(d&&d.getFullYear()===selectedYear&&d.getMonth()===i)total+=e.amt;
+  /* summary side */
+  const summaryTitle=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]:('ปี '+selectedYear);
+  let summaryHtml='';
+  if(Math.abs(stats.net)>=1){
+    summaryHtml+=`<div class="dash-rrow dash-rrow-p"><div class="dash-rtxt">${stats.net>0?`💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}`:`💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}`}</div><div class="dash-ramt">${fmt(Math.abs(stats.net))}</div></div>`;
+  } else {
+    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">🎉 เสมอกันพอดี!</div><div class="dash-ramt dash-ramt-m">ไม่มีใครต้องโอน</div></div>`;
+  }
+  summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
+  if(selectedMonth!==null){
+    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
+  } else {
+    const months=new Date().getMonth()+1;
+    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อเดือน</div><div class="dash-ramt dash-ramt-m">${fmt(Math.round(stats.total/months))}</div></div>`;
+  }
+  summaryHtml+=cmpHtml;
+  document.getElementById('desk-dash-summary').innerHTML=`<div class="desk-box-lbl">✨ สรุป — ${summaryTitle}</div>`+summaryHtml;
+
+  /* recent entries */
+  const allEntries=selectedMonth!==null?
+    stats.entries.sort((a,b)=>(b.ts||0)-(a.ts||0)):
+    (()=>{
+      const arr=[];
+      Object.entries(projects).forEach(([pid,p])=>{
+        Object.entries(p.entries||{}).forEach(([k,e])=>{
+          arr.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่'});
+        });
       });
-    });
-    return total;
-  });
+      return arr.sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,8);
+    })();
+
+  const recentLabel=selectedMonth!==null?`🧾 รายการ${MONTH_NAMES_FULL[selectedMonth]}`:'🧾 รายการล่าสุด';
+  document.getElementById('desk-recent-label').textContent=recentLabel;
+  document.getElementById('desk-recent-entries').innerHTML=allEntries.length===0?
+    `<div class="empty-state"><span class="big">🌷</span><p>ยังไม่มีรายการ</p></div>`:
+    allEntries.map(e=>{
+      const pi=getPillInfo(e);
+      return `<div class="desk-erow">
+        <div class="desk-edot" style="background:${pi.dotColor};"></div>
+        <div class="desk-eleft">
+          <div class="desk-edesc">${esc(e.desc)}</div>
+          <div class="desk-edate">${esc(e.projName)} • ${getEntrySubText(e)}</div>
+        </div>
+        <div class="desk-eamt">${fmt(e.amt)}</div>
+        <span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅ เคลียร์':pi.txt}</span>
+      </div>`;
+    }).join('');
+
+  checkExportBanner();
+}
+
+function renderChart(){
+  const values=MONTH_NAMES.map((_,i)=>calcMonthTotal(selectedYear,i));
   const maxVal=Math.max(...values,1);
   const now=new Date();
   document.getElementById('desk-chart').innerHTML=values.map((v,i)=>{
@@ -1474,11 +1283,10 @@ function renderDeskDetail(){
   const cont=document.getElementById('desk-detail-content');
   if(!currentProjId||!projects[currentProjId]){cont.innerHTML='';return;}
   const proj=projects[currentProjId];
-  const isCafeProj=proj.category==='cafe';
   const allEntries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
   const pendingEntries=allEntries.filter(e=>!e.cleared);
   const clearedEntries=allEntries.filter(e=>e.cleared);
-  const showEntries=isCafeProj?allEntries:(deskActiveTab==='pending'?pendingEntries:clearedEntries);
+  const showEntries=deskActiveTab==='pending'?pendingEntries:clearedEntries;
 
   let total=0,meOwes=0,partnerOwes=0;
   pendingEntries.forEach(e=>{
@@ -1499,7 +1307,7 @@ function renderDeskDetail(){
 
   cont.innerHTML=`
     <div style="margin-bottom:.75rem;">
-      <button class="desk-back-btn" onclick="showDashboard(projects[currentProjId]?.category==='cafe'?'cafe':'family')">← กลับ Dashboard</button>
+      <button class="desk-back-btn" onclick="showDashboard()">← กลับ Dashboard</button>
       <div class="desk-proj-title-row">
         <input class="proj-name-input" style="font-size:17px;" type="text" value="${esc(proj.name||'โปรเจคใหม่')}" onchange="updateProjectName('${currentProjId}',this.value)">
         <button class="btn-del-proj" onclick="deleteProject('${currentProjId}')">ลบโปรเจค</button>
@@ -1508,18 +1316,8 @@ function renderDeskDetail(){
     <div class="desk-detail-layout">
       <div class="desk-form-col">
         <div class="desk-box">
-          <div class="desk-box-lbl">${isCafeProj?'☕':'✏️'} เพิ่มรายการ</div>
-          <input class="desk-inp" type="text" id="desk-inp-desc" placeholder="${isCafeProj?'รายการอะไร? เช่น แป้งสาลี...':'ใช้จ่ายอะไร?'}">
-          ${isCafeProj?`
-          <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
-          <div class="who-pay-row">
-            <button class="who-pay-btn active-may" id="cafe-who-me" onclick="cafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
-            <button class="who-pay-btn" id="cafe-who-partner" onclick="cafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
-            <button class="who-pay-btn" id="cafe-who-pool" onclick="cafeSelectWho('pool')">🏦 ส่วนกลาง</button>
-            <button class="who-pay-btn" id="cafe-who-other" onclick="cafeSelectWho('other')">👤 อื่นๆ</button>
-          </div>
-          <input class="other-name-inp" id="cafe-other-name" type="text" placeholder="ระบุชื่อ..." style="display:none;">
-          `:`
+          <div class="desk-box-lbl">✏️ เพิ่มรายการ</div>
+          <input class="desk-inp" type="text" id="desk-inp-desc" placeholder="ใช้จ่ายอะไร?">
           <div class="desk-type-row">
             <button class="desk-type-btn active-split" id="desk-type-split" onclick="deskSelectType('split')">🍱 หารกัน</button>
             <button class="desk-type-btn" id="desk-type-paid" onclick="deskSelectType('paid')">💸 จ่ายแทน</button>
@@ -1529,7 +1327,6 @@ function renderDeskDetail(){
             <button class="desk-who-btn active-me" id="desk-who-me" onclick="deskSelectWho('me')">🩷 ${esc(nameMe)}</button>
             <button class="desk-who-btn" id="desk-who-partner" onclick="deskSelectWho('partner')">💜 ${esc(namePartner)}</button>
           </div>
-          `}
           <input class="desk-inp" type="number" id="desk-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
           <input class="desk-inp" type="date" id="desk-inp-date">
           <div style="height:1px;background:var(--border);margin:8px 0 7px;"></div>
@@ -1539,19 +1336,12 @@ function renderDeskDetail(){
             <button class="desk-pay-btn" id="desk-pay-credit" onclick="deskSelectPay('credit')">💳 บัตรเครดิต</button>
           </div>
           <div id="desk-bank-wrap" style="display:none">${deskBankSelectHTML('desk-bank-sel')}</div>
-          <button class="${isCafeProj?'btn-add-cafe':'desk-btn-add'}" onclick="${isCafeProj?'cafeAddEntry()':'deskAddEntry()'}">+ เพิ่มรายการ</button>
+          <button class="desk-btn-add" onclick="deskAddEntry()">+ เพิ่มรายการ</button>
         </div>
       </div>
       <div class="desk-right-col">
         <div class="desk-box">
           <div class="desk-box-lbl">✨ สรุปยอด</div>
-          ${isCafeProj?`
-          <div class="who-summary-row who-s-may"><div><div class="who-s-name">🩷 ${esc(nameMe)}</div><div class="who-s-sub">สำรองจ่าย</div></div><div class="who-s-amt" style="color:var(--pink-deep);">${fmt(allEntries.filter(e=>e.who==='me').reduce((s,e)=>s+e.amt,0))}</div></div>
-          <div class="who-summary-row who-s-partner"><div><div class="who-s-name">💜 ${esc(namePartner)}</div><div class="who-s-sub">สำรองจ่าย</div></div><div class="who-s-amt" style="color:var(--lav-deep);">${fmt(allEntries.filter(e=>e.who==='partner').reduce((s,e)=>s+e.amt,0))}</div></div>
-          <div class="who-summary-row who-s-pool"><div><div class="who-s-name">🏦 ส่วนกลาง</div><div class="who-s-sub">ไม่ต้องคืน</div></div><div class="who-s-amt" style="color:var(--orange-deep);">${fmt(allEntries.filter(e=>e.who==='pool').reduce((s,e)=>s+e.amt,0))}</div></div>
-          ${[...new Set(allEntries.filter(e=>e.who==='other').map(e=>e.otherName||'อื่นๆ'))].map(n=>`<div class="who-summary-row who-s-other"><div><div class="who-s-name">👤 ${esc(n)}</div><div class="who-s-sub">สำรองจ่าย</div></div><div class="who-s-amt" style="color:#6B7280;">${fmt(allEntries.filter(e=>e.who==='other'&&(e.otherName||'อื่นๆ')===n).reduce((s,e)=>s+e.amt,0))}</div></div>`).join('')}
-          <div style="margin-top:8px;padding:8px;background:var(--yellow-soft);border-radius:8px;text-align:center;"><div style="font-size:9px;color:var(--muted);">รวมทั้งหมด</div><div style="font-size:16px;font-weight:800;color:var(--text);">${fmt(allEntries.reduce((s,e)=>s+e.amt,0))}</div></div>
-          `:`
           <div class="desk-metrics">
             <div class="desk-metric metric-total"><div class="metric-label">รวม</div><div class="metric-val">${fmt(total)}</div></div>
             <div class="desk-metric metric-me"><div class="metric-label">${esc(nameMe)}</div><div class="metric-val">${fmt(mePaid)}</div></div>
@@ -1560,25 +1350,21 @@ function renderDeskDetail(){
           <div class="bar-row"><span>${esc(nameMe)} ${mePct}%</span><span>${esc(namePartner)} ${100-mePct}%</span></div>
           <div class="bar-track"><div class="bar-fill" style="width:${mePct}%"></div></div>
           <div class="${resultClass}" style="font-size:13px;padding:12px;">${resultHtml}</div>
-          `}
         </div>
         <div class="desk-box">
-          ${!isCafeProj?`<div class="tabs-row">
+          <div class="tabs-row">
             <button class="tab-btn ${deskActiveTab==='pending'?'active':''}" onclick="deskSetTab('pending')">ค้างอยู่ (${pendingEntries.length})</button>
             <button class="tab-btn ${deskActiveTab==='cleared'?'active':''}" onclick="deskSetTab('cleared')">✅ เคลียร์แล้ว (${clearedEntries.length})</button>
-          </div>`:'<div class="desk-box-lbl">🧾 รายการทั้งหมด</div>'}
+          </div>
           ${showEntries.length===0?`<div class="empty-state"><span class="big">🌷</span><p>ไม่มีรายการ</p></div>`:
           showEntries.map(e=>{
-            if(isCafeProj){
-              const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
-              const pillStyle=e.who==='me'?'background:#FDE8F2;color:#C4608A;':e.who==='partner'?'background:#F0ECFF;color:#6B50C4;':e.who==='pool'?'background:#FFF5E6;color:#C47020;':'background:#F3F4F6;color:#6B7280;';
-              const dotColor=e.who==='me'?'#FDE8F2':e.who==='partner'?'#F0ECFF':e.who==='pool'?'#FFF5E6':'#F3F4F6';
-              return `<div class="desk-entry"><div class="desk-edot" style="width:7px;height:7px;border-radius:50%;background:${dotColor};flex-shrink:0;"></div><div class="desk-entry-left"><div class="desk-entry-name">${esc(e.desc)}</div><div class="desk-entry-sub">${e.date||''} ${e.bank?'• '+e.bank:''}</div></div><div class="desk-entry-amt">${fmt(e.amt)}</div><span class="pill" style="font-size:9px;padding:2px 7px;${pillStyle}">${whoTxt}</span><button class="desk-btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})">✏️</button><button class="desk-btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button></div>`;
-            }
             const pi=getPillInfo(e);
             return `<div class="desk-entry ${e.cleared?'desk-entry-cleared':''}">
               <div class="desk-edot" style="width:7px;height:7px;border-radius:50%;background:${pi.dotColor};flex-shrink:0;"></div>
-              <div class="desk-entry-left"><div class="desk-entry-name">${esc(e.desc)}</div><div class="desk-entry-sub">${getEntrySubText(e)}</div></div>
+              <div class="desk-entry-left">
+                <div class="desk-entry-name">${esc(e.desc)}</div>
+                <div class="desk-entry-sub">${getEntrySubText(e)}</div>
+              </div>
               <div class="desk-entry-amt">${fmt(e.amt)}</div>
               <span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅':pi.txt}</span>
               ${!e.cleared?`<button class="desk-btn-clear" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
@@ -1595,42 +1381,7 @@ function renderDeskDetail(){
   deskSelectWho(deskSelectedWho);
 }
 
-let cafeSelectedWho='me';
-window.cafeSelectWho=(who)=>{
-  cafeSelectedWho=who;
-  ['me','partner','pool','other'].forEach(w=>{
-    const el=document.getElementById('cafe-who-'+w);
-    if(!el)return;
-    const activeClass=w==='me'?'active-may':w==='partner'?'active-partner':w==='pool'?'active-pool':'active-other';
-    el.className='who-pay-btn'+(who===w?' '+activeClass:'');
-  });
-  const otherInp=document.getElementById('cafe-other-name');
-  if(otherInp)otherInp.style.display=who==='other'?'block':'none';
-};
-
-window.cafeAddEntry=()=>{
-  if(!db||!currentProjId)return;
-  const desc=document.getElementById('desk-inp-desc').value.trim();
-  const amt=parseFloat(document.getElementById('desk-inp-amt').value);
-  const dateVal=document.getElementById('desk-inp-date').value;
-  if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
-  if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
-  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
-  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
-  const bank=document.getElementById('desk-bank-sel')?.value||'';
-  const bankOther=document.getElementById('desk-bank-sel-other')?.value||'';
-  const otherName=document.getElementById('cafe-other-name')?.value.trim()||'';
-  const entry={desc,amt,who:cafeSelectedWho,date:dateDisplay,ts:dateObj.getTime()};
-  if(cafeSelectedWho==='other'&&otherName)entry.otherName=otherName;
-  if(deskSelectedPayMethod)entry.payMethod=deskSelectedPayMethod;
-  if(bank)entry.bank=bank;
-  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
-  push(ref(db,'projects/'+currentProjId+'/entries'),entry);
-  document.getElementById('desk-inp-desc').value='';
-  document.getElementById('desk-inp-amt').value='';
-  document.getElementById('desk-inp-desc').focus();
-  showToast('เพิ่มแล้ว! ☕');
-};
+window.deskSetTab=(tab)=>{deskActiveTab=tab;renderDeskDetail();};
 
 window.deskSelectType=(type)=>{
   deskSelectedType=type;
@@ -1681,184 +1432,14 @@ window.deskAddEntry=()=>{
 /* ═══════════════════════════
    SHARED ACTIONS
 ═══════════════════════════ */
-window.openNewProjForm=()=>{
-  modalCat='family';
-  if(isDesktop()){
-    // desktop: แสดง detail view เป็น new project form
-    currentProjId=null;
-    document.getElementById('desk-view-dashboard').style.display='none';
-    document.getElementById('desk-view-detail').style.display='block';
-    document.getElementById('desk-detail-content').innerHTML=`
-      <div style="max-width:400px;">
-        <div class="desk-back-btn" onclick="showDashboard('family')" style="cursor:pointer;margin-bottom:.75rem;">← กลับ</div>
-        <div class="desk-box">
-          <div class="desk-box-lbl">➕ เพิ่มโปรเจคใหม่</div>
-          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">เลือกประเภท</div>
-          <div style="display:flex;gap:8px;margin-bottom:.875rem;">
-            <button id="desk-new-cat-fam" onclick="deskNewSelectCat('family')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--pink);border-radius:10px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;"><span style="font-size:22px;display:block;margin-bottom:4px;">🏠</span>ครอบครัว</button>
-            <button id="desk-new-cat-cafe" onclick="deskNewSelectCat('cafe')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:white;color:var(--muted);text-align:center;cursor:pointer;"><span style="font-size:22px;display:block;margin-bottom:4px;">☕</span>ร้านคาเฟ่</button>
-          </div>
-          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">ชื่อโปรเจค</div>
-          <input class="desk-inp" type="text" id="desk-new-proj-name" placeholder="เช่น ค่าวัตถุดิบ, เที่ยวทะเล..." style="margin-bottom:.75rem;">
-          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">Emoji (ไม่บังคับ)</div>
-          <input class="desk-inp" type="text" id="desk-new-proj-emoji" placeholder="เช่น 🏖️ ☕ 🧁" maxlength="2" style="margin-bottom:.875rem;">
-          <div style="display:flex;gap:8px;">
-            <button onclick="showDashboard('family')" style="flex:1;padding:9px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;color:var(--muted);cursor:pointer;">ยกเลิก</button>
-            <button onclick="deskCreateProject()" style="flex:1;padding:9px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:600;cursor:pointer;" id="desk-new-create-btn">+ สร้าง</button>
-          </div>
-        </div>
-      </div>
-    `;
-    setTimeout(()=>document.getElementById('desk-new-proj-name')?.focus(),100);
-  } else {
-    document.getElementById('mob-view-home').style.display='none';
-    document.getElementById('mob-view-detail').style.display='none';
-    document.getElementById('mob-view-newproj').style.display='block';
-    modalCat='family';
-    const fam=document.getElementById('mob-modal-cat-fam');
-    const cafe=document.getElementById('mob-modal-cat-cafe');
-    if(fam){fam.style.borderColor='var(--pink)';fam.style.background='var(--pink-soft)';fam.style.color='var(--pink-deep)';}
-    if(cafe){cafe.style.borderColor='var(--border)';cafe.style.background='white';cafe.style.color='var(--muted)';}
-    const nameInp=document.getElementById('mob-modal-proj-name');
-    const emojiInp=document.getElementById('mob-modal-emoji-inp');
-    if(nameInp)nameInp.value='';
-    if(emojiInp)emojiInp.value='';
-    window.scrollTo(0,0);
-  }
-};
-
-window.deskNewSelectCat=(cat)=>{
-  modalCat=cat;
-  const fam=document.getElementById('desk-new-cat-fam');
-  const cafe=document.getElementById('desk-new-cat-cafe');
-  if(fam){fam.style.borderColor=cat==='family'?'var(--pink)':'var(--border)';fam.style.background=cat==='family'?'var(--pink-soft)':'white';fam.style.color=cat==='family'?'var(--pink-deep)':'var(--muted)';}
-  if(cafe){cafe.style.borderColor=cat==='cafe'?'var(--orange)':'var(--border)';cafe.style.background=cat==='cafe'?'var(--orange-soft)':'white';cafe.style.color=cat==='cafe'?'var(--orange-deep)':'var(--muted)';}
-  const btn=document.getElementById('desk-new-create-btn');
-  if(btn)btn.style.background=cat==='cafe'?'linear-gradient(135deg,#FFD4A0,#FFB347)':'linear-gradient(135deg,#F472A8,#C4608A)';
-};
-
-window.deskCreateProject=()=>{
+window.addProject=()=>{
   if(!db)return;
-  const name=(document.getElementById('desk-new-proj-name')?.value.trim())||'โปรเจคใหม่';
-  const emoji=(document.getElementById('desk-new-proj-emoji')?.value.trim())||(modalCat==='cafe'?'☕':'🌸');
+  const i=Object.keys(projects).length;
   const newRef=push(rootRef);
-  set(newRef,{name,emoji,category:modalCat,entries:{}});
-  deskOpenProject(newRef.key);
-  showToast('เพิ่มโปรเจคแล้ว 🌸');
-};
-
-window.closeNewProjForm=()=>{
-  document.getElementById('mob-view-newproj').style.display='none';
-  document.getElementById('mob-view-home').style.display='block';
-};
-
-window.openNewProjModal=window.openNewProjForm;
-window.closeNewProjModal=window.closeNewProjForm;
-window.modalSelectCat=(cat)=>{
-  modalCat=cat;
-  const fam=document.getElementById('mob-modal-cat-fam');
-  const cafe=document.getElementById('mob-modal-cat-cafe');
-  if(fam){fam.style.borderColor=cat==='family'?'var(--pink)':'var(--border)';fam.style.background=cat==='family'?'var(--pink-soft)':'white';fam.style.color=cat==='family'?'var(--pink-deep)':'var(--muted)';}
-  if(cafe){cafe.style.borderColor=cat==='cafe'?'var(--orange)':'var(--border)';cafe.style.background=cat==='cafe'?'var(--orange-soft)':'white';cafe.style.color=cat==='cafe'?'var(--orange-deep)':'var(--muted)';}
-};
-window.createProject=()=>{
-  if(!db)return;
-  const nameInp=document.getElementById('mob-modal-proj-name');
-  const emojiInp=document.getElementById('mob-modal-emoji-inp');
-  const name=(nameInp?.value.trim())||'โปรเจคใหม่';
-  const emoji=(emojiInp?.value.trim())||(modalCat==='cafe'?'☕':'🌸');
-  const newRef=push(rootRef);
-  set(newRef,{name,emoji,category:modalCat,entries:{}});
-  closeNewProjForm();
+  set(newRef,{name:'โปรเจคใหม่',emoji:EMOJIS[i%EMOJIS.length],entries:{}});
   if(isDesktop())deskOpenProject(newRef.key);
   else mobOpenProject(newRef.key);
   showToast('เพิ่มโปรเจคแล้ว 🌸');
-};
-
-window.addProject=()=>openNewProjForm();
-
-window.setCafeExportYear=(y)=>{cafeExportYear=y;renderDashboard();};
-
-window.exportCafe=async()=>{
-  showToast('กำลัง export... ⏳');
-  const year=cafeExportYear;
-  const allEntries=[];
-  Object.entries(projects).forEach(([pid,p])=>{
-    if(p.category!=='cafe')return;
-    Object.entries(p.entries||{}).forEach(([k,e])=>{
-      if(e.ts&&new Date(e.ts).getFullYear()===year){
-        allEntries.push({...e,key:k,projName:p.name||'โปรเจคใหม่'});
-      }
-    });
-  });
-  allEntries.sort((a,b)=>(a.ts||0)-(b.ts||0));
-
-  let totalAll=0,mePaidAll=0,partnerPaidAll=0,poolPaidAll=0;
-  const otherPaidAll={},projStats={},monthStats={};
-  allEntries.forEach(e=>{
-    totalAll+=e.amt;
-    if(e.who==='me')mePaidAll+=e.amt;
-    else if(e.who==='partner')partnerPaidAll+=e.amt;
-    else if(e.who==='pool')poolPaidAll+=e.amt;
-    else if(e.who==='other'&&e.otherName)otherPaidAll[e.otherName]=(otherPaidAll[e.otherName]||0)+e.amt;
-    if(!projStats[e.projName])projStats[e.projName]={total:0,count:0,me:0,partner:0,pool:0};
-    projStats[e.projName].total+=e.amt;projStats[e.projName].count++;
-    if(e.who==='me')projStats[e.projName].me+=e.amt;
-    else if(e.who==='partner')projStats[e.projName].partner+=e.amt;
-    else if(e.who==='pool')projStats[e.projName].pool+=e.amt;
-    const m=e.ts?new Date(e.ts).getMonth():0;
-    if(!monthStats[m])monthStats[m]={total:0,me:0,partner:0,pool:0};
-    monthStats[m].total+=e.amt;
-    if(e.who==='me')monthStats[m].me+=e.amt;
-    else if(e.who==='partner')monthStats[m].partner+=e.amt;
-    else if(e.who==='pool')monthStats[m].pool+=e.amt;
-  });
-
-  /* XLSX */
-  try{
-    const wb=XLSX.utils.book_new();
-    const sumData=[
-      [`จ่ายด้วยกันนะ — ร้านคาเฟ่ สรุปปี ${year}`],[`${nameMe} & ${namePartner}`],[],
-      ['ภาพรวม',''],['รวมทั้งหมด',totalAll],[`${nameMe} สำรองจ่าย`,mePaidAll],[`${namePartner} สำรองจ่าย`,partnerPaidAll],['ส่วนกลางร้าน',poolPaidAll],
-      ...Object.entries(otherPaidAll).map(([n,a])=>[`${n} สำรองจ่าย`,a]),
-      [],
-      ['แยกตามโปรเจค','รายการ',nameMe,namePartner,'ส่วนกลาง','รวม'],
-      ...Object.entries(projStats).map(([n,s])=>[n,s.count,s.me,s.partner,s.pool,s.total]),
-      [],
-      ['แยกตามเดือน',nameMe,namePartner,'ส่วนกลาง','รวม'],
-      ...MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,monthStats[i].me,monthStats[i].partner,monthStats[i].pool,monthStats[i].total]:[n,0,0,0,0]),
-    ];
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumData),'Summary');
-    const rawData=[['วันที่','โปรเจค','รายการ','ใครสำรองจ่าย','จำนวนเงิน','วิธีจ่าย','ธนาคาร']];
-    allEntries.forEach(e=>{
-      const whoLabel=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
-      rawData.push([e.date||'',e.projName,e.desc,whoLabel,e.amt,e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'-',e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'-')]);
-    });
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rawData),'Raw Data');
-    XLSX.writeFile(wb,`cafe-expenses-${year}.xlsx`);
-  }catch(err){console.error(err);}
-
-  /* PDF */
-  try{
-    const {jsPDF}=window.jspdf;
-    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-    doc.setFont('helvetica');
-    doc.setFontSize(18);doc.setTextColor(196,112,32);doc.text('Cafe Expenses',14,18);
-    doc.setFontSize(11);doc.setTextColor(100,100,100);doc.text(`${nameMe} & ${namePartner} — Summary ${year}`,14,25);
-    const cards=[['Total',`฿${Math.round(totalAll).toLocaleString()}`,'#FFF5CC'],[`${nameMe} paid`,`฿${Math.round(mePaidAll).toLocaleString()}`,'#FDE8F2'],[`${namePartner} paid`,`฿${Math.round(partnerPaidAll).toLocaleString()}`,'#F0ECFF'],['Shop fund',`฿${Math.round(poolPaidAll).toLocaleString()}`,'#FFF5E6']];
-    doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('OVERVIEW',14,34);doc.setDrawColor(242,224,236);doc.line(14,36,196,36);
-    cards.forEach((c,i)=>{const x=14+(i%2)*91,y=39+Math.floor(i/2)*16;doc.setFillColor(parseInt(c[2].slice(1,3),16),parseInt(c[2].slice(3,5),16),parseInt(c[2].slice(5,7),16));doc.roundedRect(x,y,87,13,2,2,'F');doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text(c[0],x+4,y+5);doc.setFontSize(12);doc.setTextColor(61,37,53);doc.text(c[1],x+4,y+11);});
-    let y=76;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY PROJECT',14,y);doc.line(14,y+2,196,y+2);
-    doc.autoTable({startY:y+4,head:[['Project','Items',nameMe,namePartner,'Fund','Total']],body:Object.entries(projStats).map(([n,s])=>[n,s.count,`฿${Math.round(s.me).toLocaleString()}`,`฿${Math.round(s.partner).toLocaleString()}`,`฿${Math.round(s.pool).toLocaleString()}`,`฿${Math.round(s.total).toLocaleString()}`]),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[255,179,71],textColor:[61,37,53]},margin:{left:14,right:14}});
-    y=doc.lastAutoTable.finalY+8;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY MONTH',14,y);doc.line(14,y+2,196,y+2);
-    doc.autoTable({startY:y+4,head:[['Month',nameMe,namePartner,'Fund','Total']],body:MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,`฿${Math.round(monthStats[i].me).toLocaleString()}`,`฿${Math.round(monthStats[i].partner).toLocaleString()}`,`฿${Math.round(monthStats[i].pool).toLocaleString()}`,`฿${Math.round(monthStats[i].total).toLocaleString()}`]:[n,'฿0','฿0','฿0','฿0']),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[255,212,160],textColor:[61,37,53]},margin:{left:14,right:14}});
-    doc.addPage();
-    doc.setFontSize(13);doc.setTextColor(196,112,32);doc.text('All Entries',14,16);
-    doc.autoTable({startY:22,head:[['Date','Project','Item','Who','Amount','Bank']],body:allEntries.map(e=>{const w=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'Fund':(e.otherName||'Other');return[e.date||'',e.projName,e.desc,w,`฿${Math.round(e.amt).toLocaleString()}`,e.bank||'-'];}),styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[255,179,71],textColor:'white'},margin:{left:14,right:14}});
-    doc.setFontSize(8);doc.setTextColor(180,154,170);doc.text(`จ่ายด้วยกันนะ ☕ Cafe — ปี ${year}`,14,doc.internal.pageSize.height-8);
-    doc.save(`cafe-expenses-${year}.pdf`);
-  }catch(err){console.error(err);}
-  showToast('Export เรียบร้อย! ☕');
 };
 
 window.deleteProject=(id)=>{
