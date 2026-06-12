@@ -117,6 +117,8 @@ body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min
 .entry-split{border-color:#F0E8B0;background:#FFFDF0;}
 .btn-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:2px 4px;opacity:.5;flex-shrink:0;}
 .btn-del:hover{opacity:1;color:var(--pink-deep);}
+.btn-edit{background:none;border:none;cursor:pointer;font-size:13px;padding:2px 4px;opacity:.5;flex-shrink:0;}
+.btn-edit:hover{opacity:1;}
 .empty-state{text-align:center;padding:2rem 0;color:var(--muted);}
 .empty-state .big{font-size:32px;display:block;margin-bottom:8px;}
 
@@ -409,8 +411,8 @@ function renderCurrentProject(){
       <input class="inp-desc" type="text" id="inp-desc" placeholder="ใช้จ่ายอะไร? เช่น ข้าวเที่ยง, คาเฟ่...">
       <div class="type-row">
         <button class="type-btn active-split" id="type-split" onclick="selectType('split')">🍱 หารกัน</button>
-        <button class="type-btn" id="type-paid-me" onclick="selectType('paid-me')">💚 ฉันจ่ายแทน</button>
-        <button class="type-btn" id="type-paid-partner" onclick="selectType('paid-partner')">💜 แฟนจ่ายแทน</button>
+        <button class="type-btn" id="type-paid-me" onclick="selectType('paid-me')">🩷 ${esc(nameMe)}จ่ายแทน</button>
+        <button class="type-btn" id="type-paid-partner" onclick="selectType('paid-partner')">💜 ${esc(namePartner)}จ่ายแทน</button>
       </div>
       <div class="form-bottom">
         <input class="inp-amt" type="number" id="inp-amt" placeholder="฿ จำนวน" min="0" step="1">
@@ -444,13 +446,14 @@ function renderCurrentProject(){
           pillClass='pill-partner';pillText=namePartner+' จ่ายแทน';entryClass='entry-partner';
           subText=`${nameMe} ต้องคืน • ${e.date||''}`;
         }
-        return `<div class="entry ${entryClass}">
+        return `<div class="entry ${entryClass}" id="entry-${e.key}">
           <div class="entry-left">
             <div class="entry-name">${esc(e.desc)}</div>
             <div class="entry-sub">${subText}</div>
           </div>
           <div class="entry-amt">${fmt(e.amt)}</div>
           <span class="pill ${pillClass}">${pillText}</span>
+          <button class="btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})" title="แก้ไข">✏️</button>
           <button class="btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button>
         </div>`;
       }).join('')}
@@ -481,6 +484,18 @@ function renderCurrentProject(){
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 window.showToast=showToast;
+
+window.editEntry=(projId,key,oldDesc,oldAmt)=>{
+  const newDesc=prompt('แก้ชื่อรายการ:',oldDesc);
+  if(newDesc===null)return;
+  const newAmtStr=prompt('แก้จำนวนเงิน:',oldAmt);
+  if(newAmtStr===null)return;
+  const newAmt=parseFloat(newAmtStr);
+  if(!newDesc.trim()){showToast('ชื่อรายการห้ามว่าง');return;}
+  if(isNaN(newAmt)||newAmt<=0){showToast('จำนวนเงินไม่ถูกต้อง');return;}
+  update(ref(db,'projects/'+projId+'/entries/'+key),{desc:newDesc.trim(),amt:newAmt});
+  showToast('แก้ไขแล้ว 🌸');
+};
 </script>
 </body>
 </html>
