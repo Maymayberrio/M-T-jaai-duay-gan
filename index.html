@@ -6,256 +6,146 @@
 <title>จ่ายด้วยกันนะ 🌸</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --pink:#F9A8C9;--pink-soft:#FDE8F2;--pink-deep:#C4608A;
+  --peach:#FFD6B0;--peach-soft:#FFF0E4;
+  --mint:#B5E8D8;--mint-soft:#E6FAF5;--mint-deep:#3A9E80;
+  --lav:#D4C5F9;--lav-soft:#F0ECFF;--lav-deep:#6B50C4;
+  --yellow:#FFE9A0;
+  --bg:#FFF8FB;--surface:#FFFFFF;--border:#F2E0EC;
+  --text:#3D2535;--muted:#B89AAA;
+  --radius:20px;--radius-sm:14px;--radius-xs:10px;
+}
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;padding-bottom:120px;}
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+.header{background:linear-gradient(160deg,#FFD6E8 0%,#FFE8D6 50%,#D6E8FF 100%);padding:2rem 1.25rem 3rem;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:-20px;right:-20px;width:90px;height:90px;background:#FFB3D9;border-radius:50%;opacity:.4;}
+.header::after{content:'';position:absolute;bottom:-15px;left:-10px;width:70px;height:70px;background:#B3D4FF;border-radius:50%;opacity:.4;}
+.header-content{position:relative;}
+.header-emoji{font-size:36px;display:block;margin-bottom:6px;}
+.header h1{font-size:22px;font-weight:600;color:var(--text);}
+.header p{font-size:13px;color:#8B6070;margin-top:4px;}
+.header-wave{position:absolute;bottom:-1px;left:0;right:0;height:24px;background:var(--bg);border-radius:50% 50% 0 0/100% 100% 0 0;z-index:2;}
 
-:root {
-  --pink:      #F9A8C9;
-  --pink-soft: #FDE8F2;
-  --pink-deep: #C4608A;
-  --peach:     #FFD6B0;
-  --peach-soft:#FFF0E4;
-  --mint:      #B5E8D8;
-  --mint-soft: #E6FAF5;
-  --mint-deep: #3A9E80;
-  --lav:       #D4C5F9;
-  --lav-soft:  #F0ECFF;
-  --lav-deep:  #6B50C4;
-  --yellow:    #FFE9A0;
-  --bg:        #FFF8FB;
-  --surface:   #FFFFFF;
-  --border:    #F2E0EC;
-  --text:      #3D2535;
-  --muted:     #B89AAA;
-  --radius:    20px;
-  --radius-sm: 14px;
-  --radius-xs: 10px;
-}
+.container{max-width:480px;margin:0 auto;padding:1.25rem 1rem;}
 
-body {
-  font-family: 'Sarabun', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 15px;
-  line-height: 1.6;
-  padding-bottom: 100px;
-}
+/* CARDS */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;box-shadow:0 2px 12px rgba(200,120,160,.07);}
+.card-title{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:6px;}
+.card-title span{font-size:14px;}
 
-/* ---- HEADER ---- */
-.header {
-  background: linear-gradient(160deg, #FFD6E8 0%, #FFE8D6 50%, #D6E8FF 100%);
-  padding: 2.5rem 1.25rem 3.5rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.header::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle at 80% 20%, #FFB3D9 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, #B3D4FF 0%, transparent 50%);
-  opacity: 0.4;
-}
-.header-content { position: relative; }
-.header-emoji { font-size: 40px; display: block; margin-bottom: 8px; }
-.header h1 { font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
-.header p { font-size: 13px; color: #8B6070; margin-top: 4px; }
-.header-wave {
-  position: absolute; bottom: -1px; left: 0; right: 0;
-  height: 30px; background: var(--bg);
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-}
+/* CONFIG */
+.config-card{background:linear-gradient(135deg,#FFF0F8,#FFF8F0);border:1.5px solid var(--pink);}
+.config-note{font-size:13px;color:#9B607A;margin-bottom:12px;line-height:1.7;}
+.config-input{width:100%;border:1.5px solid #F5C5DC;border-radius:var(--radius-xs);padding:10px 14px;font-family:'Sarabun',sans-serif;font-size:13px;background:white;color:var(--text);outline:none;margin-bottom:8px;transition:border-color .2s;}
+.config-input:focus{border-color:var(--pink-deep);}
+.btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:4px;}
+.btn-primary:active{transform:scale(.98);}
 
-/* ---- CONTAINER ---- */
-.container { max-width: 480px; margin: 0 auto; padding: 1.25rem 1rem; }
+/* STATUS */
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:var(--mint-soft);border:1px solid var(--mint);border-radius:99px;padding:5px 12px;font-size:12px;color:var(--mint-deep);margin-bottom:1rem;}
+.status-pill.offline{background:#FFF0E4;border-color:var(--peach);color:#C47020;}
+.status-pill.syncing{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+.status-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+.status-dot.pulse{animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.status-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+.btn-link{background:none;border:none;font-family:'Sarabun',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
 
-/* ---- CARDS ---- */
-.card {
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 12px rgba(200,120,160,0.07);
-}
-.card-title {
-  font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
-  color: var(--muted); font-weight: 600; margin-bottom: 1rem;
-  display: flex; align-items: center; gap: 6px;
-}
-.card-title span { font-size: 14px; }
+/* NAMES */
+.names-row{display:flex;gap:10px;align-items:center;}
+.name-box{flex:1;}
+.name-box label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;margin-bottom:6px;}
+.name-input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:10px 12px;font-family:'Sarabun',sans-serif;font-size:15px;color:var(--text);background:var(--bg);outline:none;font-weight:600;transition:border-color .2s;}
+.name-input:focus{border-color:var(--pink);}
+.names-heart{color:var(--pink);font-size:18px;padding-top:20px;flex-shrink:0;}
 
-/* ---- CONFIG ---- */
-.config-card {
-  background: linear-gradient(135deg, #FFF0F8, #FFF8F0);
-  border: 1.5px solid var(--pink);
-}
-.config-card .card-title { color: var(--pink-deep); }
-.config-note { font-size: 13px; color: #9B607A; margin-bottom: 12px; line-height: 1.7; }
-.config-input {
-  width: 100%; border: 1.5px solid #F5C5DC; border-radius: var(--radius-xs);
-  padding: 10px 14px; font-family: 'Sarabun', sans-serif; font-size: 13px;
-  background: white; color: var(--text); outline: none; margin-bottom: 8px;
-  transition: border-color 0.2s;
-}
-.config-input:focus { border-color: var(--pink-deep); }
-.btn-primary {
-  width: 100%; padding: 12px;
-  background: linear-gradient(135deg, #F472A8, #C4608A);
-  color: white; border: none; border-radius: var(--radius-xs);
-  font-family: 'Sarabun', sans-serif; font-size: 15px; font-weight: 600;
-  cursor: pointer; transition: opacity 0.15s, transform 0.1s;
-  margin-top: 4px;
-}
-.btn-primary:hover { opacity: 0.9; }
-.btn-primary:active { transform: scale(0.98); }
+/* PROJECTS (tabs) */
+.projects-bar{display:flex;gap:8px;margin-bottom:1rem;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.projects-bar::-webkit-scrollbar{display:none;}
+.proj-tab{flex-shrink:0;padding:7px 16px;border-radius:99px;font-family:'Sarabun',sans-serif;font-size:13px;font-weight:600;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.proj-tab.active{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+.proj-tab.add-tab{border-style:dashed;color:var(--muted);}
 
-/* ---- STATUS ---- */
-.status-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--mint-soft); border: 1px solid var(--mint);
-  border-radius: 99px; padding: 5px 12px; font-size: 12px;
-  color: var(--mint-deep); margin-bottom: 1rem;
-  transition: all 0.3s;
-}
-.status-pill.offline { background: #FFF0E4; border-color: var(--peach); color: #C47020; }
-.status-pill.syncing { background: var(--lav-soft); border-color: var(--lav); color: var(--lav-deep); }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.status-dot.pulse { animation: pulse 1.2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-.status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-.btn-link { background: none; border: none; font-family: 'Sarabun', sans-serif; font-size: 12px; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.proj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+.proj-name-input{font-family:'Sarabun',sans-serif;font-size:16px;font-weight:600;color:var(--text);border:none;border-bottom:1.5px solid var(--border);background:transparent;outline:none;padding:4px 0;flex:1;transition:border-color .2s;}
+.proj-name-input:focus{border-color:var(--pink);}
+.btn-del-proj{background:none;border:none;cursor:pointer;color:var(--muted);font-size:13px;font-family:'Sarabun',sans-serif;opacity:.6;padding:4px 8px;}
+.btn-del-proj:hover{color:var(--pink-deep);opacity:1;}
 
-/* ---- NAMES ---- */
-.names-row { display: flex; gap: 10px; align-items: center; }
-.name-box { flex: 1; }
-.name-box label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
-.name-input {
-  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-xs);
-  padding: 10px 12px; font-family: 'Sarabun', sans-serif; font-size: 15px;
-  color: var(--text); background: var(--bg); outline: none; font-weight: 600;
-  transition: border-color 0.2s;
-}
-.name-input:focus { border-color: var(--pink); }
-.names-heart { color: var(--pink); font-size: 18px; padding-top: 20px; flex-shrink: 0; }
+/* ADD FORM */
+.inp-desc{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:11px 14px;font-family:'Sarabun',sans-serif;font-size:15px;color:var(--text);background:var(--bg);outline:none;margin-bottom:10px;transition:border-color .2s;}
+.inp-desc:focus{border-color:var(--pink);}
+.form-bottom{display:flex;gap:8px;margin-bottom:8px;}
+.inp-amt{flex:1;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:11px 14px;font-family:'Sarabun',sans-serif;font-size:15px;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;}
+.inp-amt:focus{border-color:var(--pink);}
+.who-toggle{display:flex;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);overflow:hidden;}
+.who-btn{flex:1;padding:10px 8px;font-family:'Sarabun',sans-serif;font-size:13px;font-weight:500;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;white-space:nowrap;}
+.who-btn.active-me{background:var(--mint-soft);color:var(--mint-deep);}
+.who-btn.active-partner{background:var(--lav-soft);color:var(--lav-deep);}
 
-/* ---- ADD FORM ---- */
-.inp-desc {
-  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-xs);
-  padding: 11px 14px; font-family: 'Sarabun', sans-serif; font-size: 15px;
-  color: var(--text); background: var(--bg); outline: none;
-  margin-bottom: 10px; transition: border-color 0.2s;
-}
-.inp-desc:focus { border-color: var(--pink); }
-.form-bottom { display: flex; gap: 8px; }
-.inp-amt {
-  flex: 1; border: 1.5px solid var(--border); border-radius: var(--radius-xs);
-  padding: 11px 14px; font-family: 'Sarabun', sans-serif; font-size: 15px;
-  color: var(--text); background: var(--bg); outline: none;
-  transition: border-color 0.2s;
-}
-.inp-amt:focus { border-color: var(--pink); }
-.who-toggle { display: flex; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius-xs); overflow: hidden; }
-.who-btn {
-  flex: 1; padding: 10px 10px; font-family: 'Sarabun', sans-serif; font-size: 13px;
-  font-weight: 500; border: none; cursor: pointer; background: transparent;
-  color: var(--muted); transition: all 0.2s; white-space: nowrap;
-}
-.who-btn.active-me { background: var(--mint-soft); color: var(--mint-deep); }
-.who-btn.active-partner { background: var(--lav-soft); color: var(--lav-deep); }
-.inp-date {
-  width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-xs);
-  padding: 10px 14px; font-family: 'Sarabun', sans-serif; font-size: 14px;
-  color: var(--text); background: var(--bg); outline: none;
-  margin-top: 8px; transition: border-color 0.2s;
-}
-.inp-date:focus { border-color: var(--pink); }
-.btn-add-wrap { margin-top: 10px; }
-.btn-add {
-  width: 100%; padding: 13px;
-  background: linear-gradient(135deg, #A8D8C8, #7BC4A8);
-  color: white; border: none; border-radius: var(--radius-xs);
-  font-family: 'Sarabun', sans-serif; font-size: 16px; font-weight: 600;
-  cursor: pointer; transition: opacity 0.15s, transform 0.1s;
-  letter-spacing: 0.3px;
-}
-.btn-add:hover { opacity: 0.9; }
-.btn-add:active { transform: scale(0.99); }
+/* TYPE SELECT */
+.type-row{display:flex;gap:6px;margin-bottom:8px;}
+.type-btn{flex:1;padding:8px 6px;font-family:'Sarabun',sans-serif;font-size:12px;font-weight:600;border:1.5px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;background:var(--surface);color:var(--muted);text-align:center;transition:all .2s;}
+.type-btn.active-split{background:var(--yellow);border-color:#E8C840;color:#7A6010;}
+.type-btn.active-paid-me{background:var(--mint-soft);border-color:var(--mint);color:var(--mint-deep);}
+.type-btn.active-paid-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
 
-/* ---- ENTRY LIST ---- */
-.entries-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.875rem; }
-.btn-clear { background: none; border: none; font-family: 'Sarabun', sans-serif; font-size: 12px; color: var(--muted); cursor: pointer; }
-.btn-clear:hover { color: #C4608A; }
-.entry-list { display: flex; flex-direction: column; gap: 8px; }
-.entry {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 14px; border-radius: var(--radius-xs);
-  border: 1.5px solid var(--border);
-  transition: transform 0.15s;
-}
-.entry:active { transform: scale(0.99); }
-.entry-left { flex: 1; min-width: 0; }
-.entry-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.entry-date { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.entry-amt { font-size: 15px; font-weight: 600; }
-.pill {
-  font-size: 11px; padding: 3px 10px; border-radius: 99px;
-  font-weight: 600; white-space: nowrap; flex-shrink: 0;
-}
-.pill-me { background: var(--mint-soft); color: var(--mint-deep); }
-.pill-partner { background: var(--lav-soft); color: var(--lav-deep); }
-.entry-me { border-color: #D8F2EB; background: #FAFFFD; }
-.entry-partner { border-color: #E4DCF8; background: #FDFBFF; }
-.btn-del { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 15px; padding: 2px 4px; opacity: 0.5; transition: opacity 0.15s; flex-shrink: 0; }
-.btn-del:hover { opacity: 1; color: var(--pink-deep); }
-.empty-state { text-align: center; padding: 2rem 0; color: var(--muted); }
-.empty-state .big { font-size: 36px; display: block; margin-bottom: 8px; }
-.empty-state p { font-size: 13px; }
+.inp-date{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:10px 14px;font-family:'Sarabun',sans-serif;font-size:14px;color:var(--text);background:var(--bg);outline:none;margin-bottom:8px;transition:border-color .2s;}
+.inp-date:focus{border-color:var(--pink);}
+.btn-add{width:100%;padding:13px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);color:white;border:none;border-radius:var(--radius-xs);font-family:'Sarabun',sans-serif;font-size:16px;font-weight:600;cursor:pointer;margin-top:2px;}
+.btn-add:active{transform:scale(.99);}
 
-/* ---- SUMMARY ---- */
-.metrics { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
-.metric {
-  border-radius: var(--radius-xs); padding: 12px 10px; text-align: center;
-}
-.metric-total { background: var(--yellow); }
-.metric-me { background: var(--mint-soft); }
-.metric-partner { background: var(--lav-soft); }
-.metric-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
-.metric-val { font-size: 17px; font-weight: 700; color: var(--text); }
+/* ENTRIES */
+.entries-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem;}
+.btn-clear{background:none;border:none;font-family:'Sarabun',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;}
+.btn-clear:hover{color:var(--pink-deep);}
+.entry-list{display:flex;flex-direction:column;gap:8px;}
+.entry{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--radius-xs);border:1.5px solid var(--border);}
+.entry-left{flex:1;min-width:0;}
+.entry-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.entry-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.entry-amt{font-size:15px;font-weight:600;}
+.pill{font-size:11px;padding:3px 10px;border-radius:99px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.pill-me{background:var(--mint-soft);color:var(--mint-deep);}
+.pill-partner{background:var(--lav-soft);color:var(--lav-deep);}
+.pill-split{background:var(--yellow);color:#7A6010;}
+.entry-me{border-color:#D8F2EB;background:#FAFFFD;}
+.entry-partner{border-color:#E4DCF8;background:#FDFBFF;}
+.entry-split{border-color:#F0E8B0;background:#FFFDF0;}
+.btn-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:2px 4px;opacity:.5;flex-shrink:0;}
+.btn-del:hover{opacity:1;color:var(--pink-deep);}
+.empty-state{text-align:center;padding:2rem 0;color:var(--muted);}
+.empty-state .big{font-size:32px;display:block;margin-bottom:8px;}
 
-.bar-row { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 600; }
-.bar-track { background: var(--lav-soft); border-radius: 99px; height: 10px; overflow: hidden; margin-bottom: 1rem; }
-.bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--mint), var(--lav)); transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+/* SUMMARY */
+.metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem;}
+.metric{border-radius:var(--radius-xs);padding:12px 10px;text-align:center;}
+.metric-total{background:var(--yellow);}
+.metric-me{background:var(--mint-soft);}
+.metric-partner{background:var(--lav-soft);}
+.metric-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:600;}
+.metric-val{font-size:17px;font-weight:700;color:var(--text);}
+.bar-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+.bar-track{background:var(--lav-soft);border-radius:99px;height:10px;overflow:hidden;margin-bottom:1rem;}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--mint),var(--lav));transition:width .5s cubic-bezier(.4,0,.2,1);}
+.result-box{border-radius:var(--radius-xs);padding:16px;font-size:15px;font-weight:600;text-align:center;display:none;line-height:1.5;}
+.result-balanced{background:var(--mint-soft);color:var(--mint-deep);display:block;}
+.result-me-owes{background:var(--lav-soft);color:var(--lav-deep);display:block;}
+.result-partner-owes{background:var(--pink-soft);color:var(--pink-deep);display:block;}
+.result-amount{font-size:22px;display:block;margin-top:4px;}
 
-.result-box {
-  border-radius: var(--radius-xs); padding: 16px;
-  font-size: 15px; font-weight: 600; text-align: center; display: none;
-  line-height: 1.5;
-}
-.result-balanced { background: var(--mint-soft); color: var(--mint-deep); display: block; }
-.result-me-owes { background: var(--lav-soft); color: var(--lav-deep); display: block; }
-.result-partner-owes { background: var(--pink-soft); color: var(--pink-deep); display: block; }
-.result-amount { font-size: 22px; display: block; margin-top: 4px; }
-
-/* ---- TOAST ---- */
-.toast {
-  position: fixed; bottom: 1.5rem; left: 50%;
-  transform: translateX(-50%) translateY(8px);
-  background: var(--text); color: white;
-  padding: 10px 20px; border-radius: 99px; font-size: 13px;
-  opacity: 0; transition: opacity 0.2s, transform 0.2s;
-  pointer-events: none; z-index: 999; white-space: nowrap;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text);color:white;padding:10px 20px;border-radius:99px;font-size:13px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="header-content">
     <span class="header-emoji">🌸</span>
-    <h1>จ่ายด้วยกันนะ 🌸</h1>
+    <h1>จ่ายด้วยกันนะ</h1>
     <p>บันทึกด้วยกัน เคลียร์กันง่ายๆ 💕</p>
   </div>
   <div class="header-wave"></div>
@@ -266,17 +156,16 @@ body {
   <!-- Firebase Config -->
   <div class="card config-card" id="config-card">
     <div class="card-title"><span>⚙️</span> ตั้งค่าครั้งแรก</div>
-    <p class="config-note">กรอก Firebase config เพื่อให้ซิงค์กันได้เรียลไทม์<br>ได้จาก Firebase Console → Project settings → Your apps</p>
+    <p class="config-note">กรอก Firebase config เพื่อให้ซิงค์กันได้เรียลไทม์</p>
     <input class="config-input" type="text" id="cfg-apikey" placeholder="apiKey">
     <input class="config-input" type="text" id="cfg-authdomain" placeholder="authDomain">
     <input class="config-input" type="text" id="cfg-projectid" placeholder="projectId">
-    <input class="config-input" type="text" id="cfg-dburl" placeholder="databaseURL (https://xxx-default-rtdb.firebaseio.com)">
+    <input class="config-input" type="text" id="cfg-dburl" placeholder="databaseURL">
     <button class="btn-primary" onclick="saveConfig()">เชื่อมต่อ Firebase 🌸</button>
   </div>
 
   <!-- Main App -->
   <div id="main-app" style="display:none">
-
     <div class="status-row">
       <div class="status-pill" id="status-pill">
         <div class="status-dot" id="status-dot"></div>
@@ -301,60 +190,11 @@ body {
       </div>
     </div>
 
-    <!-- Add -->
+    <!-- Projects -->
     <div class="card">
-      <div class="card-title"><span>✏️</span> เพิ่มรายการ</div>
-      <input class="inp-desc" type="text" id="inp-desc" placeholder="ใช้จ่ายอะไร? เช่น ข้าวเที่ยง, คาเฟ่...">
-      <div class="form-bottom">
-        <input class="inp-amt" type="number" id="inp-amt" placeholder="฿ จำนวน" min="0" step="1">
-        <div class="who-toggle">
-          <button class="who-btn active-me" id="who-me" onclick="selectWho('me')">ฉัน</button>
-          <button class="who-btn" id="who-partner" onclick="selectWho('partner')">แฟน</button>
-        </div>
-      </div>
-      <input class="inp-date" type="date" id="inp-date">
-      <div class="btn-add-wrap">
-        <button class="btn-add" onclick="addEntry()">+ เพิ่มรายการ</button>
-      </div>
-    </div>
-
-    <!-- List -->
-    <div class="card">
-      <div class="entries-header">
-        <div class="card-title" style="margin-bottom:0"><span>🧾</span> รายการ (<span id="count">0</span>)</div>
-        <button class="btn-clear" onclick="clearAll()">ล้างทั้งหมด</button>
-      </div>
-      <div class="entry-list" id="entry-list">
-        <div class="empty-state">
-          <span class="big">🌷</span>
-          <p>ยังไม่มีรายการ<br>เพิ่มรายการแรกด้านบนได้เลย</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Summary -->
-    <div class="card">
-      <div class="card-title"><span>✨</span> สรุปยอด</div>
-      <div class="metrics">
-        <div class="metric metric-total">
-          <div class="metric-label">รวม</div>
-          <div class="metric-val" id="total">฿0</div>
-        </div>
-        <div class="metric metric-me">
-          <div class="metric-label" id="lbl-me">ฉัน</div>
-          <div class="metric-val" id="me-total">฿0</div>
-        </div>
-        <div class="metric metric-partner">
-          <div class="metric-label" id="lbl-partner">แฟน</div>
-          <div class="metric-val" id="partner-total">฿0</div>
-        </div>
-      </div>
-      <div class="bar-row">
-        <span id="bar-lbl-me">ฉัน 0%</span>
-        <span id="bar-lbl-partner">แฟน 0%</span>
-      </div>
-      <div class="bar-track"><div class="bar-fill" id="bar-fill" style="width:50%"></div></div>
-      <div class="result-box" id="result-box"></div>
+      <div class="card-title"><span>📂</span> โปรเจค</div>
+      <div class="projects-bar" id="projects-bar"></div>
+      <div id="proj-content"></div>
     </div>
 
   </div>
@@ -364,212 +204,283 @@ body {
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, onValue, push, remove, update } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, onValue, push, remove, update, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-let db, entriesRef, settingsRef;
-let entries = [];
+let db, rootRef, settingsRef;
+let projects = {};      // { projId: { name, entries:{} } }
+let currentProjId = null;
 let selectedWho = 'me';
+let selectedType = 'split'; // split | paid-me | paid-partner
+let nameMe = 'ฉัน', namePartner = 'แฟน';
 
-function getCfg() {
-  try { return JSON.parse(localStorage.getItem('fb-cfg2') || 'null'); } catch(e) { return null; }
+function getCfg(){try{return JSON.parse(localStorage.getItem('fb-cfg2')||'null');}catch(e){return null;}}
+window.saveConfig=()=>{
+  const cfg={apiKey:document.getElementById('cfg-apikey').value.trim(),authDomain:document.getElementById('cfg-authdomain').value.trim(),projectId:document.getElementById('cfg-projectid').value.trim(),databaseURL:document.getElementById('cfg-dburl').value.trim()};
+  if(!cfg.apiKey||!cfg.projectId||!cfg.databaseURL){showToast('กรุณากรอกให้ครบนะ 🌸');return;}
+  localStorage.setItem('fb-cfg2',JSON.stringify(cfg));location.reload();
+};
+window.resetConfig=()=>{if(confirm('รีเซ็ต config?')){localStorage.removeItem('fb-cfg2');location.reload();}};
+
+const cfg=getCfg();
+if(!cfg){document.getElementById('config-card').style.display='block';}
+else{document.getElementById('config-card').style.display='none';document.getElementById('main-app').style.display='block';initFB(cfg);}
+
+function setStatus(state,text){
+  const pill=document.getElementById('status-pill'),dot=document.getElementById('status-dot');
+  pill.className='status-pill '+(state==='online'?'':state);
+  dot.className='status-dot'+(state==='syncing'?' pulse':'');
+  document.getElementById('status-text').textContent=text;
 }
 
-window.saveConfig = () => {
-  const cfg = {
-    apiKey: document.getElementById('cfg-apikey').value.trim(),
-    authDomain: document.getElementById('cfg-authdomain').value.trim(),
-    projectId: document.getElementById('cfg-projectid').value.trim(),
-    databaseURL: document.getElementById('cfg-dburl').value.trim(),
-  };
-  if (!cfg.apiKey || !cfg.projectId || !cfg.databaseURL) { showToast('กรุณากรอกให้ครบนะ 🌸'); return; }
-  localStorage.setItem('fb-cfg2', JSON.stringify(cfg));
-  location.reload();
-};
+function initFB(cfg){
+  try{
+    const app=initializeApp(cfg);
+    db=getDatabase(app);
+    rootRef=ref(db,'projects');
+    settingsRef=ref(db,'settings');
+    setStatus('syncing','กำลังเชื่อมต่อ...');
 
-window.resetConfig = () => {
-  if (confirm('รีเซ็ต config?')) { localStorage.removeItem('fb-cfg2'); location.reload(); }
-};
+    onValue(rootRef,(snap)=>{
+      projects={};
+      snap.forEach(c=>{projects[c.key]={name:c.val().name||'โปรเจคใหม่',entries:c.val().entries||{}};});
+      if(!currentProjId||!projects[currentProjId]){
+        const keys=Object.keys(projects);
+        currentProjId=keys.length>0?keys[0]:null;
+      }
+      setStatus('online','ซิงค์แล้ว 🌸');
+      renderAll();
+      setTodayDate();
+    },()=>setStatus('offline','เชื่อมต่อไม่ได้'));
 
-window.selectWho = (who) => {
-  selectedWho = who;
-  const meLabel = document.getElementById('name-me').value.trim() || 'ฉัน';
-  const partnerLabel = document.getElementById('name-partner').value.trim() || 'แฟน';
-  const btnMe = document.getElementById('who-me');
-  const btnPartner = document.getElementById('who-partner');
-  btnMe.className = 'who-btn' + (who === 'me' ? ' active-me' : '');
-  btnPartner.className = 'who-btn' + (who === 'partner' ? ' active-partner' : '');
-  btnMe.textContent = meLabel;
-  btnPartner.textContent = partnerLabel;
-};
-
-const cfg = getCfg();
-if (!cfg) {
-  document.getElementById('config-card').style.display = 'block';
-} else {
-  document.getElementById('config-card').style.display = 'none';
-  document.getElementById('main-app').style.display = 'block';
-  initFB(cfg);
-}
-
-function setStatus(state, text) {
-  const pill = document.getElementById('status-pill');
-  const dot = document.getElementById('status-dot');
-  pill.className = 'status-pill ' + (state === 'online' ? '' : state);
-  dot.className = 'status-dot' + (state === 'syncing' ? ' pulse' : '');
-  document.getElementById('status-text').textContent = text;
-}
-
-function initFB(cfg) {
-  try {
-    const app = initializeApp(cfg);
-    db = getDatabase(app);
-    entriesRef = ref(db, 'entries');
-    settingsRef = ref(db, 'settings');
-    setStatus('syncing', 'กำลังเชื่อมต่อ...');
-
-    onValue(entriesRef, (snap) => {
-      entries = [];
-      snap.forEach(c => entries.push({ key: c.key, ...c.val() }));
-      entries.sort((a,b) => (b.ts||0)-(a.ts||0));
-      setStatus('online', 'ซิงค์แล้ว 🌸');
-      render();
-    }, () => setStatus('offline', 'เชื่อมต่อไม่ได้'));
-
-    onValue(settingsRef, (snap) => {
-      const d = snap.val();
-      if (!d) return;
-      if (d.nameMe) document.getElementById('name-me').value = d.nameMe;
-      if (d.namePartner) document.getElementById('name-partner').value = d.namePartner;
-      selectWho(selectedWho);
-      render();
+    onValue(settingsRef,(snap)=>{
+      const d=snap.val();
+      if(!d)return;
+      if(d.nameMe){nameMe=d.nameMe;document.getElementById('name-me').value=d.nameMe;}
+      if(d.namePartner){namePartner=d.namePartner;document.getElementById('name-partner').value=d.namePartner;}
+      updateWhoButtons();renderAll();
     });
-  } catch(e) {
-    setStatus('offline', 'config ไม่ถูกต้อง');
-    showToast('config ไม่ถูกต้อง ลองใหม่นะ');
-  }
+  }catch(e){setStatus('offline','config ไม่ถูกต้อง');showToast('config ไม่ถูกต้อง ลองใหม่นะ');}
 }
 
-function saveSetting() {
-  if (!settingsRef) return;
-  update(settingsRef, {
-    nameMe: document.getElementById('name-me').value,
-    namePartner: document.getElementById('name-partner').value
-  });
+function saveSetting(){
+  if(!settingsRef)return;
+  update(settingsRef,{nameMe:document.getElementById('name-me').value,namePartner:document.getElementById('name-partner').value});
 }
 
-document.getElementById('name-me')?.addEventListener('input', () => { selectWho(selectedWho); render(); saveSetting(); });
-document.getElementById('name-partner')?.addEventListener('input', () => { selectWho(selectedWho); render(); saveSetting(); });
-document.getElementById('inp-desc')?.addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('inp-amt').focus(); });
-document.getElementById('inp-amt')?.addEventListener('keydown', e => { if(e.key==='Enter') window.addEntry(); });
+document.getElementById('name-me')?.addEventListener('input',()=>{nameMe=document.getElementById('name-me').value.trim()||'ฉัน';updateWhoButtons();renderAll();saveSetting();});
+document.getElementById('name-partner')?.addEventListener('input',()=>{namePartner=document.getElementById('name-partner').value.trim()||'แฟน';updateWhoButtons();renderAll();saveSetting();});
 
-const todayStr = new Date().toISOString().split('T')[0];
-const inpDate = document.getElementById('inp-date');
-if (inpDate) inpDate.value = todayStr;
+function setTodayDate(){const el=document.getElementById('inp-date');if(el&&!el.value)el.value=new Date().toISOString().split('T')[0];}
 
-window.addEntry = () => {
-  if (!entriesRef) { showToast('ยังไม่ได้เชื่อมต่อ'); return; }
-  const desc = document.getElementById('inp-desc').value.trim();
-  const amt = parseFloat(document.getElementById('inp-amt').value);
-  const dateVal = document.getElementById('inp-date').value;
-  if (!desc) { document.getElementById('inp-desc').focus(); showToast('ใส่ชื่อรายการด้วยนะ 🌸'); return; }
-  if (isNaN(amt) || amt <= 0) { document.getElementById('inp-amt').focus(); showToast('ใส่จำนวนเงินด้วยนะ'); return; }
-  const dateObj = dateVal ? new Date(dateVal + 'T12:00:00') : new Date();
-  const dateDisplay = dateObj.toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'2-digit'});
-  setStatus('syncing', 'กำลังบันทึก...');
-  push(entriesRef, {
-    desc, amt, who: selectedWho,
-    date: dateDisplay,
-    ts: dateObj.getTime()
+function updateWhoButtons(){
+  const bm=document.getElementById('who-me'),bp=document.getElementById('who-partner');
+  if(!bm||!bp)return;
+  bm.textContent=nameMe;bp.textContent=namePartner;
+  bm.className='who-btn'+(selectedWho==='me'?' active-me':'');
+  bp.className='who-btn'+(selectedWho==='partner'?' active-partner':'');
+}
+
+window.selectWho=(who)=>{selectedWho=who;updateWhoButtons();};
+window.selectType=(type)=>{
+  selectedType=type;
+  ['split','paid-me','paid-partner'].forEach(t=>{
+    const el=document.getElementById('type-'+t);
+    if(el)el.className='type-btn'+(type===t?' active-'+t:'');
   });
-  document.getElementById('inp-desc').value = '';
-  document.getElementById('inp-amt').value = '';
+  // hide/show who toggle
+  const whoRow=document.getElementById('who-row');
+  if(whoRow)whoRow.style.display=(type==='split'?'flex':'none');
+};
+
+// Projects
+window.addProject=()=>{
+  if(!db)return;
+  const newRef=push(ref(db,'projects'));
+  set(newRef,{name:'โปรเจคใหม่',entries:{}});
+  currentProjId=newRef.key;
+  showToast('เพิ่มโปรเจคแล้ว 🌸');
+};
+
+window.deleteProject=(id)=>{
+  if(!db)return;
+  if(!confirm('ลบโปรเจคนี้?'))return;
+  remove(ref(db,'projects/'+id));
+  const keys=Object.keys(projects).filter(k=>k!==id);
+  currentProjId=keys.length>0?keys[0]:null;
+};
+
+window.switchProject=(id)=>{currentProjId=id;renderAll();setTodayDate();};
+
+window.updateProjectName=(id,name)=>{if(db)update(ref(db,'projects/'+id),{name});};
+
+// Entries
+window.addEntry=()=>{
+  if(!db||!currentProjId){showToast('ยังไม่ได้เชื่อมต่อ');return;}
+  const desc=document.getElementById('inp-desc').value.trim();
+  const amt=parseFloat(document.getElementById('inp-amt').value);
+  const dateVal=document.getElementById('inp-date').value;
+  if(!desc){document.getElementById('inp-desc').focus();showToast('ใส่ชื่อรายการด้วยนะ 🌸');return;}
+  if(isNaN(amt)||amt<=0){document.getElementById('inp-amt').focus();showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  setStatus('syncing','กำลังบันทึก...');
+  push(ref(db,'projects/'+currentProjId+'/entries'),{
+    desc,amt,type:selectedType,
+    who:selectedType==='split'?selectedWho:null,
+    date:dateDisplay,ts:dateObj.getTime()
+  });
+  document.getElementById('inp-desc').value='';
+  document.getElementById('inp-amt').value='';
   document.getElementById('inp-desc').focus();
   showToast('เพิ่มแล้ว! 🌸');
 };
 
-window.deleteEntry = (key) => {
-  if (!db) return;
-  remove(ref(db, 'entries/' + key));
-  showToast('ลบแล้ว');
+window.deleteEntry=(projId,key)=>{if(db)remove(ref(db,'projects/'+projId+'/entries/'+key));};
+
+window.clearAll=()=>{
+  if(!currentProjId)return;
+  const proj=projects[currentProjId];
+  if(!proj||!proj.entries||Object.keys(proj.entries).length===0)return;
+  if(!confirm('ล้างรายการทั้งหมดในโปรเจคนี้?'))return;
+  Object.keys(proj.entries).forEach(k=>remove(ref(db,'projects/'+currentProjId+'/entries/'+k)));
+  showToast('ล้างแล้ว 🌷');
 };
 
-window.clearAll = () => {
-  if (entries.length === 0) return;
-  if (confirm('ล้างรายการทั้งหมดเลยนะ?')) {
-    entries.forEach(e => remove(ref(db, 'entries/' + e.key)));
-    showToast('ล้างแล้ว 🌷');
-  }
-};
+function fmt(n){return '฿'+Math.round(n).toLocaleString('th-TH');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function getName(who) {
-  return who === 'me'
-    ? (document.getElementById('name-me')?.value.trim() || 'ฉัน')
-    : (document.getElementById('name-partner')?.value.trim() || 'แฟน');
+function renderAll(){
+  renderProjects();
+  renderCurrentProject();
 }
 
-function fmt(n) { return '฿' + Math.round(n).toLocaleString('th-TH'); }
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderProjects(){
+  const bar=document.getElementById('projects-bar');
+  if(!bar)return;
+  const keys=Object.keys(projects);
+  bar.innerHTML=keys.map(id=>`
+    <button class="proj-tab${id===currentProjId?' active':''}" onclick="switchProject('${id}')">${esc(projects[id].name)}</button>
+  `).join('')+`<button class="proj-tab add-tab" onclick="addProject()">+ เพิ่ม</button>`;
+}
 
-function render() {
-  const meLabel = getName('me');
-  const partnerLabel = getName('partner');
+function renderCurrentProject(){
+  const cont=document.getElementById('proj-content');
+  if(!cont)return;
+  if(!currentProjId||!projects[currentProjId]){
+    cont.innerHTML=`<div class="empty-state"><span class="big">📂</span><p>กด "+ เพิ่ม" เพื่อสร้างโปรเจคแรกเลยครับ</p></div>`;
+    return;
+  }
+  const proj=projects[currentProjId];
+  const entries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
 
-  document.getElementById('lbl-me').textContent = meLabel;
-  document.getElementById('lbl-partner').textContent = partnerLabel;
-  document.getElementById('count').textContent = entries.length;
+  // calc
+  let total=0,meOwes=0,partnerOwes=0;
+  entries.forEach(e=>{
+    total+=e.amt;
+    if(e.type==='split'){
+      // หารกัน — ใครจ่ายจะได้เครดิต ครึ่งหนึ่ง
+      if(e.who==='me') partnerOwes+=e.amt/2;
+      else meOwes+=e.amt/2;
+    } else if(e.type==='paid-me'){
+      // ฉันจ่ายแทนแฟน — แฟนต้องคืน
+      partnerOwes+=e.amt;
+    } else if(e.type==='paid-partner'){
+      // แฟนจ่ายแทนฉัน — ฉันต้องคืน
+      meOwes+=e.amt;
+    }
+  });
+  const net=partnerOwes-meOwes; // + = แฟนต้องโอน, - = ฉันต้องโอน
 
-  const list = document.getElementById('entry-list');
-  if (entries.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="big">🌷</span><p>ยังไม่มีรายการ<br>เพิ่มรายการแรกด้านบนได้เลย</p></div>`;
-  } else {
-    list.innerHTML = entries.map(e => `
-      <div class="entry ${e.who==='me'?'entry-me':'entry-partner'}">
-        <div class="entry-left">
-          <div class="entry-name">${esc(e.desc)}</div>
-          <div class="entry-date">${e.date||''}</div>
-        </div>
-        <div class="entry-amt">${fmt(e.amt)}</div>
-        <span class="pill ${e.who==='me'?'pill-me':'pill-partner'}">${getName(e.who)}</span>
-        <button class="btn-del" onclick="deleteEntry('${e.key}')">✕</button>
+  const meTotalPaid=entries.filter(e=>e.type==='split'&&e.who==='me').reduce((s,e)=>s+e.amt,0)
+    +entries.filter(e=>e.type==='paid-me').reduce((s,e)=>s+e.amt,0);
+  const partnerTotalPaid=entries.filter(e=>e.type==='split'&&e.who==='partner').reduce((s,e)=>s+e.amt,0)
+    +entries.filter(e=>e.type==='paid-partner').reduce((s,e)=>s+e.amt,0);
+
+  cont.innerHTML=`
+    <!-- Project name -->
+    <div class="proj-header">
+      <input class="proj-name-input" type="text" value="${esc(proj.name)}" onchange="updateProjectName('${currentProjId}',this.value)" placeholder="ชื่อโปรเจค">
+      <button class="btn-del-proj" onclick="deleteProject('${currentProjId}')">ลบโปรเจค</button>
+    </div>
+
+    <!-- Add form -->
+    <div style="margin-bottom:1rem;">
+      <div class="card-title"><span>✏️</span> เพิ่มรายการ</div>
+      <input class="inp-desc" type="text" id="inp-desc" placeholder="ใช้จ่ายอะไร? เช่น ข้าวเที่ยง, คาเฟ่...">
+      <div class="type-row">
+        <button class="type-btn active-split" id="type-split" onclick="selectType('split')">🍱 หารกัน</button>
+        <button class="type-btn" id="type-paid-me" onclick="selectType('paid-me')">💚 ฉันจ่ายแทน</button>
+        <button class="type-btn" id="type-paid-partner" onclick="selectType('paid-partner')">💜 แฟนจ่ายแทน</button>
       </div>
-    `).join('');
-  }
+      <div class="form-bottom">
+        <input class="inp-amt" type="number" id="inp-amt" placeholder="฿ จำนวน" min="0" step="1">
+        <div class="who-toggle" id="who-row">
+          <button class="who-btn active-me" id="who-me" onclick="selectWho('me')">${esc(nameMe)}</button>
+          <button class="who-btn" id="who-partner" onclick="selectWho('partner')">${esc(namePartner)}</button>
+        </div>
+      </div>
+      <input class="inp-date" type="date" id="inp-date">
+      <button class="btn-add" onclick="addEntry()">+ เพิ่มรายการ</button>
+    </div>
 
-  const total = entries.reduce((s,e)=>s+e.amt,0);
-  const meTotal = entries.filter(e=>e.who==='me').reduce((s,e)=>s+e.amt,0);
-  const partnerTotal = total - meTotal;
-  const diff = meTotal - total/2;
+    <!-- Entry list -->
+    <div class="entries-header">
+      <div class="card-title" style="margin-bottom:0"><span>🧾</span> รายการ (${entries.length})</div>
+      <button class="btn-clear" onclick="clearAll()">ล้างทั้งหมด</button>
+    </div>
+    <div class="entry-list">
+      ${entries.length===0?`<div class="empty-state"><span class="big">🌷</span><p>ยังไม่มีรายการ</p></div>`:
+      entries.map(e=>{
+        let pillClass,pillText,entryClass,subText;
+        if(e.type==='split'){
+          pillClass=e.who==='me'?'pill-me':'pill-partner';
+          pillText=(e.who==='me'?nameMe:namePartner)+' จ่าย';
+          entryClass=e.who==='me'?'entry-me':'entry-partner';
+          subText=`หารกัน • ${e.date||''}`;
+        } else if(e.type==='paid-me'){
+          pillClass='pill-me';pillText=nameMe+' จ่ายแทน';entryClass='entry-me';
+          subText=`${namePartner} ต้องคืน • ${e.date||''}`;
+        } else {
+          pillClass='pill-partner';pillText=namePartner+' จ่ายแทน';entryClass='entry-partner';
+          subText=`${nameMe} ต้องคืน • ${e.date||''}`;
+        }
+        return `<div class="entry ${entryClass}">
+          <div class="entry-left">
+            <div class="entry-name">${esc(e.desc)}</div>
+            <div class="entry-sub">${subText}</div>
+          </div>
+          <div class="entry-amt">${fmt(e.amt)}</div>
+          <span class="pill ${pillClass}">${pillText}</span>
+          <button class="btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button>
+        </div>`;
+      }).join('')}
+    </div>
 
-  document.getElementById('total').textContent = fmt(total);
-  document.getElementById('me-total').textContent = fmt(meTotal);
-  document.getElementById('partner-total').textContent = fmt(partnerTotal);
-
-  const mePct = total > 0 ? Math.round((meTotal/total)*100) : 50;
-  document.getElementById('bar-fill').style.width = mePct+'%';
-  document.getElementById('bar-lbl-me').textContent = `${meLabel} ${mePct}%`;
-  document.getElementById('bar-lbl-partner').textContent = `${partnerLabel} ${100-mePct}%`;
-
-  const box = document.getElementById('result-box');
-  if (entries.length === 0) {
-    box.className = 'result-box'; box.innerHTML = '';
-  } else if (Math.abs(diff) < 1) {
-    box.className = 'result-box result-balanced';
-    box.innerHTML = `<span>🎉 เสมอกันพอดีเลย!</span><span class="result-amount">ไม่มีใครต้องโอน</span>`;
-  } else if (diff > 0) {
-    box.className = 'result-box result-partner-owes';
-    box.innerHTML = `<span>💸 ${esc(partnerLabel)} ต้องโอนให้ ${esc(meLabel)}</span><span class="result-amount">${fmt(Math.abs(diff))}</span>`;
-  } else {
-    box.className = 'result-box result-me-owes';
-    box.innerHTML = `<span>💸 ${esc(meLabel)} ต้องโอนให้ ${esc(partnerLabel)}</span><span class="result-amount">${fmt(Math.abs(diff))}</span>`;
-  }
+    <!-- Summary -->
+    <div style="margin-top:1rem;">
+      <div class="card-title"><span>✨</span> สรุปยอด</div>
+      <div class="metrics">
+        <div class="metric metric-total"><div class="metric-label">รวม</div><div class="metric-val">${fmt(total)}</div></div>
+        <div class="metric metric-me"><div class="metric-label">${esc(nameMe)}</div><div class="metric-val">${fmt(meTotalPaid)}</div></div>
+        <div class="metric metric-partner"><div class="metric-label">${esc(namePartner)}</div><div class="metric-val">${fmt(partnerTotalPaid)}</div></div>
+      </div>
+      <div class="${Math.abs(net)<1?'result-box result-balanced':net>0?'result-box result-partner-owes':'result-box result-me-owes'}">
+        ${Math.abs(net)<1
+          ?'<span>🎉 เสมอกันพอดีเลย!</span><span class="result-amount">ไม่มีใครต้องโอน</span>'
+          :net>0
+            ?`<span>💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`
+            :`<span>💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`
+        }
+      </div>
+    </div>
+  `;
+  setTodayDate();
+  updateWhoButtons();
+  selectType(selectedType);
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
-}
-window.showToast = showToast;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+window.showToast=showToast;
 </script>
 </body>
 </html>
