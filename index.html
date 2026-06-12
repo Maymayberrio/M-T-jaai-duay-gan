@@ -259,13 +259,7 @@ input,select{font-family:'Sarabun',sans-serif;}
   .dash-b-val{font-size:8px;color:var(--muted);margin-bottom:2px;}
 
   /* SUMMARY SIDE */
-  .dash-cmp-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;background:var(--bg);}
-  .dash-cmp-lbl{font-size:8px;color:var(--muted);font-weight:600;margin-bottom:2px;}
-  .dash-cmp-amt{font-size:12px;font-weight:700;color:var(--text);}
-  .dash-cmp-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px;}
-  .dash-cmp-up{background:#FEE2E2;color:#DC2626;}
-  .dash-cmp-down{background:#DCFCE7;color:#16A34A;}
-  .dash-cmp-same{background:#F3F4F6;color:#6B7280;font-size:10px;}
+  .dash-result-stack{display:flex;flex-direction:column;gap:7px;}
   .dash-rrow{border-radius:9px;padding:9px 12px;}
   .dash-rrow-p{background:var(--pink-soft);}
   .dash-rrow-l{background:var(--lav-soft);}
@@ -1008,43 +1002,6 @@ function renderDashboard(){
 
   renderChart();
 
-  /* comparison stats */
-  let cmpHtml='';
-  if(selectedMonth!==null){
-    // เปรียบเทียบกับเดือนที่แล้ว
-    const prevMonth=selectedMonth===0?11:selectedMonth-1;
-    const prevYear=selectedMonth===0?selectedYear-1:selectedYear;
-    const prevStats=calcMonthStats(prevYear,prevMonth);
-    const prevName=MONTH_NAMES_FULL[prevMonth]+(selectedMonth===0?' '+(selectedYear-1):'');
-    const diff=prevStats.total>0?Math.round(((stats.total-prevStats.total)/prevStats.total)*100):null;
-    let badgeHtml='';
-    if(diff===null){badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`;}
-    else if(diff>0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`;}
-    else if(diff<0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`;}
-    else{badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;}
-    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div>
-    <div class="desk-box-lbl">📊 เทียบ${prevName}</div>
-    <div class="dash-cmp-row">
-      <div><div class="dash-cmp-lbl">${prevName} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevStats.total)}</div></div>
-      ${badgeHtml}
-    </div>`;
-  } else {
-    // เปรียบเทียบกับปีที่แล้ว
-    const prevYearStats=calcMonthStats(selectedYear-1,null);
-    const diff=prevYearStats.total>0?Math.round(((stats.total-prevYearStats.total)/prevYearStats.total)*100):null;
-    let badgeHtml='';
-    if(diff===null){badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`;}
-    else if(diff>0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`;}
-    else if(diff<0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`;}
-    else{badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;}
-    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div>
-    <div class="desk-box-lbl">📊 เทียบปี ${selectedYear-1}</div>
-    <div class="dash-cmp-row">
-      <div><div class="dash-cmp-lbl">ปี ${selectedYear-1} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevYearStats.total)}</div></div>
-      ${badgeHtml}
-    </div>`;
-  }
-
   /* summary side */
   const summaryTitle=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]:('ปี '+selectedYear);
   let summaryHtml='';
@@ -1055,12 +1012,8 @@ function renderDashboard(){
   }
   summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
   if(selectedMonth!==null){
-    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
-  } else {
-    const months=new Date().getMonth()+1;
-    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อเดือน</div><div class="dash-ramt dash-ramt-m">${fmt(Math.round(stats.total/months))}</div></div>`;
+    summaryHtml+=`<div class="dash-rrow dash-rrow-m" style="background:var(--mint-soft);"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
   }
-  summaryHtml+=cmpHtml;
   document.getElementById('desk-dash-summary').innerHTML=`<div class="desk-box-lbl">✨ สรุป — ${summaryTitle}</div>`+summaryHtml;
 
   /* recent entries */
