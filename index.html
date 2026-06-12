@@ -1,81 +1,1866 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>จ่ายด้วยกันนะ 🌸</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f0f0f0;display:flex;justify-content:center;padding:20px;font-family:'Sarabun',sans-serif;}
-.phone{background:#FFF8FB;width:300px;border-radius:30px;overflow:hidden;border:2px solid #F2E0EC;box-shadow:0 8px 28px rgba(200,120,160,.12);}
-.hdr{background:linear-gradient(160deg,#FFD6E8 0%,#FFE8D6 50%,#D6E8FF 100%);padding:1rem 1rem 1.5rem;text-align:center;}
-.hdr-emoji{font-size:26px;display:block;margin-bottom:3px;}
-.hdr h1{font-size:16px;font-weight:700;color:#3D2535;}
-.hdr-sub{font-size:11px;color:#8B6070;margin-top:2px;}
-.wave{height:14px;background:#FFF8FB;border-radius:50% 50% 0 0/100% 100% 0 0;margin-top:-1px;}
-.body{padding:.875rem;}
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --pink:#F9A8C9;--pink-soft:#FDE8F2;--pink-deep:#C4608A;
+  --mint:#B5E8D8;--mint-soft:#E6FAF5;--mint-deep:#3A9E80;
+  --lav:#D4C5F9;--lav-soft:#F0ECFF;--lav-deep:#6B50C4;
+  --yellow:#FFE9A0;--yellow-soft:#FFF5CC;--yellow-deep:#7A6010;
+  --blue-soft:#E8F4FF;--blue-deep:#1A6FC4;
+  --orange:#FFB347;--orange-soft:#FFF5E6;--orange-deep:#C47020;
+  --bg:#FFF8FB;--surface:#FFFFFF;--border:#F2E0EC;
+  --text:#3D2535;--muted:#B89AAA;
+  --radius:20px;--radius-sm:14px;--radius-xs:10px;
+  --sidebar-w:190px;
+}
+
+/* ── RESET & BASE ── */
+body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;}
+button{font-family:'Sarabun',sans-serif;cursor:pointer;}
+input,select{font-family:'Sarabun',sans-serif;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(8px);background:var(--text);color:white;padding:10px 20px;border-radius:99px;font-size:13px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ══════════════════════════════
+   MOBILE LAYOUT (default < 768px)
+══════════════════════════════ */
+.desktop-only{display:none;}
+.mobile-only{display:block;}
+
+/* HEADER */
+.mob-header{background:linear-gradient(160deg,#FFD6E8 0%,#FFE8D6 50%,#D6E8FF 100%);padding:1.75rem 1.25rem 2.5rem;text-align:center;position:relative;overflow:hidden;}
+.mob-header::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:#FFB3D9;border-radius:50%;opacity:.4;}
+.mob-header::after{content:'';position:absolute;bottom:-15px;left:-10px;width:60px;height:60px;background:#B3D4FF;border-radius:50%;opacity:.4;}
+.mob-header-content{position:relative;}
+.mob-header-emoji{font-size:32px;display:block;margin-bottom:4px;}
+.mob-header h1{font-size:20px;font-weight:700;color:var(--text);}
+.mob-header-names{font-size:12px;color:#8B6070;margin-top:3px;}
+.mob-wave{height:20px;background:var(--bg);border-radius:50% 50% 0 0/100% 100% 0 0;margin-top:-1px;}
+
+.mob-container{padding:1rem;}
+
+/* CARD */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:1.1rem;margin-bottom:.875rem;}
+.card-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:.875rem;display:flex;align-items:center;gap:6px;}
+
+/* CONFIG */
+.config-card{background:linear-gradient(135deg,#FFF0F8,#FFF8F0);border:1.5px solid var(--pink);}
+.config-note{font-size:13px;color:#9B607A;margin-bottom:12px;line-height:1.7;}
+.config-input{width:100%;border:1.5px solid #F5C5DC;border-radius:var(--radius-xs);padding:10px 14px;font-size:13px;background:white;color:var(--text);outline:none;margin-bottom:8px;}
+.config-input:focus{border-color:var(--pink-deep);}
+.btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-size:15px;font-weight:600;}
+
+/* STATUS */
 .status-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
-.spill{display:inline-flex;align-items:center;gap:5px;background:#E6FAF5;border:1px solid #B5E8D8;border-radius:99px;padding:3px 10px;font-size:10px;color:#3A9E80;}
-.dot{width:5px;height:5px;border-radius:50%;background:#3A9E80;}
-.sum-box{border-radius:12px;padding:11px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
-.sum-pink{border:1.5px solid #F9A8C9;background:#FDE8F2;}
-.sum-lav{border:1.5px solid #D4C5F9;background:#F0ECFF;}
-.sum-lbl{font-size:10px;color:#9B607A;margin-bottom:2px;}
-.sum-amt{font-size:17px;font-weight:800;color:#C4608A;}
-.sum-amt-l{color:#6B50C4;}
-.sum-emoji{font-size:20px;}
-.sec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:.5rem;display:flex;align-items:center;gap:5px;}
-.sec-fam{color:#C4608A;}.sec-cafe{color:#C47020;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.875rem;}
-.pc{background:white;border:1.5px solid #F2E0EC;border-radius:12px;padding:9px;position:relative;overflow:hidden;}
-.pc::before{content:'';position:absolute;top:-8px;right:-8px;width:35px;height:35px;border-radius:50%;opacity:.3;}
-.pc-pink::before{background:#F9A8C9;}.pc-lav::before{background:#D4C5F9;}
-.pc-mint::before{background:#B5E8D8;}.pc-orange::before{background:#FFB347;}
-.pc-emoji{font-size:16px;margin-bottom:2px;}
-.pc-name{font-size:10px;font-weight:700;color:#3D2535;margin-bottom:1px;}
-.pc-count{font-size:8px;color:#B89AAA;margin-bottom:3px;}
-.pc-lbl{font-size:8px;color:#B89AAA;}
-.pc-amt-p{font-size:12px;font-weight:800;color:#C4608A;}
-.pc-amt-ok{font-size:12px;font-weight:800;color:#3A9E80;}
-.pc-amt-o{font-size:12px;font-weight:800;color:#C47020;}
-.add-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;background:none;border:1.5px dashed #F9A8C9;border-radius:12px;cursor:pointer;}
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:var(--mint-soft);border:1px solid var(--mint);border-radius:99px;padding:4px 12px;font-size:11px;color:var(--mint-deep);}
+.status-pill.offline{background:#FFF0E4;border-color:#FFD6B0;color:#C47020;}
+.status-pill.syncing{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+.status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.status-dot.pulse{animation:pulse 1.2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-link{background:none;border:none;font-size:11px;color:var(--muted);text-decoration:underline;}
+
+/* NAMES */
+.names-row{display:flex;gap:10px;align-items:center;}
+.name-box{flex:1;}
+.name-box label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:600;margin-bottom:5px;}
+.name-input{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:9px 12px;font-size:14px;color:var(--text);background:var(--bg);outline:none;font-weight:600;}
+.name-input:focus{border-color:var(--pink);}
+.names-heart{color:var(--pink);font-size:16px;padding-top:18px;flex-shrink:0;}
+
+/* SUMMARY BOXES (mobile home) */
+.mob-sum-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.mob-sum-box.pink{border-color:var(--pink);background:var(--pink-soft);}
+.mob-sum-box.lav{border-color:var(--lav);background:var(--lav-soft);}
+.mob-sum-lbl{font-size:10px;color:#9B607A;margin-bottom:2px;}
+.mob-sum-lbl.lav{color:#7B6AAA;}
+.mob-sum-amt{font-size:17px;font-weight:800;color:var(--pink-deep);}
+.mob-sum-amt.lav{color:var(--lav-deep);}
+.mob-sum-emoji{font-size:20px;}
+
+/* PROJECT GRID (mobile) */
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.proj-card-home{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px;cursor:pointer;position:relative;overflow:hidden;transition:transform .15s;}
+.proj-card-home:active{transform:scale(.97);}
+.proj-card-home::before{content:'';position:absolute;top:-10px;right:-10px;width:42px;height:42px;border-radius:50%;opacity:.3;}
+.pc-pink::before{background:#F9A8C9;}.pc-lav::before{background:#D4C5F9;}.pc-mint::before{background:#B5E8D8;}.pc-yellow::before{background:#FFE9A0;}.pc-peach::before{background:#FFD6B0;}
+.proj-home-emoji{font-size:20px;margin-bottom:3px;}
+.proj-home-name{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.proj-home-count{font-size:9px;color:var(--muted);margin-bottom:5px;}
+.proj-home-lbl{font-size:8px;color:var(--muted);}
+.proj-home-amt{font-size:13px;font-weight:800;}
+.amt-me{color:var(--lav-deep);}.amt-partner{color:var(--pink-deep);}.amt-balanced{color:var(--mint-deep);}
+.add-card-home{background:none;border:1.5px dashed var(--pink);border-radius:var(--radius-sm);padding:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;min-height:95px;width:100%;}
+
+/* FORM (mobile detail) */
+.back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;font-size:13px;color:var(--pink-deep);padding:0;margin-bottom:.875rem;font-weight:600;}
+.proj-detail-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+.proj-name-input{font-size:16px;font-weight:700;color:var(--text);border:none;border-bottom:1.5px solid var(--border);background:transparent;outline:none;padding:4px 0;flex:1;}
+.proj-name-input:focus{border-color:var(--pink);}
+.btn-del-proj{background:none;border:none;color:var(--muted);font-size:12px;padding:4px 8px;}
+
+.inp-desc{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:10px 13px;font-size:14px;color:var(--text);background:var(--bg);outline:none;margin-bottom:9px;}
+.inp-desc:focus{border-color:var(--pink);}
+
+/* TYPE ROW */
+.type-row{display:flex;gap:6px;margin-bottom:7px;}
+.type-btn{flex:1;padding:8px 3px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:var(--radius-xs);background:var(--surface);color:var(--muted);text-align:center;}
+.type-btn.active-split{background:var(--yellow-soft);border-color:#E8C840;color:var(--yellow-deep);}
+.type-btn.active-paid{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+.type-btn.active-pool{background:var(--blue-soft);border-color:#90C8F0;color:var(--blue-deep);}
+
+/* WHO ROW */
+.who-row{display:flex;gap:6px;margin-bottom:9px;}
+.who-btn{flex:1;padding:8px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:var(--radius-xs);background:var(--surface);color:var(--muted);text-align:center;}
+.who-btn.active-me{background:var(--mint-soft);border-color:var(--mint);color:var(--mint-deep);}
+.who-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+
+.inp-amt{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:10px 13px;font-size:14px;color:var(--text);background:var(--bg);outline:none;margin-bottom:8px;}
+.inp-amt:focus{border-color:var(--pink);}
+.inp-date{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-xs);padding:9px 13px;font-size:13px;color:var(--text);background:var(--bg);outline:none;margin-bottom:8px;}
+.inp-date:focus{border-color:var(--pink);}
+
+.form-divider{height:1px;background:var(--border);margin:10px 0 9px;}
+.form-opt-lbl{font-size:9px;color:var(--muted);font-weight:700;margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px;}
+
+/* PAY METHOD */
+.pay-row{display:flex;gap:6px;margin-bottom:8px;}
+.pay-btn{flex:1;padding:8px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:var(--radius-xs);background:var(--surface);color:var(--muted);text-align:center;}
+.pay-btn.active{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+
+.bank-select{width:100%;border:1.5px solid var(--pink);border-radius:var(--radius-xs);padding:9px 13px;font-size:13px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C4608A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.bank-other-inp{width:100%;border:1.5px solid var(--pink);border-radius:var(--radius-xs);padding:9px 13px;font-size:13px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;}
+
+.btn-add{width:100%;padding:12px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);color:white;border:none;border-radius:var(--radius-xs);font-size:15px;font-weight:600;}
+.btn-add:active{transform:scale(.99);}
+
+/* TABS */
+.tabs-row{display:flex;background:var(--border);border-radius:9px;padding:3px;margin-bottom:.75rem;}
+.tab-btn{flex:1;padding:6px;font-size:11px;font-weight:700;border:none;border-radius:7px;background:transparent;color:var(--muted);text-align:center;}
+.tab-btn.active{background:white;color:var(--pink-deep);}
+
+/* ENTRIES */
+.entry-list{display:flex;flex-direction:column;gap:7px;}
+.entry{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-xs);border:1.5px solid var(--border);}
+.entry-left{flex:1;min-width:0;}
+.entry-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.entry-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.entry-amt{font-size:14px;font-weight:700;flex-shrink:0;}
+.pill{font-size:10px;padding:3px 9px;border-radius:99px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.pill-me{background:var(--mint-soft);color:var(--mint-deep);}
+.pill-partner{background:var(--lav-soft);color:var(--lav-deep);}
+.pill-pool{background:var(--yellow-soft);color:var(--yellow-deep);}
+.pill-cleared{background:#F0F0F0;color:#999;}
+.entry-me{border-color:#D8F2EB;background:#FAFFFD;}
+.entry-partner{border-color:#E4DCF8;background:#FDFBFF;}
+.entry-pool{border-color:#F0ECC0;background:#FEFDF0;}
+.entry-cleared{opacity:.45;}
+.entry-cleared .entry-name{text-decoration:line-through;}
+.btn-edit{background:none;border:none;font-size:12px;padding:2px 4px;opacity:.5;flex-shrink:0;}
+.btn-edit:hover{opacity:1;}
+.btn-del{background:none;border:none;color:var(--muted);font-size:14px;padding:2px 4px;opacity:.5;flex-shrink:0;}
+.btn-del:hover{opacity:1;color:var(--pink-deep);}
+.btn-clear-entry{background:none;border:1px solid var(--pink);border-radius:6px;font-size:9px;color:var(--pink-deep);padding:2px 6px;flex-shrink:0;}
+.empty-state{text-align:center;padding:2rem 0;color:var(--muted);}
+.empty-state .big{font-size:28px;display:block;margin-bottom:8px;}
+
+/* SUMMARY */
+.metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:.875rem;}
+.metric{border-radius:var(--radius-xs);padding:10px 8px;text-align:center;}
+.metric-total{background:var(--yellow-soft);}
+.metric-me{background:var(--mint-soft);}
+.metric-partner{background:var(--lav-soft);}
+.metric-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:600;}
+.metric-val{font-size:15px;font-weight:700;color:var(--text);}
+.bar-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600;}
+.bar-track{background:var(--lav-soft);border-radius:99px;height:9px;overflow:hidden;margin-bottom:.875rem;}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--mint),var(--lav));transition:width .5s;}
+.result-box{border-radius:var(--radius-xs);padding:14px;font-size:14px;font-weight:600;text-align:center;line-height:1.5;}
+.result-balanced{background:var(--mint-soft);color:var(--mint-deep);}
+.result-me-owes{background:var(--lav-soft);color:var(--lav-deep);}
+.result-partner-owes{background:var(--pink-soft);color:var(--pink-deep);}
+.result-amount{font-size:20px;display:block;margin-top:4px;}
+
+/* ══════════════════════════════
+   DESKTOP LAYOUT (≥ 768px)
+══════════════════════════════ */
+@media(min-width:768px){
+  .desktop-only{display:block;}
+  .mobile-only{display:none;}
+  body{padding-bottom:0;}
+
+  /* APP SHELL */
+  .desktop-shell{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+  /* TOP BAR */
+  .desk-topbar{background:linear-gradient(160deg,#FFD6E8 0%,#FFE8D6 50%,#D6E8FF 100%);padding:.6rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid var(--border);}
+  .desk-tb-left{display:flex;align-items:center;gap:8px;}
+  .desk-tb-title{font-size:15px;font-weight:700;color:var(--text);}
+  .desk-tb-sub{font-size:10px;color:#8B6070;}
+  .desk-tb-right{display:flex;align-items:center;gap:12px;}
+
+  /* BODY */
+  .desk-body{display:flex;flex:1;overflow:hidden;}
+
+  /* SIDEBAR */
+  .desk-sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--surface);border-right:1.5px solid var(--border);padding:.875rem;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+  .desk-sb-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:.4rem;margin-top:.25rem;}
+  .desk-proj-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1.5px solid transparent;cursor:pointer;transition:background .1s;}
+  .desk-proj-item:hover{background:var(--bg);}
+  .desk-proj-item.active{background:var(--pink-soft);border-color:var(--pink);}
+  .desk-proj-item.dash-item{background:var(--mint-soft);border-color:var(--mint);}
+  .desk-proj-emoji{font-size:14px;flex-shrink:0;}
+  .desk-proj-name{font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .desk-proj-amt{font-size:9px;color:var(--pink-deep);font-weight:600;}
+  .desk-proj-amt.ok{color:var(--mint-deep);}
+  .desk-add-proj{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:10px;border:1.5px dashed var(--pink);cursor:pointer;margin-top:4px;}
+  .desk-add-proj-txt{font-size:10px;color:var(--pink-deep);font-weight:700;}
+
+  /* MAIN CONTENT */
+  .desk-main{flex:1;overflow-y:auto;padding:.875rem;}
+
+  /* DASHBOARD */
+  .dash-scards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:.875rem;}
+  .dash-sc{border-radius:10px;padding:10px 12px;}
+  .dash-sc-y{background:var(--yellow-soft);}
+  .dash-sc-m{background:var(--mint-soft);}
+  .dash-sc-l{background:var(--lav-soft);}
+  .dash-sc-p{background:var(--pink-soft);}
+  .dash-sc-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;margin-bottom:3px;}
+  .dash-sc-val{font-size:16px;font-weight:800;color:var(--text);}
+  .dash-sc-sub{font-size:8px;color:var(--muted);margin-top:1px;}
+
+  .dash-mid{display:grid;grid-template-columns:1.5fr 1fr;gap:.875rem;margin-bottom:.875rem;}
+  .desk-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.875rem;}
+  .desk-box-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;margin-bottom:.6rem;display:flex;align-items:center;gap:5px;}
+
+  /* YEAR TABS */
+  .year-tabs{display:flex;gap:6px;margin-bottom:.75rem;}
+  .year-tab{padding:5px 14px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);cursor:pointer;}
+  .year-tab.active{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+
+  /* CHART */
+  .dash-chart{height:100px;display:flex;align-items:flex-end;gap:6px;padding:0 2px;}
+  .dash-bw{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;cursor:pointer;}
+  .dash-bw:hover .dash-b{opacity:.75;}
+  .dash-bw-sel .dash-b{outline:2px solid #C4608A;outline-offset:1px;border-radius:3px 3px 0 0;}
+  .dash-b{border-radius:3px 3px 0 0;width:100%;transition:height .3s;}
+  .dash-bl{font-size:8px;color:var(--muted);}
+  .dash-b-val{font-size:8px;color:var(--muted);margin-bottom:2px;}
+
+  /* SUMMARY SIDE */
+  .dash-cmp-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;background:var(--bg);}
+  .dash-cmp-lbl{font-size:8px;color:var(--muted);font-weight:600;margin-bottom:2px;}
+  .dash-cmp-amt{font-size:12px;font-weight:700;color:var(--text);}
+  .dash-cmp-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:99px;}
+  .dash-cmp-up{background:#FEE2E2;color:#DC2626;}
+  .dash-cmp-down{background:#DCFCE7;color:#16A34A;}
+  .dash-cmp-same{background:#F3F4F6;color:#6B7280;font-size:10px;}
+  .dash-rrow{border-radius:9px;padding:9px 12px;}
+  .dash-rrow-p{background:var(--pink-soft);}
+  .dash-rrow-l{background:var(--lav-soft);}
+  .dash-rrow-m{background:var(--mint-soft);}
+  .dash-rtxt{font-size:10px;color:var(--text);font-weight:600;margin-bottom:2px;}
+  .dash-ramt{font-size:15px;font-weight:800;color:var(--pink-deep);}
+  .dash-ramt-l{color:var(--lav-deep);}
+  .dash-ramt-m{color:var(--mint-deep);}
+
+  /* RECENT */
+  .desk-erow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+  .desk-erow:last-child{border-bottom:none;}
+  .desk-edot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+  .desk-eleft{flex:1;min-width:0;}
+  .desk-edesc{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .desk-edate{font-size:9px;color:var(--muted);}
+  .desk-eamt{font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;}
+
+  /* CAFE STYLES */
+  .cafe-section-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.8px;color:var(--orange-deep);font-weight:700;padding:4px 0;display:flex;align-items:center;gap:4px;margin-top:.4rem;}
+  .desk-proj-item.cafe-active{background:var(--orange-soft);border-color:var(--orange);}
+  .desk-proj-item.cafe-dash{background:var(--orange-soft);border-color:var(--orange);}
+  .desk-proj-amt.cafe{color:var(--orange-deep);}
+  .cafe-year-tab.active{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
+  .who-pay-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+  .who-pay-btn{padding:7px 8px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);text-align:center;}
+  .who-pay-btn.active-may{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+  .who-pay-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+  .who-pay-btn.active-pool{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
+  .who-pay-btn.active-other{background:#F3F4F6;border-color:#D1D5DB;color:#374151;}
+  .other-name-inp{width:100%;border:1.5px solid var(--orange);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;}
+  .btn-add-cafe{width:100%;padding:9px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;}
+  .btn-export-cafe{width:100%;padding:8px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:8px;font-size:11px;font-weight:700;margin-top:6px;}
+  .who-summary-row{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;border-radius:8px;margin-bottom:5px;}
+  .who-summary-row:last-child{margin-bottom:0;}
+  .who-s-may{background:var(--pink-soft);}
+  .who-s-partner{background:var(--lav-soft);}
+  .who-s-pool{background:var(--orange-soft);}
+  .who-s-other{background:#F3F4F6;}
+  .who-s-name{font-size:10px;font-weight:700;color:var(--text);}
+  .who-s-sub{font-size:8px;color:var(--muted);}
+  .who-s-amt{font-size:13px;font-weight:800;}
+  /* MODAL */
+  .modal-overlay{visibility:hidden;pointer-events:none;position:fixed;inset:0;background:rgba(61,37,53,.5);z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
+  .modal-overlay.show{visibility:visible;pointer-events:auto;opacity:1;}
+  .modal-box{background:white;border-radius:var(--radius-sm);padding:1.25rem;width:90%;max-width:320px;}
+  .modal-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:.875rem;}
+  .cat-row{display:flex;gap:8px;margin-bottom:.875rem;}
+  .cat-btn{flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--muted);text-align:center;cursor:pointer;}
+  .cat-btn.active-fam{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+  .cat-btn.active-cafe{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
+  .cat-emoji{font-size:22px;display:block;margin-bottom:4px;}
+  .emoji-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.875rem;}
+  .emoji-opt{font-size:20px;cursor:pointer;padding:4px;border-radius:6px;border:1.5px solid transparent;}
+  .emoji-opt.selected{border-color:var(--pink);}
+  .modal-btns{display:flex;gap:8px;}
+  .btn-cancel{flex:1;padding:9px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;color:var(--muted);}
+  .btn-create-fam{flex:1;padding:9px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:600;}
+  .btn-create-cafe{flex:1;padding:9px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:var(--radius-xs);font-size:13px;font-weight:600;}
+  .export-banner{background:linear-gradient(135deg,#FFF5CC,#FDE8F2);border:1.5px solid var(--pink);border-radius:var(--radius-sm);padding:.875rem 1rem;margin-bottom:.875rem;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .export-banner-txt{font-size:13px;color:var(--text);font-weight:600;}
+  .export-banner-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .btn-export{padding:8px 16px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:var(--radius-xs);font-size:12px;font-weight:700;}
+  .btn-delete-year{padding:8px 14px;background:none;border:1.5px solid #E24B4A;color:#E24B4A;border-radius:var(--radius-xs);font-size:12px;font-weight:700;margin-left:8px;}
+  .export-done{font-size:11px;color:var(--mint-deep);font-weight:600;margin-left:8px;}
+
+  /* PROJECT DETAIL (desktop) */
+  .desk-detail-layout{display:grid;grid-template-columns:240px 1fr;gap:.875rem;}
+  .desk-form-col{display:flex;flex-direction:column;gap:.875rem;}
+  .desk-right-col{display:flex;flex-direction:column;gap:.875rem;}
+  .desk-back-btn{display:flex;align-items:center;gap:5px;background:none;border:none;font-size:11px;color:var(--pink-deep);font-weight:600;margin-bottom:4px;}
+  .desk-proj-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:.75rem;}
+  .desk-proj-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;}
+
+  /* DESK FORM */
+  .desk-inp{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:8px 11px;font-size:12px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;}
+  .desk-inp:focus{border-color:var(--pink);}
+  .desk-type-row{display:flex;gap:5px;margin-bottom:6px;}
+  .desk-type-btn{flex:1;padding:7px 2px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);text-align:center;}
+  .desk-type-btn.active-split{background:var(--yellow-soft);border-color:#E8C840;color:var(--yellow-deep);}
+  .desk-type-btn.active-paid{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+  .desk-type-btn.active-pool{background:var(--blue-soft);border-color:#90C8F0;color:var(--blue-deep);}
+  .desk-who-row{display:flex;gap:5px;margin-bottom:7px;}
+  .desk-who-btn{flex:1;padding:7px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);text-align:center;}
+  .desk-who-btn.active-me{background:var(--mint-soft);border-color:var(--mint);color:var(--mint-deep);}
+  .desk-who-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+  .desk-pay-row{display:flex;gap:5px;margin-bottom:7px;}
+  .desk-pay-btn{flex:1;padding:7px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);text-align:center;}
+  .desk-pay-btn.active{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+  .desk-bank-select{width:100%;border:1.5px solid var(--pink);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23C4608A' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+  .desk-bank-other{width:100%;border:1.5px solid var(--pink);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;}
+  .desk-btn-add{width:100%;padding:9px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;}
+
+  /* DESK ENTRIES */
+  .desk-entry{display:flex;align-items:center;gap:7px;padding:7px 0;border-bottom:1px solid var(--border);}
+  .desk-entry:last-child{border-bottom:none;}
+  .desk-entry-left{flex:1;min-width:0;}
+  .desk-entry-name{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .desk-entry-sub{font-size:9px;color:var(--muted);}
+  .desk-entry-amt{font-size:11px;font-weight:700;color:var(--text);flex-shrink:0;}
+  .desk-entry-cleared{opacity:.45;}
+  .desk-entry-cleared .desk-entry-name{text-decoration:line-through;}
+  .desk-btn-clear{background:none;border:1px solid var(--pink);border-radius:5px;font-size:8px;color:var(--pink-deep);padding:2px 5px;flex-shrink:0;}
+  .desk-btn-del{background:none;border:none;color:var(--muted);font-size:13px;padding:2px 3px;opacity:.5;flex-shrink:0;}
+  .desk-btn-del:hover{opacity:1;color:var(--pink-deep);}
+  .desk-btn-edit{background:none;border:none;font-size:11px;padding:2px 3px;opacity:.5;flex-shrink:0;}
+  .desk-btn-edit:hover{opacity:1;}
+
+  /* DESK SUMMARY */
+  .desk-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:.75rem;}
+  .desk-metric{border-radius:9px;padding:9px 10px;text-align:center;}
+}
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="hdr">
-    <span class="hdr-emoji">🌸</span>
-    <h1>จ่ายด้วยกันนะ</h1>
-    <div class="hdr-sub">May & Turbo 💕</div>
+
+<!-- ══════════════════════════════
+     MOBILE APP
+══════════════════════════════ -->
+<div class="mobile-only" id="mobile-app">
+
+  <div class="mob-header">
+    <div class="mob-header-content">
+      <span class="mob-header-emoji">🌸</span>
+      <h1>จ่ายด้วยกันนะ</h1>
+      <div class="mob-header-names" id="mob-header-names">บันทึกด้วยกัน เคลียร์กันง่ายๆ 💕</div>
+    </div>
   </div>
-  <div class="wave"></div>
-  <div class="body">
-    <div class="status-row">
-      <div class="spill"><div class="dot"></div>ซิงค์แล้ว 🌸</div>
-      <span style="font-size:10px;color:#B89AAA;text-decoration:underline;">เปลี่ยน config</span>
+  <div class="mob-wave"></div>
+
+  <div class="mob-container">
+    <!-- CONFIG -->
+    <div class="card config-card" id="mob-config-card">
+      <div class="card-title">⚙️ ตั้งค่าครั้งแรก</div>
+      <p class="config-note">กรอก Firebase config เพื่อให้ซิงค์กันได้เรียลไทม์</p>
+      <input class="config-input" type="text" id="mob-cfg-apikey" placeholder="apiKey">
+      <input class="config-input" type="text" id="mob-cfg-authdomain" placeholder="authDomain">
+      <input class="config-input" type="text" id="mob-cfg-projectid" placeholder="projectId">
+      <input class="config-input" type="text" id="mob-cfg-dburl" placeholder="databaseURL">
+      <button class="btn-primary" onclick="saveConfig()">เชื่อมต่อ Firebase 🌸</button>
     </div>
-    <div class="sum-box sum-pink">
-      <div><div class="sum-lbl">Turbo ต้องโอนให้ May</div><div class="sum-amt">฿500</div></div>
-      <div class="sum-emoji">💸</div>
+
+    <!-- MAIN -->
+    <div id="mob-main" style="display:none">
+      <div class="status-row">
+        <div class="status-pill" id="mob-status-pill"><div class="status-dot" id="mob-status-dot"></div><span id="mob-status-text">กำลังเชื่อมต่อ...</span></div>
+        <button class="btn-link" onclick="resetConfig()">เปลี่ยน config</button>
+      </div>
+
+      <!-- HOME VIEW -->
+      <div id="mob-view-home">
+        <div id="mob-sum-debt" class="mob-sum-box pink" style="display:none"></div>
+        <div id="mob-sum-month" class="mob-sum-box lav"></div>
+        <div id="mob-fam-section">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--pink-deep);font-weight:700;margin-bottom:.5rem;margin-top:.25rem;">🏠 ครอบครัว</div>
+          <div class="proj-grid" id="mob-proj-grid-fam"></div>
+        </div>
+        <div id="mob-cafe-section">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--orange-deep);font-weight:700;margin-bottom:.5rem;margin-top:.25rem;">☕ ร้านคาเฟ่</div>
+          <div class="proj-grid" id="mob-proj-grid-cafe"></div>
+        </div>
+        <button style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:none;border:1.5px dashed var(--pink);border-radius:var(--radius-sm);cursor:pointer;margin-top:-.25rem;" onclick="openNewProjForm()">
+          <span style="font-size:16px;color:var(--pink);">+</span>
+          <span style="font-size:12px;color:var(--pink-deep);font-weight:700;">เพิ่มโปรเจค</span>
+        </button>
+      </div>
+
+      <!-- NEW PROJECT FORM VIEW (mobile) -->
+      <div id="mob-view-newproj" style="display:none">
+        <button class="back-btn" onclick="closeNewProjForm()">← กลับหน้าหลัก</button>
+        <div class="card">
+          <div class="card-title">➕ เพิ่มโปรเจคใหม่</div>
+          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">เลือกประเภท</div>
+          <div class="cat-row" style="display:flex;gap:8px;margin-bottom:.875rem;">
+            <button class="cat-btn active-fam" id="mob-modal-cat-fam" onclick="modalSelectCat('family')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--pink);border-radius:10px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;">
+              <span style="font-size:22px;display:block;margin-bottom:4px;">🏠</span>ครอบครัว
+            </button>
+            <button class="cat-btn" id="mob-modal-cat-cafe" onclick="modalSelectCat('cafe')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:white;color:var(--muted);text-align:center;cursor:pointer;">
+              <span style="font-size:22px;display:block;margin-bottom:4px;">☕</span>ร้านคาเฟ่
+            </button>
+          </div>
+          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">ชื่อโปรเจค</div>
+          <input class="inp-desc" type="text" id="mob-modal-proj-name" placeholder="เช่น ค่าวัตถุดิบ, เที่ยวทะเล...">
+          <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">Emoji</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.75rem;font-size:22px;">
+            🏠 🌸 🏖️ 🍜 🎉 ✈️ 🎁 🍰 ☕ 🧁 🥐 🧾 💰 🛒 🐾 💡
+          </div>
+          <input class="inp-desc" id="mob-modal-emoji-inp" type="text" placeholder="หรือพิมพ์ emoji เอง" maxlength="2">
+          <div style="display:flex;gap:8px;margin-top:.75rem;">
+            <button class="back-btn" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-xs);font-size:13px;color:var(--muted);justify-content:center;" onclick="closeNewProjForm()">ยกเลิก</button>
+            <button class="btn-add" style="flex:1;" id="mob-modal-create-btn" onclick="createProject()">+ สร้าง</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DETAIL VIEW -->
+      <div id="mob-view-detail" style="display:none">
+        <button class="back-btn" onclick="mobGoHome()">← กลับหน้าหลัก</button>
+        <div id="mob-detail-content"></div>
+      </div>
     </div>
-    <div class="sum-box sum-lav">
-      <div><div class="sum-lbl" style="color:#7B6AAA;">📅 เดือนนี้ใช้ไป</div><div class="sum-amt sum-amt-l">฿2,840</div></div>
-      <div class="sum-emoji">📊</div>
-    </div>
-    <div class="sec-lbl sec-fam">🏠 ครอบครัว</div>
-    <div class="grid">
-      <div class="pc pc-pink"><div class="pc-emoji">🏖️</div><div class="pc-name">เที่ยวทะเล</div><div class="pc-count">8 รายการ</div><div class="pc-lbl">Turbo ต้องโอน</div><div class="pc-amt-p">฿320</div></div>
-      <div class="pc pc-lav"><div class="pc-emoji">🏠</div><div class="pc-name">ค่าบ้าน</div><div class="pc-count">5 รายการ</div><div class="pc-lbl">เสมอกัน</div><div class="pc-amt-ok">฿0</div></div>
-    </div>
-    <div class="sec-lbl sec-cafe">☕ ร้านคาเฟ่</div>
-    <div class="grid">
-      <div class="pc pc-orange"><div class="pc-emoji">🧁</div><div class="pc-name">ค่าวัตถุดิบ</div><div class="pc-count">12 รายการ</div><div class="pc-lbl">รวม</div><div class="pc-amt-o">฿8,400</div></div>
-      <div class="pc pc-mint"><div class="pc-emoji">🧾</div><div class="pc-name">ค่าน้ำค่าไฟ</div><div class="pc-count">3 รายการ</div><div class="pc-lbl">รวม</div><div class="pc-amt-o">฿2,100</div></div>
-    </div>
-    <button class="add-btn">
-      <span style="font-size:16px;color:#F9A8C9;">+</span>
-      <span style="font-size:12px;color:#C4608A;font-weight:700;">เพิ่มโปรเจค</span>
-    </button>
   </div>
 </div>
+
+<!-- ══════════════════════════════
+     DESKTOP APP
+══════════════════════════════ -->
+<div class="desktop-only desktop-shell" id="desktop-app">
+  <div class="desk-topbar">
+    <div class="desk-tb-left">
+      <span style="font-size:20px;">🌸</span>
+      <div>
+        <div class="desk-tb-title">จ่ายด้วยกันนะ</div>
+        <div class="desk-tb-sub" id="desk-header-names">May & Turbo 💕</div>
+      </div>
+    </div>
+    <div class="desk-tb-right">
+      <div class="status-pill" id="desk-status-pill"><div class="status-dot" id="desk-status-dot"></div><span id="desk-status-text">กำลังเชื่อมต่อ...</span></div>
+      <button class="btn-link" onclick="resetConfig()">เปลี่ยน config</button>
+    </div>
+  </div>
+
+  <div class="desk-body">
+    <!-- SIDEBAR -->
+    <div class="desk-sidebar">
+      <button style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--pink);background:var(--pink-soft);cursor:pointer;width:100%;margin-bottom:.5rem;" onclick="openNewProjModal()">
+        <span style="color:var(--pink-deep);font-size:14px;font-weight:700;">+</span>
+        <span style="font-size:11px;color:var(--pink-deep);font-weight:700;">เพิ่มโปรเจค</span>
+      </button>
+      <div class="desk-sb-lbl" style="color:var(--pink-deep);">🏠 ครอบครัว</div>
+      <div class="desk-proj-item dash-item" onclick="showDashboard('family')">
+        <span class="desk-proj-emoji">📊</span>
+        <div><div class="desk-proj-name">Dashboard</div></div>
+      </div>
+      <div id="desk-sidebar-fam"></div>
+      <div class="desk-sb-lbl" style="color:var(--orange-deep);margin-top:.5rem;">☕ ร้านคาเฟ่</div>
+      <div class="desk-proj-item" style="background:var(--orange-soft);border-color:var(--orange);" onclick="showDashboard('cafe')">
+        <span class="desk-proj-emoji">📊</span>
+        <div><div class="desk-proj-name">Dashboard</div></div>
+      </div>
+      <div id="desk-sidebar-cafe"></div>
+      <div style="margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border);">
+        <div class="card-title" style="margin-bottom:.5rem;">💕 ชื่อของเรา</div>
+        <div class="names-row">
+          <div class="name-box"><label style="font-size:9px;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">ฉัน</label><input class="name-input" style="font-size:12px;padding:6px 8px;" type="text" id="desk-name-me" value="ฉัน" maxlength="12"></div>
+          <div style="color:var(--pink);font-size:13px;padding-top:16px;flex-shrink:0;">♡</div>
+          <div class="name-box"><label style="font-size:9px;color:var(--muted);font-weight:600;display:block;margin-bottom:4px;">แฟน</label><input class="name-input" style="font-size:12px;padding:6px 8px;" type="text" id="desk-name-partner" value="แฟน" maxlength="12"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="desk-main">
+      <!-- CONFIG -->
+      <div id="desk-config-card" style="display:none;max-width:480px;margin:2rem auto;">
+        <div class="card config-card">
+          <div class="card-title">⚙️ ตั้งค่าครั้งแรก</div>
+          <p class="config-note">กรอก Firebase config เพื่อให้ซิงค์กันได้เรียลไทม์</p>
+          <input class="config-input" type="text" id="desk-cfg-apikey" placeholder="apiKey">
+          <input class="config-input" type="text" id="desk-cfg-authdomain" placeholder="authDomain">
+          <input class="config-input" type="text" id="desk-cfg-projectid" placeholder="projectId">
+          <input class="config-input" type="text" id="desk-cfg-dburl" placeholder="databaseURL">
+          <button class="btn-primary" onclick="saveConfig()">เชื่อมต่อ Firebase 🌸</button>
+        </div>
+      </div>
+
+      <!-- DASHBOARD VIEW -->
+      <div id="desk-view-dashboard" style="display:none;">
+        <div id="desk-export-banner" style="display:none;"></div>
+        <div id="desk-cafe-export-box" style="display:none;" class="desk-box" style="margin-bottom:.875rem;">
+          <div class="desk-box-lbl">📦 Export ข้อมูลร้านคาเฟ่</div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Export ได้ตลอดเวลา ไม่ต้องรอปลายปีค่ะ</div>
+          <div class="year-tabs" id="desk-cafe-export-years" style="margin-bottom:8px;"></div>
+          <button class="btn-export-cafe" onclick="exportCafe()">📦 Export Excel + PDF</button>
+        </div>
+        <div class="dash-scards" id="desk-dash-cards"></div>
+        <div class="dash-mid">
+          <div class="desk-box">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;">
+              <div class="desk-box-lbl" style="margin-bottom:0;">📈 ค่าใช้จ่ายรายเดือน</div>
+              <div id="desk-month-indicator" style="display:none;font-size:9px;color:var(--pink-deep);font-weight:700;align-items:center;gap:3px;"></div>
+            </div>
+            <div class="year-tabs" id="desk-year-tabs"></div>
+            <div class="dash-chart" id="desk-chart"></div>
+            <div style="font-size:8px;color:var(--muted);text-align:center;margin-top:4px;">กดที่แท่งเพื่อดู summary ของเดือนนั้น</div>
+          </div>
+          <div class="desk-box">
+            <div class="dash-result-stack" id="desk-dash-summary"></div>
+          </div>
+        </div>
+        <div class="desk-box">
+          <div class="desk-box-lbl" id="desk-recent-label">🧾 รายการล่าสุด</div>
+          <div id="desk-recent-entries"></div>
+        </div>
+      </div>
+
+      <!-- PROJECT DETAIL VIEW -->
+      <div id="desk-view-detail" style="display:none;">
+        <div id="desk-detail-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue, push, remove, update, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+/* ── STATE ── */
+let db, rootRef, settingsRef;
+let projects = {};
+let currentProjId = null;
+let currentDashCat = 'family'; // 'family' | 'cafe'
+let modalCat = 'family';
+let modalEmoji = '🌸';
+let cafeExportYear = new Date().getFullYear();
+let nameMe = 'ฉัน', namePartner = 'แฟน';
+let selectedType = 'split', selectedWho = 'me', selectedPayMethod = '', selectedBank = '';
+let deskSelectedType = 'split', deskSelectedWho = 'me', deskSelectedPayMethod = '', deskSelectedBank = '';
+let activeTab = 'pending'; // 'pending' | 'cleared'
+let deskActiveTab = 'pending';
+let selectedYear = new Date().getFullYear();
+let selectedMonth = null; // null = ดูทั้งปี, 0-11 = เดือนที่เลือก
+const isDesktop = () => window.innerWidth >= 768;
+const COLORS = ['pc-pink','pc-lav','pc-mint','pc-yellow','pc-peach'];
+const EMOJIS = ['🌸','🏖️','🏠','🍜','🎉','✈️','🎁','🍰','🎪','💫'];
+const BANKS = ['KBANK','BBL','SCB','UOB','BAY','Kept','อื่นๆ'];
+
+/* ── CONFIG ── */
+function getCfg(){try{return JSON.parse(localStorage.getItem('fb-cfg2')||'null');}catch(e){return null;}}
+window.saveConfig=()=>{
+  const isD=isDesktop();
+  const cfg={
+    apiKey:(document.getElementById(isD?'desk-cfg-apikey':'mob-cfg-apikey')||{}).value?.trim(),
+    authDomain:(document.getElementById(isD?'desk-cfg-authdomain':'mob-cfg-authdomain')||{}).value?.trim(),
+    projectId:(document.getElementById(isD?'desk-cfg-projectid':'mob-cfg-projectid')||{}).value?.trim(),
+    databaseURL:(document.getElementById(isD?'desk-cfg-dburl':'mob-cfg-dburl')||{}).value?.trim()
+  };
+  if(!cfg.apiKey||!cfg.projectId||!cfg.databaseURL){showToast('กรุณากรอกให้ครบนะ 🌸');return;}
+  localStorage.setItem('fb-cfg2',JSON.stringify(cfg));location.reload();
+};
+window.resetConfig=()=>{if(confirm('รีเซ็ต config?')){localStorage.removeItem('fb-cfg2');location.reload();}};
+
+/* ── INIT ── */
+const cfg=getCfg();
+initUI(cfg);
+
+function initUI(cfg){
+  if(isDesktop()){
+    if(!cfg){
+      document.getElementById('desk-config-card').style.display='block';
+    } else {
+      document.getElementById('desk-config-card').style.display='none';
+      initFB(cfg);
+    }
+  } else {
+    if(!cfg){
+      document.getElementById('mob-config-card').style.display='block';
+    } else {
+      document.getElementById('mob-config-card').style.display='none';
+      document.getElementById('mob-main').style.display='block';
+      initFB(cfg);
+    }
+  }
+}
+
+function setStatus(s,t){
+  ['mob','desk'].forEach(p=>{
+    const pill=document.getElementById(p+'-status-pill');
+    const dot=document.getElementById(p+'-status-dot');
+    if(!pill)return;
+    pill.className='status-pill '+(s==='online'?'':s);
+    dot.className='status-dot'+(s==='syncing'?' pulse':'');
+    document.getElementById(p+'-status-text').textContent=t;
+  });
+}
+
+function initFB(cfg){
+  try{
+    const app=initializeApp(cfg);
+    db=getDatabase(app);
+    rootRef=ref(db,'projects');
+    settingsRef=ref(db,'settings');
+    setStatus('syncing','กำลังเชื่อมต่อ...');
+    onValue(rootRef,(snap)=>{
+      projects={};
+      snap.forEach(c=>{projects[c.key]={...c.val(),entries:c.val().entries||{}};});
+      setStatus('online','ซิงค์แล้ว 🌸');
+      if(isDesktop()){
+        renderDeskSidebar();
+        if(currentProjId&&projects[currentProjId]) renderDeskDetail();
+        else showDashboard();
+      } else {
+        if(currentProjId&&projects[currentProjId]) renderMobDetail();
+        else renderMobHome();
+      }
+    },()=>setStatus('offline','เชื่อมต่อไม่ได้'));
+    onValue(settingsRef,(snap)=>{
+      const d=snap.val();if(!d)return;
+      if(d.nameMe){nameMe=d.nameMe;setNameInputs('nameMe',d.nameMe);}
+      if(d.namePartner){namePartner=d.namePartner;setNameInputs('namePartner',d.namePartner);}
+      updateHeaderNames();
+    });
+  }catch(e){setStatus('offline','config ไม่ถูกต้อง');}
+}
+
+function setNameInputs(field,val){
+  if(field==='nameMe'){
+    const dk=document.getElementById('desk-name-me');
+    if(dk)dk.value=val;
+  } else {
+    const dk=document.getElementById('desk-name-partner');
+    if(dk)dk.value=val;
+  }
+}
+
+function updateHeaderNames(){
+  const el=document.getElementById('mob-header-names');
+  const del=document.getElementById('desk-header-names');
+  if(el)el.textContent=nameMe+' & '+namePartner+' 💕';
+  if(del)del.textContent=nameMe+' & '+namePartner+' 💕';
+}
+
+function saveSetting(){
+  if(!settingsRef)return;
+  update(settingsRef,{nameMe,namePartner});
+}
+
+['desk-name-me'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('input',e=>{
+    nameMe=e.target.value.trim()||'ฉัน';
+    updateHeaderNames();saveSetting();
+    if(isDesktop())renderDeskSidebar();else renderMobHome();
+  });
+});
+['desk-name-partner'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('input',e=>{
+    namePartner=e.target.value.trim()||'แฟน';
+    updateHeaderNames();saveSetting();
+    if(isDesktop())renderDeskSidebar();else renderMobHome();
+  });
+});
+
+/* ── HELPERS ── */
+function fmt(n){return '฿'+Math.round(n).toLocaleString('th-TH');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function calcNet(entries){
+  let meOwes=0,partnerOwes=0;
+  Object.values(entries).forEach(e=>{
+    if(e.cleared)return;
+    if(e.type==='split'){if(e.who==='me')partnerOwes+=e.amt/2;else meOwes+=e.amt/2;}
+    else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
+  });
+  return partnerOwes-meOwes;
+}
+
+function calcMonthTotal(year,month){
+  let total=0;
+  Object.values(projects).forEach(p=>{
+    Object.values(p.entries||{}).forEach(e=>{
+      if(!e.ts)return;
+      const d=new Date(e.ts);
+      if(d.getFullYear()===year&&d.getMonth()===month)total+=e.amt;
+    });
+  });
+  return total;
+}
+
+function getThisMonthTotal(){
+  const now=new Date();
+  return calcMonthTotal(now.getFullYear(),now.getMonth());
+}
+
+function getGlobalNet(){
+  let net=0;
+  Object.values(projects).forEach(p=>net+=calcNet(p.entries||{}));
+  return net;
+}
+
+function getYears(){
+  const cur=new Date().getFullYear();
+  return [cur-2,cur-1,cur];
+}
+
+function bankSelectHTML(id,val=''){
+  return `<select class="bank-select" id="${id}" onchange="onBankChange('${id}')">
+    <option value="">เลือกธนาคาร...</option>
+    ${BANKS.map(b=>`<option value="${b}"${val===b?' selected':''}>${b}</option>`).join('')}
+  </select>
+  <input class="bank-other-inp" id="${id}-other" type="text" placeholder="ระบุธนาคาร..." style="display:${val==='อื่นๆ'?'block':'none'}">`;
+}
+
+function deskBankSelectHTML(id,val=''){
+  return `<select class="desk-bank-select" id="${id}" onchange="onDeskBankChange('${id}')">
+    <option value="">เลือกธนาคาร...</option>
+    ${BANKS.map(b=>`<option value="${b}"${val===b?' selected':''}>${b}</option>`).join('')}
+  </select>
+  <input class="desk-bank-other" id="${id}-other" type="text" placeholder="ระบุธนาคาร..." style="display:${val==='อื่นๆ'?'block':'none'}">`;
+}
+
+window.onBankChange=(id)=>{
+  const v=document.getElementById(id).value;
+  const o=document.getElementById(id+'-other');
+  if(o)o.style.display=v==='อื่นๆ'?'block':'none';
+};
+window.onDeskBankChange=(id)=>{
+  const v=document.getElementById(id).value;
+  const o=document.getElementById(id+'-other');
+  if(o)o.style.display=v==='อื่นๆ'?'block':'none';
+};
+
+function getEntrySubText(e,isMob=true){
+  const typeLabel=e.type==='split'?'หารกัน':e.type==='paid'?'จ่ายแทน':'บัญชีกลาง';
+  const payLabel=e.payMethod?(` • ${e.bank&&e.bank!=='อื่นๆ'?e.bank:e.bankOther||''} ${e.payMethod==='transfer'?'โอนจ่าย':'บัตรเครดิต'}`):'';
+  return `${typeLabel} • ${e.date||''}${payLabel}`;
+}
+
+function getPillInfo(e){
+  if(e.type==='split'){
+    return {cls:e.who==='me'?'pill-me':'pill-partner',txt:(e.who==='me'?nameMe:namePartner)+' จ่าย',entryCls:e.who==='me'?'entry-me':'entry-partner',dotColor:e.who==='me'?'#B5E8D8':'#D4C5F9'};
+  } else if(e.type==='paid'){
+    return {cls:e.who==='me'?'pill-me':'pill-partner',txt:(e.who==='me'?nameMe:namePartner)+' จ่ายแทน',entryCls:e.who==='me'?'entry-me':'entry-partner',dotColor:e.who==='me'?'#B5E8D8':'#D4C5F9'};
+  } else {
+    return {cls:'pill-pool',txt:'บัญชีกลาง',entryCls:'entry-pool',dotColor:'#FFE9A0'};
+  }
+}
+
+function setTodayDate(id){const el=document.getElementById(id);if(el&&!el.value)el.value=new Date().toISOString().split('T')[0];}
+
+/* ═══════════════════════════
+   MOBILE RENDER
+═══════════════════════════ */
+function renderMobHome(){
+  /* summary boxes */
+  const famNet=getGlobalNet();
+  const debtBox=document.getElementById('mob-sum-debt');
+  const monthBox=document.getElementById('mob-sum-month');
+  if(Math.abs(famNet)>=1){
+    debtBox.style.display='flex';
+    if(famNet>0){debtBox.innerHTML=`<div><div class="mob-sum-lbl">${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}</div><div class="mob-sum-amt">${fmt(famNet)}</div></div><div class="mob-sum-emoji">💸</div>`;}
+    else{debtBox.innerHTML=`<div><div class="mob-sum-lbl">${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</div><div class="mob-sum-amt" style="color:var(--lav-deep)">${fmt(Math.abs(famNet))}</div></div><div class="mob-sum-emoji">💸</div>`;}
+  } else {
+    debtBox.style.display='flex';
+    debtBox.innerHTML=`<div><div class="mob-sum-lbl">ยอดค้างชำระ</div><div class="mob-sum-amt" style="color:var(--mint-deep)">เสมอกัน 🎉</div></div><div class="mob-sum-emoji">✅</div>`;
+  }
+  const monthTotal=getThisMonthTotal();
+  monthBox.innerHTML=`<div><div class="mob-sum-lbl lav">📅 เดือนนี้ใช้ไป</div><div class="mob-sum-amt lav">${fmt(monthTotal)}</div></div><div class="mob-sum-emoji">📊</div>`;
+
+  /* render project cards helper */
+  const renderCards=(ids,isCafe)=>ids.map((id,i)=>{
+    const p=projects[id];
+    const color=COLORS[i%COLORS.length];
+    const emoji=p.emoji||EMOJIS[i%EMOJIS.length];
+    if(isCafe){
+      const total=Object.values(p.entries||{}).reduce((s,e)=>s+e.amt,0);
+      return `<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')">
+        <div class="proj-home-emoji">${emoji}</div>
+        <div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div>
+        <div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div>
+        <div class="proj-home-lbl">รวม</div>
+        <div class="proj-home-amt" style="color:var(--orange-deep);">${fmt(total)}</div>
+      </div>`;
+    }
+    const net=calcNet(p.entries||{});
+    let amtClass='amt-balanced',amtLbl='เสมอกัน',amtVal='฿0';
+    if(Math.abs(net)>=1){
+      if(net>0){amtClass='amt-partner';amtLbl=namePartner+' ต้องโอน';amtVal=fmt(net);}
+      else{amtClass='amt-me';amtLbl=nameMe+' ต้องโอน';amtVal=fmt(Math.abs(net));}
+    }
+    return `<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')">
+      <div class="proj-home-emoji">${emoji}</div>
+      <div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div>
+      <div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div>
+      <div class="proj-home-lbl">${amtLbl}</div>
+      <div class="proj-home-amt ${amtClass}">${amtVal}</div>
+    </div>`;
+  }).join('');
+
+  const famIds=Object.keys(projects).filter(id=>projects[id].category!=='cafe');
+  const cafeIds=Object.keys(projects).filter(id=>projects[id].category==='cafe');
+
+  document.getElementById('mob-proj-grid-fam').innerHTML=renderCards(famIds,false);
+  document.getElementById('mob-proj-grid-cafe').innerHTML=renderCards(cafeIds,true);
+  document.getElementById('mob-fam-section').style.display=famIds.length?'block':'none';
+  document.getElementById('mob-cafe-section').style.display=cafeIds.length?'block':'none';
+}
+
+window.mobOpenProject=(id)=>{
+  currentProjId=id;
+  document.getElementById('mob-view-home').style.display='none';
+  document.getElementById('mob-view-detail').style.display='block';
+  renderMobDetail();
+};
+
+window.mobGoHome=()=>{
+  currentProjId=null;
+  document.getElementById('mob-view-home').style.display='block';
+  document.getElementById('mob-view-detail').style.display='none';
+  renderMobHome();
+};
+
+function renderMobDetail(){
+  const cont=document.getElementById('mob-detail-content');
+  if(!currentProjId||!projects[currentProjId]){cont.innerHTML='';return;}
+  const proj=projects[currentProjId];
+  const allEntries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const pendingEntries=allEntries.filter(e=>!e.cleared);
+  const clearedEntries=allEntries.filter(e=>e.cleared);
+  const showEntries=activeTab==='pending'?pendingEntries:clearedEntries;
+
+  let total=0,meOwes=0,partnerOwes=0;
+  pendingEntries.forEach(e=>{
+    total+=e.amt;
+    if(e.type==='split'){if(e.who==='me')partnerOwes+=e.amt/2;else meOwes+=e.amt/2;}
+    else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
+  });
+  const net=partnerOwes-meOwes;
+  const mePaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='me').reduce((s,e)=>s+e.amt,0);
+  const partnerPaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='partner').reduce((s,e)=>s+e.amt,0);
+  const mePct=total>0?Math.round((mePaid/total)*100):50;
+
+  let resultClass='result-box result-balanced',resultHtml='<span>🎉 เสมอกันพอดีเลย!</span><span class="result-amount">ไม่มีใครต้องโอน</span>';
+  if(Math.abs(net)>=1){
+    if(net>0){resultClass='result-box result-partner-owes';resultHtml=`<span>💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`;}
+    else{resultClass='result-box result-me-owes';resultHtml=`<span>💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`;}
+  }
+
+  cont.innerHTML=`
+    <div class="proj-detail-header">
+      <input class="proj-name-input" type="text" value="${esc(proj.name||'โปรเจคใหม่')}" onchange="updateProjectName('${currentProjId}',this.value)">
+      <button class="btn-del-proj" onclick="deleteProject('${currentProjId}')">ลบ</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✏️ เพิ่มรายการ</div>
+      <input class="inp-desc" type="text" id="mob-inp-desc" placeholder="ใช้จ่ายอะไร? เช่น ข้าวเที่ยง...">
+      <div class="type-row">
+        <button class="type-btn active-split" id="mob-type-split" onclick="mobSelectType('split')">🍱 หารกัน</button>
+        <button class="type-btn" id="mob-type-paid" onclick="mobSelectType('paid')">💸 จ่ายแทน</button>
+        <button class="type-btn" id="mob-type-pool" onclick="mobSelectType('pool')">🏦 กลาง</button>
+      </div>
+      <div class="who-row" id="mob-who-row">
+        <button class="who-btn active-me" id="mob-who-me" onclick="mobSelectWho('me')">🩷 ${esc(nameMe)}</button>
+        <button class="who-btn" id="mob-who-partner" onclick="mobSelectWho('partner')">💜 ${esc(namePartner)}</button>
+      </div>
+      <input class="inp-amt" type="number" id="mob-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
+      <input class="inp-date" type="date" id="mob-inp-date">
+      <div class="form-divider"></div>
+      <div class="form-opt-lbl">วิธีจ่าย (ไม่บังคับ)</div>
+      <div class="pay-row">
+        <button class="pay-btn" id="mob-pay-transfer" onclick="mobSelectPay('transfer')">🏦 โอนจ่าย</button>
+        <button class="pay-btn" id="mob-pay-credit" onclick="mobSelectPay('credit')">💳 บัตรเครดิต</button>
+      </div>
+      <div id="mob-bank-wrap" style="display:none">${bankSelectHTML('mob-bank-sel')}</div>
+      <button class="btn-add" onclick="mobAddEntry()">+ เพิ่มรายการ</button>
+    </div>
+
+    <div class="card">
+      <div class="tabs-row">
+        <button class="tab-btn ${activeTab==='pending'?'active':''}" onclick="mobSetTab('pending')">ค้างอยู่ (${pendingEntries.length})</button>
+        <button class="tab-btn ${activeTab==='cleared'?'active':''}" onclick="mobSetTab('cleared')">✅ เคลียร์แล้ว (${clearedEntries.length})</button>
+      </div>
+      <div class="entry-list">
+        ${showEntries.length===0?`<div class="empty-state"><span class="big">🌷</span><p>ไม่มีรายการ</p></div>`:
+        showEntries.map(e=>{
+          const pi=getPillInfo(e);
+          return `<div class="entry ${pi.entryCls} ${e.cleared?'entry-cleared':''}">
+            <div class="entry-left">
+              <div class="entry-name">${esc(e.desc)}</div>
+              <div class="entry-sub">${getEntrySubText(e)}</div>
+            </div>
+            <div class="entry-amt">${fmt(e.amt)}</div>
+            <span class="pill ${e.cleared?'pill-cleared':pi.cls}">${e.cleared?'✅ เคลียร์':pi.txt}</span>
+            ${!e.cleared?`<button class="btn-clear-entry" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
+            <button class="btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})">✏️</button>
+            <button class="btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✨ สรุปยอด</div>
+      <div class="metrics">
+        <div class="metric metric-total"><div class="metric-label">รวม</div><div class="metric-val">${fmt(total)}</div></div>
+        <div class="metric metric-me"><div class="metric-label">${esc(nameMe)}</div><div class="metric-val">${fmt(mePaid)}</div></div>
+        <div class="metric metric-partner"><div class="metric-label">${esc(namePartner)}</div><div class="metric-val">${fmt(partnerPaid)}</div></div>
+      </div>
+      <div class="bar-row"><span>${esc(nameMe)} ${mePct}%</span><span>${esc(namePartner)} ${100-mePct}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${mePct}%"></div></div>
+      <div class="${resultClass}">${resultHtml}</div>
+    </div>
+  `;
+  setTodayDate('mob-inp-date');
+  mobSelectType(selectedType);
+  mobSelectWho(selectedWho);
+}
+
+window.mobSetTab=(tab)=>{activeTab=tab;renderMobDetail();};
+
+window.mobSelectType=(type)=>{
+  selectedType=type;
+  ['split','paid','pool'].forEach(t=>{
+    const el=document.getElementById('mob-type-'+t);
+    if(el)el.className='type-btn'+(type===t?' active-'+type:'');
+  });
+  const wr=document.getElementById('mob-who-row');
+  if(wr)wr.style.display=(type==='pool'?'none':'flex');
+};
+
+window.mobSelectWho=(who)=>{
+  selectedWho=who;
+  const bm=document.getElementById('mob-who-me'),bp=document.getElementById('mob-who-partner');
+  if(bm)bm.className='who-btn'+(who==='me'?' active-me':'');
+  if(bp)bp.className='who-btn'+(who==='partner'?' active-partner':'');
+};
+
+window.mobSelectPay=(method)=>{
+  selectedPayMethod=selectedPayMethod===method?'':method;
+  document.getElementById('mob-pay-transfer').className='pay-btn'+(selectedPayMethod==='transfer'?' active':'');
+  document.getElementById('mob-pay-credit').className='pay-btn'+(selectedPayMethod==='credit'?' active':'');
+  document.getElementById('mob-bank-wrap').style.display=selectedPayMethod?'block':'none';
+};
+
+window.mobAddEntry=()=>{
+  if(!db||!currentProjId){showToast('ยังไม่ได้เชื่อมต่อ');return;}
+  const desc=document.getElementById('mob-inp-desc').value.trim();
+  const amt=parseFloat(document.getElementById('mob-inp-amt').value);
+  const dateVal=document.getElementById('mob-inp-date').value;
+  if(!desc){showToast('ใส่ชื่อรายการด้วยนะ 🌸');return;}
+  if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  const bank=document.getElementById('mob-bank-sel')?.value||'';
+  const bankOther=document.getElementById('mob-bank-sel-other')?.value||'';
+  const entry={desc,amt,type:selectedType,who:selectedType!=='pool'?selectedWho:null,date:dateDisplay,ts:dateObj.getTime(),cleared:false};
+  if(selectedPayMethod)entry.payMethod=selectedPayMethod;
+  if(bank)entry.bank=bank;
+  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  push(ref(db,'projects/'+currentProjId+'/entries'),entry);
+  document.getElementById('mob-inp-desc').value='';
+  document.getElementById('mob-inp-amt').value='';
+  showToast('เพิ่มแล้ว! 🌸');
+};
+
+/* ═══════════════════════════
+   DESKTOP RENDER
+═══════════════════════════ */
+function renderDeskSidebar(){
+  const famEl=document.getElementById('desk-sidebar-fam');
+  const cafeEl=document.getElementById('desk-sidebar-cafe');
+  if(!famEl||!cafeEl)return;
+  const famProjs=Object.keys(projects).filter(id=>projects[id].category!=='cafe');
+  const cafeProjs=Object.keys(projects).filter(id=>projects[id].category==='cafe');
+
+  const renderItems=(ids)=>ids.map((id,i)=>{
+    const p=projects[id];
+    const net=calcNet(p.entries||{});
+    const emoji=p.emoji||EMOJIS[i%EMOJIS.length];
+    const isCafe=p.category==='cafe';
+    let amtTxt='เสมอกัน',amtClass='ok';
+    if(isCafe){
+      const total=Object.values(p.entries||{}).reduce((s,e)=>s+e.amt,0);
+      amtTxt=fmt(total);amtClass='cafe';
+    } else {
+      if(Math.abs(net)>=1){amtTxt=(net>0?namePartner:nameMe)+' ต้องโอน '+fmt(Math.abs(net));amtClass='';}
+    }
+    const isActive=currentProjId===id&&document.getElementById('desk-view-detail').style.display!=='none';
+    return `<div class="desk-proj-item${isActive?(isCafe?' cafe-active':' active'):''}" onclick="deskOpenProject('${id}')">
+      <span class="desk-proj-emoji">${emoji}</span>
+      <div style="min-width:0;flex:1;">
+        <div class="desk-proj-name">${esc(p.name||'โปรเจคใหม่')}</div>
+        <div class="desk-proj-amt ${amtClass}">${amtTxt}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  famEl.innerHTML=renderItems(famProjs);
+  cafeEl.innerHTML=renderItems(cafeProjs);
+}
+
+window.showDashboard=(cat='family')=>{
+  currentProjId=null;
+  currentDashCat=cat;
+  document.getElementById('desk-view-dashboard').style.display='block';
+  document.getElementById('desk-view-detail').style.display='none';
+  renderDeskSidebar();
+  renderDashboard();
+};
+
+const MONTH_NAMES=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const MONTH_NAMES_FULL=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function calcMonthStats(year,month,cat=null){
+  // month = null หมายถึงทั้งปี, cat = null หมายถึงทุก category
+  let total=0,mePaid=0,partnerPaid=0,poolPaid=0,otherPaid={},meOwes=0,partnerOwes=0;
+  const entries=[];
+  Object.entries(projects).forEach(([pid,p])=>{
+    if(cat&&p.category!==cat)return;
+    if(!cat&&p.category==='cafe')return; // family dashboard ไม่รวม cafe
+    Object.entries(p.entries||{}).forEach(([k,e])=>{
+      const d=e.ts?new Date(e.ts):null;
+      const matchYear=d&&d.getFullYear()===year;
+      const matchMonth=month===null||(d&&d.getMonth()===month);
+      if(!matchYear||!matchMonth)return;
+      entries.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่'});
+      total+=e.amt;
+      if(p.category==='cafe'){
+        if(e.who==='me')mePaid+=e.amt;
+        else if(e.who==='partner')partnerPaid+=e.amt;
+        else if(e.who==='pool')poolPaid+=e.amt;
+        else if(e.who==='other'&&e.otherName){
+          otherPaid[e.otherName]=(otherPaid[e.otherName]||0)+e.amt;
+        }
+      } else {
+        if((e.type==='split'||e.type==='paid')&&e.who==='me')mePaid+=e.amt;
+        else if((e.type==='split'||e.type==='paid')&&e.who==='partner')partnerPaid+=e.amt;
+        if(!e.cleared){
+          if(e.type==='split'){if(e.who==='me')partnerOwes+=e.amt/2;else meOwes+=e.amt/2;}
+          else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
+        }
+      }
+    });
+  });
+  const net=partnerOwes-meOwes;
+  const days=month===null?365:new Date(year,month+1,0).getDate();
+  return {total,mePaid,partnerPaid,poolPaid,otherPaid,net,entries,avgPerDay:total>0?Math.round(total/days):0};
+}
+
+function renderDashboard(){
+  const isCafe=currentDashCat==='cafe';
+  const accentColor=isCafe?'var(--orange-deep)':'var(--pink-deep)';
+
+  /* cafe export box */
+  const cafeExBox=document.getElementById('desk-cafe-export-box');
+  if(cafeExBox){
+    if(isCafe){
+      cafeExBox.style.display='block';
+      const years=getYears();
+      document.getElementById('desk-cafe-export-years').innerHTML=years.map(y=>`
+        <button class="year-tab${cafeExportYear===y?' active':''}" style="${cafeExportYear===y?'background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep)':''}" onclick="setCafeExportYear(${y})">${y}</button>
+      `).join('');
+    } else {
+      cafeExBox.style.display='none';
+    }
+  }
+
+  /* year tabs */
+  const years=getYears();
+  if(!years.includes(selectedYear)){selectedYear=years[2];selectedMonth=null;}
+  document.getElementById('desk-year-tabs').innerHTML=years.map(y=>`
+    <button class="year-tab${selectedYear===y?' active':''}" style="${selectedYear===y&&isCafe?'background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep)':''}" onclick="selectYear(${y})">${y}</button>
+  `).join('');
+
+  /* stats */
+  const stats=calcMonthStats(selectedYear,selectedMonth,isCafe?'cafe':null);
+  const subLbl=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]+' '+selectedYear:'ทั้งปี '+selectedYear;
+
+  /* summary cards */
+  if(isCafe){
+    document.getElementById('desk-dash-cards').innerHTML=`
+      <div class="dash-sc" style="background:var(--yellow-soft);"><div class="dash-sc-lbl">รวมทั้งหมด</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
+      <div class="dash-sc" style="background:var(--pink-soft);"><div class="dash-sc-lbl">${esc(nameMe)} สำรองจ่าย</div><div class="dash-sc-val">${fmt(stats.mePaid)}</div></div>
+      <div class="dash-sc" style="background:var(--lav-soft);"><div class="dash-sc-lbl">${esc(namePartner)} สำรองจ่าย</div><div class="dash-sc-val">${fmt(stats.partnerPaid)}</div></div>
+      <div class="dash-sc" style="background:var(--orange-soft);"><div class="dash-sc-lbl">ส่วนกลางร้าน</div><div class="dash-sc-val">${fmt(stats.poolPaid)}</div></div>
+    `;
+  } else {
+    let debtTxt='เสมอกัน',debtColor='var(--mint-deep)';
+    if(Math.abs(stats.net)>=1){debtTxt=fmt(Math.abs(stats.net));debtColor=stats.net>0?'var(--pink-deep)':'var(--lav-deep)';}
+    document.getElementById('desk-dash-cards').innerHTML=`
+      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวม</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
+      <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">${esc(nameMe)} จ่าย</div><div class="dash-sc-val">${fmt(stats.mePaid)}</div></div>
+      <div class="dash-sc dash-sc-l"><div class="dash-sc-lbl">${esc(namePartner)} จ่าย</div><div class="dash-sc-val">${fmt(stats.partnerPaid)}</div></div>
+      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">ยอดค้าง</div><div class="dash-sc-val" style="color:${debtColor}">${debtTxt}</div></div>
+    `;
+  }
+
+  renderChart();
+
+  /* comparison */
+  let cmpHtml='';
+  if(selectedMonth!==null){
+    const prevMonth=selectedMonth===0?11:selectedMonth-1;
+    const prevYear=selectedMonth===0?selectedYear-1:selectedYear;
+    const prevStats=calcMonthStats(prevYear,prevMonth,isCafe?'cafe':null);
+    const prevName=MONTH_NAMES_FULL[prevMonth]+(selectedMonth===0?' '+(selectedYear-1):'');
+    const diff=prevStats.total>0?Math.round(((stats.total-prevStats.total)/prevStats.total)*100):null;
+    const badgeHtml=diff===null?`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`:diff>0?`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`:diff<0?`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`:`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;
+    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div><div class="desk-box-lbl">📊 เทียบ${prevName}</div><div class="dash-cmp-row"><div><div class="dash-cmp-lbl">${prevName} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevStats.total)}</div></div>${badgeHtml}</div>`;
+  } else {
+    const prevYearStats=calcMonthStats(selectedYear-1,null,isCafe?'cafe':null);
+    const diff=prevYearStats.total>0?Math.round(((stats.total-prevYearStats.total)/prevYearStats.total)*100):null;
+    const badgeHtml=diff===null?`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`:diff>0?`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`:diff<0?`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`:`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;
+    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div><div class="desk-box-lbl">📊 เทียบปี ${selectedYear-1}</div><div class="dash-cmp-row"><div><div class="dash-cmp-lbl">ปี ${selectedYear-1} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevYearStats.total)}</div></div>${badgeHtml}</div>`;
+  }
+
+  /* summary side */
+  const summaryTitle=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]:('ปี '+selectedYear);
+  let summaryHtml='';
+  if(isCafe){
+    // cafe: แสดงใครสำรองจ่าย
+    summaryHtml+=`<div class="who-summary-row who-s-may"><div><div class="who-s-name">🩷 ${esc(nameMe)} สำรองจ่าย</div><div class="who-s-sub">ร้านต้องคืน</div></div><div class="who-s-amt" style="color:var(--pink-deep);">${fmt(stats.mePaid)}</div></div>`;
+    summaryHtml+=`<div class="who-summary-row who-s-partner"><div><div class="who-s-name">💜 ${esc(namePartner)} สำรองจ่าย</div><div class="who-s-sub">ร้านต้องคืน</div></div><div class="who-s-amt" style="color:var(--lav-deep);">${fmt(stats.partnerPaid)}</div></div>`;
+    summaryHtml+=`<div class="who-summary-row who-s-pool"><div><div class="who-s-name">🏦 ส่วนกลางร้าน</div><div class="who-s-sub">ไม่ต้องคืน</div></div><div class="who-s-amt" style="color:var(--orange-deep);">${fmt(stats.poolPaid)}</div></div>`;
+    Object.entries(stats.otherPaid).forEach(([name,amt])=>{
+      summaryHtml+=`<div class="who-summary-row who-s-other"><div><div class="who-s-name">👤 ${esc(name)}</div><div class="who-s-sub">ร้านต้องคืน</div></div><div class="who-s-amt" style="color:#6B7280;">${fmt(amt)}</div></div>`;
+    });
+  } else {
+    if(Math.abs(stats.net)>=1){
+      summaryHtml+=`<div class="dash-rrow dash-rrow-p"><div class="dash-rtxt">${stats.net>0?`💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}`:`💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}`}</div><div class="dash-ramt">${fmt(Math.abs(stats.net))}</div></div>`;
+    } else {
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">🎉 เสมอกันพอดี!</div><div class="dash-ramt dash-ramt-m">ไม่มีใครต้องโอน</div></div>`;
+    }
+    summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
+    if(selectedMonth!==null){
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
+    } else {
+      const months=new Date().getMonth()+1;
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อเดือน</div><div class="dash-ramt dash-ramt-m">${fmt(Math.round(stats.total/months))}</div></div>`;
+    }
+  }
+  summaryHtml+=cmpHtml;
+  document.getElementById('desk-dash-summary').innerHTML=`<div class="desk-box-lbl">✨ สรุป — ${summaryTitle}</div>`+summaryHtml;
+
+  /* recent */
+  const allEntries=selectedMonth!==null?
+    stats.entries.sort((a,b)=>(b.ts||0)-(a.ts||0)):
+    (()=>{
+      const arr=[];
+      Object.entries(projects).forEach(([pid,p])=>{
+        if(isCafe&&p.category!=='cafe')return;
+        if(!isCafe&&p.category==='cafe')return;
+        Object.entries(p.entries||{}).forEach(([k,e])=>{arr.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่',isCafe:p.category==='cafe'});});
+      });
+      return arr.sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,8);
+    })();
+
+  const recentLabel=selectedMonth!==null?`🧾 รายการ${MONTH_NAMES_FULL[selectedMonth]}`:'🧾 รายการล่าสุด';
+  document.getElementById('desk-recent-label').textContent=recentLabel;
+  document.getElementById('desk-recent-entries').innerHTML=allEntries.length===0?
+    `<div class="empty-state"><span class="big">🌷</span><p>ยังไม่มีรายการ</p></div>`:
+    allEntries.map(e=>{
+      if(e.isCafe||projects[e.projId]?.category==='cafe'){
+        const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+        const dotColor=e.who==='me'?'#FDE8F2':e.who==='partner'?'#F0ECFF':e.who==='pool'?'#FFF5E6':'#F3F4F6';
+        const pillStyle=e.who==='me'?'background:#FDE8F2;color:#C4608A;':e.who==='partner'?'background:#F0ECFF;color:#6B50C4;':e.who==='pool'?'background:#FFF5E6;color:#C47020;':'background:#F3F4F6;color:#6B7280;';
+        return `<div class="desk-erow"><div class="desk-edot" style="background:${dotColor};"></div><div class="desk-eleft"><div class="desk-edesc">${esc(e.desc)}</div><div class="desk-edate">${esc(e.projName)} • ${e.date||''}</div></div><div class="desk-eamt">${fmt(e.amt)}</div><span class="pill" style="font-size:9px;padding:2px 7px;${pillStyle}">${whoTxt}</span></div>`;
+      }
+      const pi=getPillInfo(e);
+      return `<div class="desk-erow"><div class="desk-edot" style="background:${pi.dotColor};"></div><div class="desk-eleft"><div class="desk-edesc">${esc(e.desc)}</div><div class="desk-edate">${esc(e.projName)} • ${getEntrySubText(e)}</div></div><div class="desk-eamt">${fmt(e.amt)}</div><span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅ เคลียร์':pi.txt}</span></div>`;
+    }).join('');
+
+  if(!isCafe)checkExportBanner();
+}
+
+  /* summary cards */
+  const subLbl=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]+' '+selectedYear:'ทั้งปี '+selectedYear;
+  let debtTxt='เสมอกัน',debtColor='var(--mint-deep)';
+  if(Math.abs(stats.net)>=1){debtTxt=fmt(Math.abs(stats.net));debtColor=stats.net>0?'var(--pink-deep)':'var(--lav-deep)';}
+  document.getElementById('desk-dash-cards').innerHTML=`
+    <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวม</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
+    <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">${esc(nameMe)} จ่าย</div><div class="dash-sc-val">${fmt(stats.mePaid)}</div></div>
+    <div class="dash-sc dash-sc-l"><div class="dash-sc-lbl">${esc(namePartner)} จ่าย</div><div class="dash-sc-val">${fmt(stats.partnerPaid)}</div></div>
+    <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">ยอดค้าง</div><div class="dash-sc-val" style="color:${debtColor}">${debtTxt}</div></div>
+  `;
+
+  renderChart();
+
+  /* comparison stats */
+  let cmpHtml='';
+  if(selectedMonth!==null){
+    // เปรียบเทียบกับเดือนที่แล้ว
+    const prevMonth=selectedMonth===0?11:selectedMonth-1;
+    const prevYear=selectedMonth===0?selectedYear-1:selectedYear;
+    const prevStats=calcMonthStats(prevYear,prevMonth);
+    const prevName=MONTH_NAMES_FULL[prevMonth]+(selectedMonth===0?' '+(selectedYear-1):'');
+    const diff=prevStats.total>0?Math.round(((stats.total-prevStats.total)/prevStats.total)*100):null;
+    let badgeHtml='';
+    if(diff===null){badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`;}
+    else if(diff>0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`;}
+    else if(diff<0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`;}
+    else{badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;}
+    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div>
+    <div class="desk-box-lbl">📊 เทียบ${prevName}</div>
+    <div class="dash-cmp-row">
+      <div><div class="dash-cmp-lbl">${prevName} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevStats.total)}</div></div>
+      ${badgeHtml}
+    </div>`;
+  } else {
+    // เปรียบเทียบกับปีที่แล้ว
+    const prevYearStats=calcMonthStats(selectedYear-1,null);
+    const diff=prevYearStats.total>0?Math.round(((stats.total-prevYearStats.total)/prevYearStats.total)*100):null;
+    let badgeHtml='';
+    if(diff===null){badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">ไม่มีข้อมูล</span>`;}
+    else if(diff>0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-up">↑ ${diff}%</span>`;}
+    else if(diff<0){badgeHtml=`<span class="dash-cmp-badge dash-cmp-down">↓ ${Math.abs(diff)}%</span>`;}
+    else{badgeHtml=`<span class="dash-cmp-badge dash-cmp-same">→ 0%</span>`;}
+    cmpHtml=`<div style="height:1px;background:var(--border);margin:8px 0;"></div>
+    <div class="desk-box-lbl">📊 เทียบปี ${selectedYear-1}</div>
+    <div class="dash-cmp-row">
+      <div><div class="dash-cmp-lbl">ปี ${selectedYear-1} ใช้ไป</div><div class="dash-cmp-amt">${fmt(prevYearStats.total)}</div></div>
+      ${badgeHtml}
+    </div>`;
+  }
+
+function renderChart(){
+  const isCafe=currentDashCat==='cafe';
+  const values=MONTH_NAMES.map((_,i)=>{
+    let total=0;
+    Object.values(projects).forEach(p=>{
+      if(isCafe&&p.category!=='cafe')return;
+      if(!isCafe&&p.category==='cafe')return;
+      Object.values(p.entries||{}).forEach(e=>{
+        const d=e.ts?new Date(e.ts):null;
+        if(d&&d.getFullYear()===selectedYear&&d.getMonth()===i)total+=e.amt;
+      });
+    });
+    return total;
+  });
+  const maxVal=Math.max(...values,1);
+  const now=new Date();
+  document.getElementById('desk-chart').innerHTML=values.map((v,i)=>{
+    const h=Math.round((v/maxVal)*86);
+    const isCur=selectedYear===now.getFullYear()&&i===now.getMonth();
+    const isSelected=selectedMonth===i;
+    const color=isSelected?'#C4608A':isCur?'#E8789C':selectedYear===now.getFullYear()&&i<now.getMonth()?'#F9A8C9':'#D4C5F9';
+    return `<div class="dash-bw${isSelected?' dash-bw-sel':''}" onclick="selectMonth(${i})">
+      <div class="dash-b-val" style="color:${isSelected?'#C4608A':'var(--muted)'};">${v>0?'฿'+Math.round(v/1000)+'k':''}</div>
+      <div class="dash-b" style="height:${h}px;background:${color};min-height:${v>0?4:0}px;"></div>
+      <div class="dash-bl" style="${isSelected?'color:#C4608A;font-weight:700;':''}">${MONTH_NAMES[i]}</div>
+    </div>`;
+  }).join('');
+
+  /* month indicator */
+  const ind=document.getElementById('desk-month-indicator');
+  if(ind){
+    if(selectedMonth!==null){
+      ind.innerHTML=`${MONTH_NAMES_FULL[selectedMonth]} ${selectedYear} <button onclick="clearMonth()" style="background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer;padding:0 2px;line-height:1;">✕</button>`;
+      ind.style.display='flex';
+    } else {
+      ind.style.display='none';
+    }
+  }
+}
+
+window.selectYear=(y)=>{selectedYear=y;selectedMonth=null;renderDashboard();};
+window.selectMonth=(m)=>{selectedMonth=selectedMonth===m?null:m;renderDashboard();};
+window.clearMonth=()=>{selectedMonth=null;renderDashboard()};
+
+function checkExportBanner(){
+  const years=getYears();
+  const oldestYear=years[0];
+  const banner=document.getElementById('desk-export-banner');
+  const now=new Date();
+  const isNearRollover=now.getMonth()===11&&now.getDate()>=25;
+  const hasOldData=Object.values(projects).some(p=>
+    Object.values(p.entries||{}).some(e=>e.ts&&new Date(e.ts).getFullYear()===oldestYear)
+  );
+  if(isNearRollover&&hasOldData){
+    banner.style.display='flex';
+    banner.innerHTML=`
+      <div>
+        <div class="export-banner-txt">⚠️ ปี ${oldestYear} กำลังจะหลุดออกจาก Dashboard</div>
+        <div class="export-banner-sub">กด Export เพื่อบันทึกข้อมูลก่อนที่จะหายไปนะคะ 🌸</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div id="export-status"></div>
+        <button class="btn-export" onclick="exportYear(${oldestYear})">📦 Export ปี ${oldestYear}</button>
+        <button class="btn-delete-year" id="btn-delete-year" style="display:none" onclick="deleteYearData(${oldestYear})">🗑️ ลบข้อมูลปี ${oldestYear}</button>
+      </div>
+    `;
+  } else {
+    banner.style.display='none';
+  }
+}
+
+window.exportYear=async(year)=>{
+  showToast('กำลัง export... ⏳');
+  const allEntries=[];
+  Object.entries(projects).forEach(([pid,p])=>{
+    Object.entries(p.entries||{}).forEach(([k,e])=>{
+      if(e.ts&&new Date(e.ts).getFullYear()===year){
+        allEntries.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่'});
+      }
+    });
+  });
+  allEntries.sort((a,b)=>(a.ts||0)-(b.ts||0));
+
+  /* คำนวณ summary */
+  let totalAll=0,mePaidAll=0,partnerPaidAll=0,netOwed=0;
+  const projStats={},monthStats={};
+  allEntries.forEach(e=>{
+    totalAll+=e.amt;
+    if((e.type==='split'||e.type==='paid')&&e.who==='me')mePaidAll+=e.amt;
+    else if((e.type==='split'||e.type==='paid')&&e.who==='partner')partnerPaidAll+=e.amt;
+    if(!e.cleared){
+      let po=0,mo=0;
+      if(e.type==='split'){if(e.who==='me')po=e.amt/2;else mo=e.amt/2;}
+      else if(e.type==='paid'){if(e.who==='me')po=e.amt;else mo=e.amt;}
+      netOwed+=po-mo;
+    }
+    if(!projStats[e.projName])projStats[e.projName]={total:0,mePaid:0,partnerPaid:0,count:0};
+    projStats[e.projName].total+=e.amt;projStats[e.projName].count++;
+    if((e.type==='split'||e.type==='paid')&&e.who==='me')projStats[e.projName].mePaid+=e.amt;
+    else if((e.type==='split'||e.type==='paid')&&e.who==='partner')projStats[e.projName].partnerPaid+=e.amt;
+    const m=e.ts?new Date(e.ts).getMonth():0;
+    if(!monthStats[m])monthStats[m]={total:0,mePaid:0,partnerPaid:0};
+    monthStats[m].total+=e.amt;
+    if((e.type==='split'||e.type==='paid')&&e.who==='me')monthStats[m].mePaid+=e.amt;
+    else if((e.type==='split'||e.type==='paid')&&e.who==='partner')monthStats[m].partnerPaid+=e.amt;
+  });
+
+  /* ── XLSX ── */
+  try{
+    const wb=XLSX.utils.book_new();
+    // Sheet 1: Summary
+    const sumData=[
+      [`จ่ายด้วยกันนะ — สรุปปี ${year}`],
+      [`${nameMe} & ${namePartner}`],[],
+      ['ภาพรวม',''],
+      ['รวมทั้งหมด',totalAll],[`${nameMe} จ่าย`,mePaidAll],[`${namePartner} จ่าย`,partnerPaidAll],
+      [netOwed>0?`${namePartner} ต้องโอนให้ ${nameMe}`:netOwed<0?`${nameMe} ต้องโอนให้ ${namePartner}`:'เสมอกัน',Math.abs(netOwed)],[],
+      ['แยกตามโปรเจค','รายการ',`${nameMe} จ่าย`,`${namePartner} จ่าย`,'รวม'],
+      ...Object.entries(projStats).map(([n,s])=>[n,s.count,s.mePaid,s.partnerPaid,s.total]),
+      [],
+      ['แยกตามเดือน',`${nameMe} จ่าย`,`${namePartner} จ่าย`,'รวม'],
+      ...MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,monthStats[i].mePaid,monthStats[i].partnerPaid,monthStats[i].total]:[n,0,0,0]),
+    ];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumData),'Summary');
+    // Sheet 2: Raw Data
+    const rawData=[['วันที่','โปรเจค','รายการ','ประเภท','ใครจ่าย','จำนวนเงิน','วิธีจ่าย','ธนาคาร','สถานะ']];
+    allEntries.forEach(e=>{
+      rawData.push([e.date||'',e.projName,e.desc,e.type==='split'?'หารกัน':e.type==='paid'?'จ่ายแทน':'บัญชีกลาง',e.who==='me'?nameMe:e.who==='partner'?namePartner:'-',e.amt,e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'-',e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'-'),e.cleared?'เคลียร์แล้ว':'ค้างอยู่']);
+    });
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rawData),'Raw Data');
+    XLSX.writeFile(wb,`jaai-duay-gan-${year}.xlsx`);
+  }catch(err){console.error(err);}
+
+  /* ── PDF ── */
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    doc.setFont('helvetica');
+    // Header
+    doc.setFontSize(18);doc.setTextColor(196,96,138);doc.text('Jaai Duay Gan',14,18);
+    doc.setFontSize(11);doc.setTextColor(100,100,100);doc.text(`${nameMe} & ${namePartner} — Summary ${year}`,14,25);
+    // Overview cards
+    const cards=[['Total',`฿${Math.round(totalAll).toLocaleString()}`,'#FFF5CC'],[`${nameMe} paid`,`฿${Math.round(mePaidAll).toLocaleString()}`,'#E6FAF5'],[`${namePartner} paid`,`฿${Math.round(partnerPaidAll).toLocaleString()}`,'#F0ECFF'],[netOwed>0?`${namePartner} owes`:netOwed<0?`${nameMe} owes`:'Even',`฿${Math.round(Math.abs(netOwed)).toLocaleString()}`,'#FDE8F2']];
+    doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('OVERVIEW',14,34);
+    doc.setDrawColor(242,224,236);doc.line(14,36,196,36);
+    cards.forEach((c,i)=>{
+      const x=14+(i%2)*91,y=39+Math.floor(i/2)*16;
+      doc.setFillColor(parseInt(c[2].slice(1,3),16),parseInt(c[2].slice(3,5),16),parseInt(c[2].slice(5,7),16));
+      doc.roundedRect(x,y,87,13,2,2,'F');
+      doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text(c[0],x+4,y+5);
+      doc.setFontSize(12);doc.setTextColor(61,37,53);doc.text(c[1],x+4,y+11);
+    });
+    // By project
+    let y=76;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY PROJECT',14,y);doc.line(14,y+2,196,y+2);
+    doc.autoTable({startY:y+4,head:[['Project','Items',nameMe,namePartner,'Total']],body:Object.entries(projStats).map(([n,s])=>[n,s.count,`฿${Math.round(s.mePaid).toLocaleString()}`,`฿${Math.round(s.partnerPaid).toLocaleString()}`,`฿${Math.round(s.total).toLocaleString()}`]),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[249,168,201],textColor:[61,37,53]},margin:{left:14,right:14}});
+    // By month
+    y=doc.lastAutoTable.finalY+8;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY MONTH',14,y);doc.line(14,y+2,196,y+2);
+    doc.autoTable({startY:y+4,head:[['Month',nameMe,namePartner,'Total']],body:MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,`฿${Math.round(monthStats[i].mePaid).toLocaleString()}`,`฿${Math.round(monthStats[i].partnerPaid).toLocaleString()}`,`฿${Math.round(monthStats[i].total).toLocaleString()}`]:[n,'฿0','฿0','฿0']),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[212,197,249],textColor:[61,37,53]},margin:{left:14,right:14}});
+    // Raw data — new page
+    doc.addPage();
+    doc.setFontSize(13);doc.setTextColor(196,96,138);doc.text('All Entries',14,16);
+    doc.setFontSize(9);doc.setTextColor(100,100,100);doc.text(`${year} — ${allEntries.length} items`,14,22);
+    doc.autoTable({startY:26,head:[['Date','Project','Item','Type','Who','Amount','Bank','Status']],body:allEntries.map(e=>[e.date||'',e.projName,e.desc,e.type==='split'?'Split':e.type==='paid'?'Paid':'Pool',e.who==='me'?nameMe:e.who==='partner'?namePartner:'-',`฿${Math.round(e.amt).toLocaleString()}`,e.bank==='อื่นๆ'?(e.bankOther||'Other'):(e.bank||'-'),e.cleared?'Cleared':'Pending']),styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[244,114,168],textColor:'white'},margin:{left:14,right:14}});
+    doc.setFontSize(8);doc.setTextColor(180,154,170);doc.text(`จ่ายด้วยกันนะ 🌸 — ปี ${year}`,14,doc.internal.pageSize.height-8);
+    doc.save(`jaai-duay-gan-${year}.pdf`);
+  }catch(err){console.error(err);}
+
+  const statusEl=document.getElementById('export-status');
+  if(statusEl)statusEl.innerHTML=`<span class="export-done">✅ Export เรียบร้อย!<br>jaai-duay-gan-${year}.xlsx & .pdf</span>`;
+  const delBtn=document.getElementById('btn-delete-year');
+  if(delBtn)delBtn.style.display='block';
+  showToast('Export เรียบร้อย! 🌸');
+};
+
+window.deleteYearData=(year)=>{
+  if(!confirm(`ลบข้อมูลทั้งหมดของปี ${year} ออกจากระบบ? (ไม่สามารถกู้คืนได้)`))return;
+  Object.entries(projects).forEach(([pid,p])=>{
+    Object.entries(p.entries||{}).forEach(([k,e])=>{
+      if(e.ts&&new Date(e.ts).getFullYear()===year){
+        remove(ref(db,'projects/'+pid+'/entries/'+k));
+      }
+    });
+  });
+  showToast(`ลบข้อมูลปี ${year} แล้ว 🌷`);
+};
+
+/* DESKTOP PROJECT DETAIL */
+window.deskOpenProject=(id)=>{
+  currentProjId=id;
+  document.getElementById('desk-view-dashboard').style.display='none';
+  document.getElementById('desk-view-detail').style.display='block';
+  renderDeskSidebar();
+  renderDeskDetail();
+};
+
+function renderDeskDetail(){
+  const cont=document.getElementById('desk-detail-content');
+  if(!currentProjId||!projects[currentProjId]){cont.innerHTML='';return;}
+  const proj=projects[currentProjId];
+  const isCafeProj=proj.category==='cafe';
+  const allEntries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const pendingEntries=allEntries.filter(e=>!e.cleared);
+  const clearedEntries=allEntries.filter(e=>e.cleared);
+  const showEntries=isCafeProj?allEntries:(deskActiveTab==='pending'?pendingEntries:clearedEntries);
+
+  let total=0,meOwes=0,partnerOwes=0;
+  pendingEntries.forEach(e=>{
+    total+=e.amt;
+    if(e.type==='split'){if(e.who==='me')partnerOwes+=e.amt/2;else meOwes+=e.amt/2;}
+    else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
+  });
+  const net=partnerOwes-meOwes;
+  const mePaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='me').reduce((s,e)=>s+e.amt,0);
+  const partnerPaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='partner').reduce((s,e)=>s+e.amt,0);
+  const mePct=total>0?Math.round((mePaid/total)*100):50;
+
+  let resultClass='result-box result-balanced',resultHtml='<span>🎉 เสมอกันพอดีเลย!</span><span class="result-amount">ไม่มีใครต้องโอน</span>';
+  if(Math.abs(net)>=1){
+    if(net>0){resultClass='result-box result-partner-owes';resultHtml=`<span>💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`;}
+    else{resultClass='result-box result-me-owes';resultHtml=`<span>💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`;}
+  }
+
+  cont.innerHTML=`
+    <div style="margin-bottom:.75rem;">
+      <button class="desk-back-btn" onclick="showDashboard(projects[currentProjId]?.category==='cafe'?'cafe':'family')">← กลับ Dashboard</button>
+      <div class="desk-proj-title-row">
+        <input class="proj-name-input" style="font-size:17px;" type="text" value="${esc(proj.name||'โปรเจคใหม่')}" onchange="updateProjectName('${currentProjId}',this.value)">
+        <button class="btn-del-proj" onclick="deleteProject('${currentProjId}')">ลบโปรเจค</button>
+      </div>
+    </div>
+    <div class="desk-detail-layout">
+      <div class="desk-form-col">
+        <div class="desk-box">
+          <div class="desk-box-lbl">${isCafeProj?'☕':'✏️'} เพิ่มรายการ</div>
+          <input class="desk-inp" type="text" id="desk-inp-desc" placeholder="${isCafeProj?'รายการอะไร? เช่น แป้งสาลี...':'ใช้จ่ายอะไร?'}">
+          ${isCafeProj?`
+          <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
+          <div class="who-pay-row">
+            <button class="who-pay-btn active-may" id="cafe-who-me" onclick="cafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
+            <button class="who-pay-btn" id="cafe-who-partner" onclick="cafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
+            <button class="who-pay-btn" id="cafe-who-pool" onclick="cafeSelectWho('pool')">🏦 ส่วนกลาง</button>
+            <button class="who-pay-btn" id="cafe-who-other" onclick="cafeSelectWho('other')">👤 อื่นๆ</button>
+          </div>
+          <input class="other-name-inp" id="cafe-other-name" type="text" placeholder="ระบุชื่อ..." style="display:none;">
+          `:`
+          <div class="desk-type-row">
+            <button class="desk-type-btn active-split" id="desk-type-split" onclick="deskSelectType('split')">🍱 หารกัน</button>
+            <button class="desk-type-btn" id="desk-type-paid" onclick="deskSelectType('paid')">💸 จ่ายแทน</button>
+            <button class="desk-type-btn" id="desk-type-pool" onclick="deskSelectType('pool')">🏦 กลาง</button>
+          </div>
+          <div class="desk-who-row" id="desk-who-row">
+            <button class="desk-who-btn active-me" id="desk-who-me" onclick="deskSelectWho('me')">🩷 ${esc(nameMe)}</button>
+            <button class="desk-who-btn" id="desk-who-partner" onclick="deskSelectWho('partner')">💜 ${esc(namePartner)}</button>
+          </div>
+          `}
+          <input class="desk-inp" type="number" id="desk-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
+          <input class="desk-inp" type="date" id="desk-inp-date">
+          <div style="height:1px;background:var(--border);margin:8px 0 7px;"></div>
+          <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">วิธีจ่าย (ไม่บังคับ)</div>
+          <div class="desk-pay-row">
+            <button class="desk-pay-btn" id="desk-pay-transfer" onclick="deskSelectPay('transfer')">🏦 โอนจ่าย</button>
+            <button class="desk-pay-btn" id="desk-pay-credit" onclick="deskSelectPay('credit')">💳 บัตรเครดิต</button>
+          </div>
+          <div id="desk-bank-wrap" style="display:none">${deskBankSelectHTML('desk-bank-sel')}</div>
+          <button class="${isCafeProj?'btn-add-cafe':'desk-btn-add'}" onclick="${isCafeProj?'cafeAddEntry()':'deskAddEntry()'}">+ เพิ่มรายการ</button>
+        </div>
+      </div>
+      <div class="desk-right-col">
+        <div class="desk-box">
+          <div class="desk-box-lbl">✨ สรุปยอด</div>
+          ${isCafeProj?`
+          <div class="who-summary-row who-s-may"><div><div class="who-s-name">🩷 ${esc(nameMe)}</div><div class="who-s-sub">สำรองจ่าย</div></div><div class="who-s-amt" style="color:var(--pink-deep);">${fmt(allEntries.filter(e=>e.who==='me').reduce((s,e)=>s+e.amt,0))}</div></div>
+          <div class="who-summary-row who-s-partner"><div><div class="who-s-name">💜 ${esc(namePartner)}</div><div class="who-s-sub">สำรองจ่าย</div></div><div class="who-s-amt" style="color:var(--lav-deep);">${fmt(allEntries.filter(e=>e.who==='partner').reduce((s,e)=>s+e.amt,0))}</div></div>
+          <div class="who-summary-row who-s-pool"><div><div class="who-s-name">🏦 ส่วนกลาง</div><div class="who-s-sub">ไม่ต้องคืน</div></div><div class="who-s-amt" style="color:var(--orange-deep);">${fmt(allEntries.filter(e=>e.who==='pool').reduce((s,e)=>s+e.amt,0))}</div></div>
+          ${[...new Set(allEntries.filter(e=>e.who==='other').map(e=>e.otherName||'อื่นๆ'))].map(n=>`<div class="who-summary-row who-s-other"><div><div class="who-s-name">👤 ${esc(n)}</div><div class="who-s-sub">สำรองจ่าย</div></div><div class="who-s-amt" style="color:#6B7280;">${fmt(allEntries.filter(e=>e.who==='other'&&(e.otherName||'อื่นๆ')===n).reduce((s,e)=>s+e.amt,0))}</div></div>`).join('')}
+          <div style="margin-top:8px;padding:8px;background:var(--yellow-soft);border-radius:8px;text-align:center;"><div style="font-size:9px;color:var(--muted);">รวมทั้งหมด</div><div style="font-size:16px;font-weight:800;color:var(--text);">${fmt(allEntries.reduce((s,e)=>s+e.amt,0))}</div></div>
+          `:`
+          <div class="desk-metrics">
+            <div class="desk-metric metric-total"><div class="metric-label">รวม</div><div class="metric-val">${fmt(total)}</div></div>
+            <div class="desk-metric metric-me"><div class="metric-label">${esc(nameMe)}</div><div class="metric-val">${fmt(mePaid)}</div></div>
+            <div class="desk-metric metric-partner"><div class="metric-label">${esc(namePartner)}</div><div class="metric-val">${fmt(partnerPaid)}</div></div>
+          </div>
+          <div class="bar-row"><span>${esc(nameMe)} ${mePct}%</span><span>${esc(namePartner)} ${100-mePct}%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${mePct}%"></div></div>
+          <div class="${resultClass}" style="font-size:13px;padding:12px;">${resultHtml}</div>
+          `}
+        </div>
+        <div class="desk-box">
+          ${!isCafeProj?`<div class="tabs-row">
+            <button class="tab-btn ${deskActiveTab==='pending'?'active':''}" onclick="deskSetTab('pending')">ค้างอยู่ (${pendingEntries.length})</button>
+            <button class="tab-btn ${deskActiveTab==='cleared'?'active':''}" onclick="deskSetTab('cleared')">✅ เคลียร์แล้ว (${clearedEntries.length})</button>
+          </div>`:'<div class="desk-box-lbl">🧾 รายการทั้งหมด</div>'}
+          ${showEntries.length===0?`<div class="empty-state"><span class="big">🌷</span><p>ไม่มีรายการ</p></div>`:
+          showEntries.map(e=>{
+            if(isCafeProj){
+              const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+              const pillStyle=e.who==='me'?'background:#FDE8F2;color:#C4608A;':e.who==='partner'?'background:#F0ECFF;color:#6B50C4;':e.who==='pool'?'background:#FFF5E6;color:#C47020;':'background:#F3F4F6;color:#6B7280;';
+              const dotColor=e.who==='me'?'#FDE8F2':e.who==='partner'?'#F0ECFF':e.who==='pool'?'#FFF5E6':'#F3F4F6';
+              return `<div class="desk-entry"><div class="desk-edot" style="width:7px;height:7px;border-radius:50%;background:${dotColor};flex-shrink:0;"></div><div class="desk-entry-left"><div class="desk-entry-name">${esc(e.desc)}</div><div class="desk-entry-sub">${e.date||''} ${e.bank?'• '+e.bank:''}</div></div><div class="desk-entry-amt">${fmt(e.amt)}</div><span class="pill" style="font-size:9px;padding:2px 7px;${pillStyle}">${whoTxt}</span><button class="desk-btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})">✏️</button><button class="desk-btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button></div>`;
+            }
+            const pi=getPillInfo(e);
+            return `<div class="desk-entry ${e.cleared?'desk-entry-cleared':''}">
+              <div class="desk-edot" style="width:7px;height:7px;border-radius:50%;background:${pi.dotColor};flex-shrink:0;"></div>
+              <div class="desk-entry-left"><div class="desk-entry-name">${esc(e.desc)}</div><div class="desk-entry-sub">${getEntrySubText(e)}</div></div>
+              <div class="desk-entry-amt">${fmt(e.amt)}</div>
+              <span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅':pi.txt}</span>
+              ${!e.cleared?`<button class="desk-btn-clear" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
+              <button class="desk-btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})">✏️</button>
+              <button class="desk-btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+  setTodayDate('desk-inp-date');
+  deskSelectType(deskSelectedType);
+  deskSelectWho(deskSelectedWho);
+}
+
+let cafeSelectedWho='me';
+window.cafeSelectWho=(who)=>{
+  cafeSelectedWho=who;
+  ['me','partner','pool','other'].forEach(w=>{
+    const el=document.getElementById('cafe-who-'+w);
+    if(!el)return;
+    const activeClass=w==='me'?'active-may':w==='partner'?'active-partner':w==='pool'?'active-pool':'active-other';
+    el.className='who-pay-btn'+(who===w?' '+activeClass:'');
+  });
+  const otherInp=document.getElementById('cafe-other-name');
+  if(otherInp)otherInp.style.display=who==='other'?'block':'none';
+};
+
+window.cafeAddEntry=()=>{
+  if(!db||!currentProjId)return;
+  const desc=document.getElementById('desk-inp-desc').value.trim();
+  const amt=parseFloat(document.getElementById('desk-inp-amt').value);
+  const dateVal=document.getElementById('desk-inp-date').value;
+  if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
+  if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  const bank=document.getElementById('desk-bank-sel')?.value||'';
+  const bankOther=document.getElementById('desk-bank-sel-other')?.value||'';
+  const otherName=document.getElementById('cafe-other-name')?.value.trim()||'';
+  const entry={desc,amt,who:cafeSelectedWho,date:dateDisplay,ts:dateObj.getTime()};
+  if(cafeSelectedWho==='other'&&otherName)entry.otherName=otherName;
+  if(deskSelectedPayMethod)entry.payMethod=deskSelectedPayMethod;
+  if(bank)entry.bank=bank;
+  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  push(ref(db,'projects/'+currentProjId+'/entries'),entry);
+  document.getElementById('desk-inp-desc').value='';
+  document.getElementById('desk-inp-amt').value='';
+  document.getElementById('desk-inp-desc').focus();
+  showToast('เพิ่มแล้ว! ☕');
+};
+
+window.deskSelectType=(type)=>{
+  deskSelectedType=type;
+  ['split','paid','pool'].forEach(t=>{
+    const el=document.getElementById('desk-type-'+t);
+    if(el)el.className='desk-type-btn'+(type===t?' active-'+type:'');
+  });
+  const wr=document.getElementById('desk-who-row');
+  if(wr)wr.style.display=(type==='pool'?'none':'flex');
+};
+
+window.deskSelectWho=(who)=>{
+  deskSelectedWho=who;
+  const bm=document.getElementById('desk-who-me'),bp=document.getElementById('desk-who-partner');
+  if(bm)bm.className='desk-who-btn'+(who==='me'?' active-me':'');
+  if(bp)bp.className='desk-who-btn'+(who==='partner'?' active-partner':'');
+};
+
+window.deskSelectPay=(method)=>{
+  deskSelectedPayMethod=deskSelectedPayMethod===method?'':method;
+  document.getElementById('desk-pay-transfer').className='desk-pay-btn'+(deskSelectedPayMethod==='transfer'?' active':'');
+  document.getElementById('desk-pay-credit').className='desk-pay-btn'+(deskSelectedPayMethod==='credit'?' active':'');
+  document.getElementById('desk-bank-wrap').style.display=deskSelectedPayMethod?'block':'none';
+};
+
+window.deskAddEntry=()=>{
+  if(!db||!currentProjId){showToast('ยังไม่ได้เชื่อมต่อ');return;}
+  const desc=document.getElementById('desk-inp-desc').value.trim();
+  const amt=parseFloat(document.getElementById('desk-inp-amt').value);
+  const dateVal=document.getElementById('desk-inp-date').value;
+  if(!desc){showToast('ใส่ชื่อรายการด้วยนะ 🌸');return;}
+  if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  const bank=document.getElementById('desk-bank-sel')?.value||'';
+  const bankOther=document.getElementById('desk-bank-sel-other')?.value||'';
+  const entry={desc,amt,type:deskSelectedType,who:deskSelectedType!=='pool'?deskSelectedWho:null,date:dateDisplay,ts:dateObj.getTime(),cleared:false};
+  if(deskSelectedPayMethod)entry.payMethod=deskSelectedPayMethod;
+  if(bank)entry.bank=bank;
+  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  push(ref(db,'projects/'+currentProjId+'/entries'),entry);
+  document.getElementById('desk-inp-desc').value='';
+  document.getElementById('desk-inp-amt').value='';
+  document.getElementById('desk-inp-desc').focus();
+  showToast('เพิ่มแล้ว! 🌸');
+};
+
+/* ═══════════════════════════
+   SHARED ACTIONS
+═══════════════════════════ */
+window.openNewProjForm=()=>{
+  modalCat='family';
+  if(isDesktop()){
+    // desktop: ใช้ prompt แบบง่ายๆ ก่อน
+    const name=prompt('ชื่อโปรเจค:','');
+    if(name===null)return;
+    const cat=confirm('เป็นโปรเจคร้านคาเฟ่ไหม?\nOK = ร้านคาเฟ่, Cancel = ครอบครัว')?'cafe':'family';
+    const emoji=prompt('Emoji (ไม่บังคับ):',cat==='cafe'?'☕':'🌸')||( cat==='cafe'?'☕':'🌸');
+    if(!db)return;
+    const newRef=push(rootRef);
+    set(newRef,{name:name.trim()||'โปรเจคใหม่',emoji,category:cat,entries:{}});
+    deskOpenProject(newRef.key);
+    showToast('เพิ่มโปรเจคแล้ว 🌸');
+  } else {
+    // mobile: แสดง view form
+    document.getElementById('mob-view-home').style.display='none';
+    document.getElementById('mob-view-detail').style.display='none';
+    document.getElementById('mob-view-newproj').style.display='block';
+    const fam=document.getElementById('mob-modal-cat-fam');
+    const cafe=document.getElementById('mob-modal-cat-cafe');
+    const nameInp=document.getElementById('mob-modal-proj-name');
+    const emojiInp=document.getElementById('mob-modal-emoji-inp');
+    if(fam){fam.style.borderColor='var(--pink)';fam.style.background='var(--pink-soft)';fam.style.color='var(--pink-deep)';}
+    if(cafe){cafe.style.borderColor='var(--border)';cafe.style.background='white';cafe.style.color='var(--muted)';}
+    if(nameInp)nameInp.value='';
+    if(emojiInp)emojiInp.value='';
+    window.scrollTo(0,0);
+  }
+};
+
+window.closeNewProjForm=()=>{
+  document.getElementById('mob-view-newproj').style.display='none';
+  document.getElementById('mob-view-home').style.display='block';
+};
+
+window.openNewProjModal=window.openNewProjForm;
+window.closeNewProjModal=window.closeNewProjForm;
+window.modalSelectCat=(cat)=>{
+  modalCat=cat;
+  const fam=document.getElementById('mob-modal-cat-fam');
+  const cafe=document.getElementById('mob-modal-cat-cafe');
+  if(fam){fam.style.borderColor=cat==='family'?'var(--pink)':'var(--border)';fam.style.background=cat==='family'?'var(--pink-soft)':'white';fam.style.color=cat==='family'?'var(--pink-deep)':'var(--muted)';}
+  if(cafe){cafe.style.borderColor=cat==='cafe'?'var(--orange)':'var(--border)';cafe.style.background=cat==='cafe'?'var(--orange-soft)':'white';cafe.style.color=cat==='cafe'?'var(--orange-deep)':'var(--muted)';}
+};
+window.createProject=()=>{
+  if(!db)return;
+  const nameInp=document.getElementById('mob-modal-proj-name');
+  const emojiInp=document.getElementById('mob-modal-emoji-inp');
+  const name=(nameInp?.value.trim())||'โปรเจคใหม่';
+  const emoji=(emojiInp?.value.trim())||(modalCat==='cafe'?'☕':'🌸');
+  const newRef=push(rootRef);
+  set(newRef,{name,emoji,category:modalCat,entries:{}});
+  closeNewProjForm();
+  if(isDesktop())deskOpenProject(newRef.key);
+  else mobOpenProject(newRef.key);
+  showToast('เพิ่มโปรเจคแล้ว 🌸');
+};
+
+window.addProject=()=>openNewProjForm();
+
+window.setCafeExportYear=(y)=>{cafeExportYear=y;renderDashboard();};
+
+window.exportCafe=async()=>{
+  showToast('กำลัง export... ⏳');
+  const year=cafeExportYear;
+  const allEntries=[];
+  Object.entries(projects).forEach(([pid,p])=>{
+    if(p.category!=='cafe')return;
+    Object.entries(p.entries||{}).forEach(([k,e])=>{
+      if(e.ts&&new Date(e.ts).getFullYear()===year){
+        allEntries.push({...e,key:k,projName:p.name||'โปรเจคใหม่'});
+      }
+    });
+  });
+  allEntries.sort((a,b)=>(a.ts||0)-(b.ts||0));
+
+  let totalAll=0,mePaidAll=0,partnerPaidAll=0,poolPaidAll=0;
+  const otherPaidAll={},projStats={},monthStats={};
+  allEntries.forEach(e=>{
+    totalAll+=e.amt;
+    if(e.who==='me')mePaidAll+=e.amt;
+    else if(e.who==='partner')partnerPaidAll+=e.amt;
+    else if(e.who==='pool')poolPaidAll+=e.amt;
+    else if(e.who==='other'&&e.otherName)otherPaidAll[e.otherName]=(otherPaidAll[e.otherName]||0)+e.amt;
+    if(!projStats[e.projName])projStats[e.projName]={total:0,count:0,me:0,partner:0,pool:0};
+    projStats[e.projName].total+=e.amt;projStats[e.projName].count++;
+    if(e.who==='me')projStats[e.projName].me+=e.amt;
+    else if(e.who==='partner')projStats[e.projName].partner+=e.amt;
+    else if(e.who==='pool')projStats[e.projName].pool+=e.amt;
+    const m=e.ts?new Date(e.ts).getMonth():0;
+    if(!monthStats[m])monthStats[m]={total:0,me:0,partner:0,pool:0};
+    monthStats[m].total+=e.amt;
+    if(e.who==='me')monthStats[m].me+=e.amt;
+    else if(e.who==='partner')monthStats[m].partner+=e.amt;
+    else if(e.who==='pool')monthStats[m].pool+=e.amt;
+  });
+
+  /* XLSX */
+  try{
+    const wb=XLSX.utils.book_new();
+    const sumData=[
+      [`จ่ายด้วยกันนะ — ร้านคาเฟ่ สรุปปี ${year}`],[`${nameMe} & ${namePartner}`],[],
+      ['ภาพรวม',''],['รวมทั้งหมด',totalAll],[`${nameMe} สำรองจ่าย`,mePaidAll],[`${namePartner} สำรองจ่าย`,partnerPaidAll],['ส่วนกลางร้าน',poolPaidAll],
+      ...Object.entries(otherPaidAll).map(([n,a])=>[`${n} สำรองจ่าย`,a]),
+      [],
+      ['แยกตามโปรเจค','รายการ',nameMe,namePartner,'ส่วนกลาง','รวม'],
+      ...Object.entries(projStats).map(([n,s])=>[n,s.count,s.me,s.partner,s.pool,s.total]),
+      [],
+      ['แยกตามเดือน',nameMe,namePartner,'ส่วนกลาง','รวม'],
+      ...MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,monthStats[i].me,monthStats[i].partner,monthStats[i].pool,monthStats[i].total]:[n,0,0,0,0]),
+    ];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumData),'Summary');
+    const rawData=[['วันที่','โปรเจค','รายการ','ใครสำรองจ่าย','จำนวนเงิน','วิธีจ่าย','ธนาคาร']];
+    allEntries.forEach(e=>{
+      const whoLabel=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+      rawData.push([e.date||'',e.projName,e.desc,whoLabel,e.amt,e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'-',e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'-')]);
+    });
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rawData),'Raw Data');
+    XLSX.writeFile(wb,`cafe-expenses-${year}.xlsx`);
+  }catch(err){console.error(err);}
+
+  /* PDF */
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    doc.setFont('helvetica');
+    doc.setFontSize(18);doc.setTextColor(196,112,32);doc.text('Cafe Expenses',14,18);
+    doc.setFontSize(11);doc.setTextColor(100,100,100);doc.text(`${nameMe} & ${namePartner} — Summary ${year}`,14,25);
+    const cards=[['Total',`฿${Math.round(totalAll).toLocaleString()}`,'#FFF5CC'],[`${nameMe} paid`,`฿${Math.round(mePaidAll).toLocaleString()}`,'#FDE8F2'],[`${namePartner} paid`,`฿${Math.round(partnerPaidAll).toLocaleString()}`,'#F0ECFF'],['Shop fund',`฿${Math.round(poolPaidAll).toLocaleString()}`,'#FFF5E6']];
+    doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('OVERVIEW',14,34);doc.setDrawColor(242,224,236);doc.line(14,36,196,36);
+    cards.forEach((c,i)=>{const x=14+(i%2)*91,y=39+Math.floor(i/2)*16;doc.setFillColor(parseInt(c[2].slice(1,3),16),parseInt(c[2].slice(3,5),16),parseInt(c[2].slice(5,7),16));doc.roundedRect(x,y,87,13,2,2,'F');doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text(c[0],x+4,y+5);doc.setFontSize(12);doc.setTextColor(61,37,53);doc.text(c[1],x+4,y+11);});
+    let y=76;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY PROJECT',14,y);doc.line(14,y+2,196,y+2);
+    doc.autoTable({startY:y+4,head:[['Project','Items',nameMe,namePartner,'Fund','Total']],body:Object.entries(projStats).map(([n,s])=>[n,s.count,`฿${Math.round(s.me).toLocaleString()}`,`฿${Math.round(s.partner).toLocaleString()}`,`฿${Math.round(s.pool).toLocaleString()}`,`฿${Math.round(s.total).toLocaleString()}`]),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[255,179,71],textColor:[61,37,53]},margin:{left:14,right:14}});
+    y=doc.lastAutoTable.finalY+8;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY MONTH',14,y);doc.line(14,y+2,196,y+2);
+    doc.autoTable({startY:y+4,head:[['Month',nameMe,namePartner,'Fund','Total']],body:MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,`฿${Math.round(monthStats[i].me).toLocaleString()}`,`฿${Math.round(monthStats[i].partner).toLocaleString()}`,`฿${Math.round(monthStats[i].pool).toLocaleString()}`,`฿${Math.round(monthStats[i].total).toLocaleString()}`]:[n,'฿0','฿0','฿0','฿0']),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[255,212,160],textColor:[61,37,53]},margin:{left:14,right:14}});
+    doc.addPage();
+    doc.setFontSize(13);doc.setTextColor(196,112,32);doc.text('All Entries',14,16);
+    doc.autoTable({startY:22,head:[['Date','Project','Item','Who','Amount','Bank']],body:allEntries.map(e=>{const w=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'Fund':(e.otherName||'Other');return[e.date||'',e.projName,e.desc,w,`฿${Math.round(e.amt).toLocaleString()}`,e.bank||'-'];}),styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[255,179,71],textColor:'white'},margin:{left:14,right:14}});
+    doc.setFontSize(8);doc.setTextColor(180,154,170);doc.text(`จ่ายด้วยกันนะ ☕ Cafe — ปี ${year}`,14,doc.internal.pageSize.height-8);
+    doc.save(`cafe-expenses-${year}.pdf`);
+  }catch(err){console.error(err);}
+  showToast('Export เรียบร้อย! ☕');
+};
+
+window.deleteProject=(id)=>{
+  if(!confirm('ลบโปรเจคนี้?'))return;
+  remove(ref(db,'projects/'+id));
+  if(isDesktop())showDashboard();
+  else mobGoHome();
+  showToast('ลบแล้ว');
+};
+
+window.updateProjectName=(id,name)=>{if(db)update(ref(db,'projects/'+id),{name});};
+
+window.clearEntry=(projId,key)=>{
+  update(ref(db,'projects/'+projId+'/entries/'+key),{cleared:true});
+  showToast('เคลียร์แล้ว ✅');
+};
+
+window.deleteEntry=(projId,key)=>{
+  if(!confirm('ลบรายการนี้?'))return;
+  remove(ref(db,'projects/'+projId+'/entries/'+key));
+};
+
+window.editEntry=(projId,key,oldDesc,oldAmt)=>{
+  const newDesc=prompt('แก้ชื่อรายการ:',oldDesc);if(newDesc===null)return;
+  const newAmtStr=prompt('แก้จำนวนเงิน:',oldAmt);if(newAmtStr===null)return;
+  const newAmt=parseFloat(newAmtStr);
+  if(!newDesc.trim()){showToast('ชื่อห้ามว่าง');return;}
+  if(isNaN(newAmt)||newAmt<=0){showToast('จำนวนเงินไม่ถูกต้อง');return;}
+  update(ref(db,'projects/'+projId+'/entries/'+key),{desc:newDesc.trim(),amt:newAmt});
+  showToast('แก้ไขแล้ว 🌸');
+};
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+window.showToast=showToast;
+</script>
 </body>
 </html>
