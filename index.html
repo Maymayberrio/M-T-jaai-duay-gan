@@ -928,7 +928,11 @@ function renderMobDetail(){
         <button class="pay-btn" id="mob-pay-credit" onclick="mobSelectPay('credit')">💳 บัตรเครดิต</button>
       </div>
       <div id="mob-bank-wrap" style="display:none">${bankSelectHTML('mob-bank-sel')}</div>
-      <button class="${isCafe?'btn-add-cafe':'btn-add'}" onclick="${isCafe?'mobAddCafeEntry()':'mobAddEntry()'}">+ เพิ่มรายการ</button>
+      ${isCafe?
+        `<button class="btn-add-cafe" onclick="mobAddCafeEntry()">+ เพิ่มรายการ</button>`
+        :
+        `<button class="btn-add" onclick="mobAddEntry()">+ เพิ่มรายการ</button>`
+      }
     </div>
 
     <div class="card">
