@@ -192,10 +192,15 @@ input,select{font-family:'Sarabun',sans-serif;}
 .result-partner-owes{background:var(--pink-soft);color:var(--pink-deep);}
 .result-amount{font-size:20px;display:block;margin-top:4px;}
 
-/* ══════════════════════════════
-   DESKTOP LAYOUT (≥ 768px)
-══════════════════════════════ */
-@media(min-width:768px){
+/* CAFE FORM */
+.who-pay-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+.who-pay-btn{padding:7px 8px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);cursor:pointer;}
+.who-pay-btn.active-may{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+.who-pay-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+.who-pay-btn.active-pool{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
+.who-pay-btn.active-other{background:#F3F4F6;border-color:#D1D5DB;color:#374151;}
+.cafe-other-inp{width:100%;border:1.5px solid var(--orange);border-radius:var(--radius-xs);padding:9px 13px;font-size:13px;color:var(--text);background:var(--bg);outline:none;margin-bottom:7px;}
+.btn-add-cafe{width:100%;padding:12px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:var(--radius-xs);font-size:15px;font-weight:600;cursor:pointer;}
   .desktop-only{display:block;}
   .mobile-only{display:none;}
   body{padding-bottom:0;}
@@ -839,6 +844,7 @@ function renderMobHome(){
 
 window.mobOpenProject=(id)=>{
   currentProjId=id;
+  cafeWho='me';
   document.getElementById('mob-view-home').style.display='none';
   document.getElementById('mob-view-newproj').style.display='none';
   document.getElementById('mob-view-detail').style.display='block';
@@ -1411,6 +1417,7 @@ window.deleteYearData=(year)=>{
 /* DESKTOP PROJECT DETAIL */
 window.deskOpenProject=(id)=>{
   currentProjId=id;
+  deskCafeWho='me';
   document.getElementById('desk-view-dashboard').style.display='none';
   document.getElementById('desk-view-detail').style.display='block';
   document.getElementById('desk-view-newproj').style.display='none';
