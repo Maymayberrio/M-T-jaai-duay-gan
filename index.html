@@ -192,6 +192,7 @@ input,select{font-family:'Sarabun',sans-serif;}
 .result-partner-owes{background:var(--pink-soft);color:var(--pink-deep);}
 .result-amount{font-size:20px;display:block;margin-top:4px;}
 
+
 /* CAFE FORM */
 .who-pay-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
 .who-pay-btn{padding:7px 8px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);cursor:pointer;}
@@ -241,16 +242,6 @@ input,select{font-family:'Sarabun',sans-serif;}
   .desk-proj-item.cafe-active{background:var(--orange-soft);border-color:var(--orange);}
   .desk-proj-item.cafe-dash{background:var(--orange-soft);border-color:var(--orange);}
   .desk-proj-amt.cafe{color:var(--orange-deep);}
-
-  /* CAFE FORM */
-  .who-pay-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
-  .who-pay-btn{padding:7px 8px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);cursor:pointer;}
-  .who-pay-btn.active-may{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
-  .who-pay-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
-  .who-pay-btn.active-pool{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
-  .who-pay-btn.active-other{background:#F3F4F6;border-color:#D1D5DB;color:#374151;}
-  .cafe-other-inp{width:100%;border:1.5px solid var(--orange);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text);background:var(--bg);outline:none;margin-bottom:6px;}
-  .btn-add-cafe{width:100%;padding:9px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;}
 
   /* MAIN CONTENT */
   .desk-main{flex:1;overflow-y:auto;padding:.875rem;}
@@ -436,12 +427,8 @@ input,select{font-family:'Sarabun',sans-serif;}
           <div class="card-title">➕ เพิ่มโปรเจคใหม่</div>
           <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">เลือกประเภท</div>
           <div style="display:flex;gap:8px;margin-bottom:.875rem;">
-            <button id="mob-cat-fam" onclick="mobSelectCat('family')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--pink);border-radius:10px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;">
-              <span style="font-size:22px;display:block;margin-bottom:4px;">🏠</span>ครอบครัว
-            </button>
-            <button id="mob-cat-cafe" onclick="mobSelectCat('cafe')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--muted);text-align:center;cursor:pointer;">
-              <span style="font-size:22px;display:block;margin-bottom:4px;">☕</span>ร้านคาเฟ่
-            </button>
+            <button id="mob-cat-fam" onclick="mobSelectCat('family')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--pink);border-radius:10px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;"><span style="font-size:22px;display:block;margin-bottom:4px;">🏠</span>ครอบครัว</button>
+            <button id="mob-cat-cafe" onclick="mobSelectCat('cafe')" style="flex:1;padding:14px 6px;font-size:12px;font-weight:700;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--muted);text-align:center;cursor:pointer;"><span style="font-size:22px;display:block;margin-bottom:4px;">☕</span>ร้านคาเฟ่</button>
           </div>
           <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.5px;">ชื่อโปรเจค</div>
           <input class="inp-desc" type="text" id="mob-new-name" placeholder="เช่น เที่ยวทะเล, ค่าวัตถุดิบ...">
@@ -593,13 +580,13 @@ let currentProjId = null;
 let nameMe = 'ฉัน', namePartner = 'แฟน';
 let selectedType = 'split', selectedWho = 'me', selectedPayMethod = '', selectedBank = '';
 let deskSelectedType = 'split', deskSelectedWho = 'me', deskSelectedPayMethod = '', deskSelectedBank = '';
-let activeTab = 'pending';
+let activeTab = 'pending'; // 'pending' | 'cleared'
 let deskActiveTab = 'pending';
 let selectedYear = new Date().getFullYear();
 let selectedMonth = null;
 let newProjCat = 'family';
-let cafeWho = 'me'; // สำหรับมือถือ
-let deskCafeWho = 'me'; // สำหรับคอม
+let cafeWho = 'me';
+let deskCafeWho = 'me';
 const isDesktop = () => window.innerWidth >= 768;
 const COLORS = ['pc-pink','pc-lav','pc-mint','pc-yellow','pc-peach'];
 const EMOJIS = ['🌸','🏖️','🏠','🍜','🎉','✈️','🎁','🍰','🎪','💫'];
@@ -826,21 +813,15 @@ function renderMobHome(){
   }
   const monthTotal=getThisMonthTotal();
   monthBox.innerHTML=`<div><div class="mob-sum-lbl lav">📅 เดือนนี้ใช้ไป</div><div class="mob-sum-amt lav">${fmt(monthTotal)}</div></div><div class="mob-sum-emoji">📊</div>`;
-
   const famIds=Object.keys(projects).filter(id=>projects[id].category!=='cafe');
   const cafeIds=Object.keys(projects).filter(id=>projects[id].category==='cafe');
-
   const renderCards=(ids,isCafe)=>ids.map((id,i)=>{
     const p=projects[id];const color=COLORS[i%COLORS.length];const emoji=p.emoji||EMOJIS[i%EMOJIS.length];
-    if(isCafe){
-      const total=Object.values(p.entries||{}).reduce((s,e)=>s+e.amt,0);
-      return`<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')"><div class="proj-home-emoji">${emoji}</div><div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div><div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div><div class="proj-home-lbl">รวม</div><div class="proj-home-amt" style="color:var(--orange-deep);">${fmt(total)}</div></div>`;
-    }
+    if(isCafe){const total=Object.values(p.entries||{}).reduce((s,e)=>s+e.amt,0);return`<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')"><div class="proj-home-emoji">${emoji}</div><div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div><div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div><div class="proj-home-lbl">รวม</div><div class="proj-home-amt" style="color:var(--orange-deep);">${fmt(total)}</div></div>`;}
     const n=calcNet(p.entries||{});let amtClass='amt-balanced',amtLbl='เสมอกัน',amtVal='฿0';
     if(Math.abs(n)>=1){if(n>0){amtClass='amt-partner';amtLbl=namePartner+' ต้องโอน';amtVal=fmt(n);}else{amtClass='amt-me';amtLbl=nameMe+' ต้องโอน';amtVal=fmt(Math.abs(n));}}
     return`<div class="proj-card-home ${color}" onclick="mobOpenProject('${id}')"><div class="proj-home-emoji">${emoji}</div><div class="proj-home-name">${esc(p.name||'โปรเจคใหม่')}</div><div class="proj-home-count">${Object.keys(p.entries||{}).length} รายการ</div><div class="proj-home-lbl">${amtLbl}</div><div class="proj-home-amt ${amtClass}">${amtVal}</div></div>`;
   }).join('');
-
   document.getElementById('mob-fam-grid').innerHTML=renderCards(famIds,false);
   document.getElementById('mob-cafe-grid').innerHTML=renderCards(cafeIds,true);
   document.getElementById('mob-fam-section').style.display=famIds.length?'block':'none';
@@ -848,8 +829,7 @@ function renderMobHome(){
 }
 
 window.mobOpenProject=(id)=>{
-  currentProjId=id;
-  cafeWho='me';
+  currentProjId=id;cafeWho='me';
   document.getElementById('mob-view-home').style.display='none';
   document.getElementById('mob-view-newproj').style.display='none';
   document.getElementById('mob-view-detail').style.display='block';
@@ -892,7 +872,7 @@ function renderMobDetail(){
   const allEntries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
   const pendingEntries=allEntries.filter(e=>!e.cleared);
   const clearedEntries=allEntries.filter(e=>e.cleared);
-  const showEntries=activeTab==='pending'?pendingEntries:clearedEntries;
+  const showEntries=isCafe?allEntries:(activeTab==='pending'?pendingEntries:clearedEntries);
 
   let total=0,meOwes=0,partnerOwes=0;
   pendingEntries.forEach(e=>{
@@ -929,7 +909,7 @@ function renderMobDetail(){
         <button class="who-pay-btn" id="mob-cafe-who-other" onclick="mobCafeSelectWho('other')">👤 อื่นๆ</button>
       </div>
       <input class="inp-desc cafe-other-inp" type="text" id="mob-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">
-      `:`
+      `:\`
       <div class="type-row">
         <button class="type-btn active-split" id="mob-type-split" onclick="mobSelectType('split')">🍱 หารกัน</button>
         <button class="type-btn" id="mob-type-paid" onclick="mobSelectType('paid')">💸 จ่ายแทน</button>
@@ -939,7 +919,7 @@ function renderMobDetail(){
         <button class="who-btn active-me" id="mob-who-me" onclick="mobSelectWho('me')">🩷 ${esc(nameMe)}</button>
         <button class="who-btn" id="mob-who-partner" onclick="mobSelectWho('partner')">💜 ${esc(namePartner)}</button>
       </div>
-      `}
+      \`}
       <input class="inp-amt" type="number" id="mob-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
       <input class="inp-date" type="date" id="mob-inp-date">
       <div class="form-divider"></div>
@@ -949,7 +929,7 @@ function renderMobDetail(){
         <button class="pay-btn" id="mob-pay-credit" onclick="mobSelectPay('credit')">💳 บัตรเครดิต</button>
       </div>
       <div id="mob-bank-wrap" style="display:none">${bankSelectHTML('mob-bank-sel')}</div>
-      <button class="${isCafe?'btn-add-cafe':'btn-add'}" onclick="${isCafe?'mobAddCafeEntry()':'mobAddEntry()'}">+ เพิ่มรายการ</button>
+      <button class="${isCafe?'btn-add-cafe':'btn-add'}" onclick="${isCafe?'mobAddCafeEntry()':'mobAddEntry()}">+ เพิ่มรายการ</button>
     </div>
 
     <div class="card">
@@ -998,8 +978,7 @@ window.mobSetTab=(tab)=>{activeTab=tab;renderMobDetail();};
 window.mobCafeSelectWho=(who)=>{
   cafeWho=who;
   ['me','partner','pool','other'].forEach(w=>{
-    const b=document.getElementById('mob-cafe-who-'+w);
-    if(!b)return;
+    const b=document.getElementById('mob-cafe-who-'+w);if(!b)return;
     const cls={me:'active-may',partner:'active-partner',pool:'active-pool',other:'active-other'};
     b.className='who-pay-btn'+(who===w?' '+cls[w]:'');
   });
@@ -1022,11 +1001,9 @@ window.mobAddCafeEntry=()=>{
   const entry={desc,amt,who:cafeWho,date:dateDisplay,ts:dateObj.getTime()};
   if(cafeWho==='other'&&otherName)entry.otherName=otherName;
   if(selectedPayMethod)entry.payMethod=selectedPayMethod;
-  if(bank)entry.bank=bank;
-  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  if(bank)entry.bank=bank;if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
   push(ref(db,'projects/'+currentProjId+'/entries'),entry);
-  document.getElementById('mob-inp-desc').value='';
-  document.getElementById('mob-inp-amt').value='';
+  document.getElementById('mob-inp-desc').value='';document.getElementById('mob-inp-amt').value='';
   showToast('เพิ่มแล้ว! ☕');
 };
 
@@ -1101,8 +1078,7 @@ window.showDashboard=()=>{
   document.getElementById('desk-view-dashboard').style.display='block';
   document.getElementById('desk-view-detail').style.display='none';
   document.getElementById('desk-view-newproj').style.display='none';
-  renderDeskSidebar();
-  renderDashboard();
+  renderDeskSidebar();renderDashboard();
 };
 
 const MONTH_NAMES=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
@@ -1421,13 +1397,11 @@ window.deleteYearData=(year)=>{
 
 /* DESKTOP PROJECT DETAIL */
 window.deskOpenProject=(id)=>{
-  currentProjId=id;
-  deskCafeWho='me';
+  currentProjId=id;deskCafeWho='me';
   document.getElementById('desk-view-dashboard').style.display='none';
   document.getElementById('desk-view-detail').style.display='block';
   document.getElementById('desk-view-newproj').style.display='none';
-  renderDeskSidebar();
-  renderDeskDetail();
+  renderDeskSidebar();renderDeskDetail();
 };
 
 function renderDeskDetail(){
@@ -1549,8 +1523,7 @@ window.deskSetTab=(tab)=>{deskActiveTab=tab;renderDeskDetail();};
 window.deskCafeSelectWho=(who)=>{
   deskCafeWho=who;
   ['me','partner','pool','other'].forEach(w=>{
-    const b=document.getElementById('desk-cafe-who-'+w);
-    if(!b)return;
+    const b=document.getElementById('desk-cafe-who-'+w);if(!b)return;
     const cls={me:'active-may',partner:'active-partner',pool:'active-pool',other:'active-other'};
     b.className='who-pay-btn'+(who===w?' '+cls[w]:'');
   });
@@ -1573,13 +1546,40 @@ window.deskAddCafeEntry=()=>{
   const entry={desc,amt,who:deskCafeWho,date:dateDisplay,ts:dateObj.getTime()};
   if(deskCafeWho==='other'&&otherName)entry.otherName=otherName;
   if(deskSelectedPayMethod)entry.payMethod=deskSelectedPayMethod;
-  if(bank)entry.bank=bank;
-  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  if(bank)entry.bank=bank;if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
   push(ref(db,'projects/'+currentProjId+'/entries'),entry);
-  document.getElementById('desk-inp-desc').value='';
-  document.getElementById('desk-inp-amt').value='';
-  document.getElementById('desk-inp-desc').focus();
-  showToast('เพิ่มแล้ว! ☕');
+  document.getElementById('desk-inp-desc').value='';document.getElementById('desk-inp-amt').value='';
+  document.getElementById('desk-inp-desc').focus();showToast('เพิ่มแล้ว! ☕');
+};
+
+window.showDeskNewProj=()=>{
+  newProjCat='family';
+  document.getElementById('desk-view-dashboard').style.display='none';
+  document.getElementById('desk-view-detail').style.display='none';
+  document.getElementById('desk-view-newproj').style.display='block';
+  document.getElementById('desk-cat-fam').style.cssText='flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid var(--pink);border-radius:9px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;';
+  document.getElementById('desk-cat-cafe').style.cssText='flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:9px;background:var(--surface);color:var(--muted);text-align:center;cursor:pointer;';
+  document.getElementById('desk-new-create-btn').style.background='linear-gradient(135deg,#F472A8,#C4608A)';
+  document.getElementById('desk-new-name').value='';document.getElementById('desk-new-emoji').value='';
+  setTimeout(()=>document.getElementById('desk-new-name')?.focus(),100);
+};
+
+window.deskSelectCat=cat=>{
+  newProjCat=cat;
+  document.getElementById('desk-cat-fam').style.cssText=`flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid ${cat==='family'?'var(--pink)':'var(--border)'};border-radius:9px;background:${cat==='family'?'var(--pink-soft)':'var(--surface)'};color:${cat==='family'?'var(--pink-deep)':'var(--muted)'};text-align:center;cursor:pointer;`;
+  document.getElementById('desk-cat-cafe').style.cssText=`flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid ${cat==='cafe'?'var(--orange)':'var(--border)'};border-radius:9px;background:${cat==='cafe'?'var(--orange-soft)':'var(--surface)'};color:${cat==='cafe'?'var(--orange-deep)':'var(--muted)'};text-align:center;cursor:pointer;`;
+  document.getElementById('desk-new-create-btn').style.background=cat==='cafe'?'linear-gradient(135deg,#FFD4A0,#FFB347)':'linear-gradient(135deg,#F472A8,#C4608A)';
+};
+
+window.createProject=()=>{
+  if(!db)return;
+  const isD=isDesktop();
+  const name=(document.getElementById(isD?'desk-new-name':'mob-new-name')?.value.trim())||'โปรเจคใหม่';
+  const emoji=(document.getElementById(isD?'desk-new-emoji':'mob-new-emoji')?.value.trim())||(newProjCat==='cafe'?'☕':'🌸');
+  const newRef=push(rootRef);
+  set(newRef,{name,emoji,category:newProjCat,entries:{}});
+  if(isD)deskOpenProject(newRef.key);else mobOpenProject(newRef.key);
+  showToast('เพิ่มโปรเจคแล้ว 🌸');
 };
 
 window.deskSelectType=(type)=>{
@@ -1631,41 +1631,7 @@ window.deskAddEntry=()=>{
 /* ═══════════════════════════
    SHARED ACTIONS
 ═══════════════════════════ */
-window.showDeskNewProj=()=>{
-  newProjCat='family';
-  document.getElementById('desk-view-dashboard').style.display='none';
-  document.getElementById('desk-view-detail').style.display='none';
-  document.getElementById('desk-view-newproj').style.display='block';
-  document.getElementById('desk-cat-fam').style.cssText='flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid var(--pink);border-radius:9px;background:var(--pink-soft);color:var(--pink-deep);text-align:center;cursor:pointer;';
-  document.getElementById('desk-cat-cafe').style.cssText='flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid var(--border);border-radius:9px;background:var(--surface);color:var(--muted);text-align:center;cursor:pointer;';
-  document.getElementById('desk-new-create-btn').style.background='linear-gradient(135deg,#F472A8,#C4608A)';
-  document.getElementById('desk-new-name').value='';
-  document.getElementById('desk-new-emoji').value='';
-  setTimeout(()=>document.getElementById('desk-new-name')?.focus(),100);
-};
-
-window.deskSelectCat=cat=>{
-  newProjCat=cat;
-  document.getElementById('desk-cat-fam').style.cssText=`flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid ${cat==='family'?'var(--pink)':'var(--border)'};border-radius:9px;background:${cat==='family'?'var(--pink-soft)':'var(--surface)'};color:${cat==='family'?'var(--pink-deep)':'var(--muted)'};text-align:center;cursor:pointer;`;
-  document.getElementById('desk-cat-cafe').style.cssText=`flex:1;padding:12px 6px;font-size:11px;font-weight:700;border:1.5px solid ${cat==='cafe'?'var(--orange)':'var(--border)'};border-radius:9px;background:${cat==='cafe'?'var(--orange-soft)':'var(--surface)'};color:${cat==='cafe'?'var(--orange-deep)':'var(--muted)'};text-align:center;cursor:pointer;`;
-  document.getElementById('desk-new-create-btn').style.background=cat==='cafe'?'linear-gradient(135deg,#FFD4A0,#FFB347)':'linear-gradient(135deg,#F472A8,#C4608A)';
-};
-
-window.createProject=()=>{
-  if(!db)return;
-  const isD=isDesktop();
-  const name=(document.getElementById(isD?'desk-new-name':'mob-new-name')?.value.trim())||'โปรเจคใหม่';
-  const emoji=(document.getElementById(isD?'desk-new-emoji':'mob-new-emoji')?.value.trim())||(newProjCat==='cafe'?'☕':'🌸');
-  const newRef=push(rootRef);
-  set(newRef,{name,emoji,category:newProjCat,entries:{}});
-  if(isD)deskOpenProject(newRef.key);
-  else mobOpenProject(newRef.key);
-  showToast('เพิ่มโปรเจคแล้ว 🌸');
-};
-
-window.addProject=()=>{
-  if(isDesktop())showDeskNewProj();else showMobNewProj();
-};
+window.addProject=()=>{if(isDesktop())showDeskNewProj();else showMobNewProj();};
 
 window.deleteProject=(id)=>{
   if(!confirm('ลบโปรเจคนี้?'))return;
