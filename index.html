@@ -901,14 +901,14 @@ function renderMobDetail(){
       <div class="card-title">${isCafe?'☕ เพิ่มรายการ':'✏️ เพิ่มรายการ'}</div>
       <input class="inp-desc" type="text" id="mob-inp-desc" placeholder="${isCafe?'รายการอะไร? เช่น แป้งสาลี...':'ใช้จ่ายอะไร? เช่น ข้าวเที่ยง...'}">
       ${isCafe?
-      `<div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
-      <div class="who-pay-row">
-        <button class="who-pay-btn ${cafeWho==='me'?'active-may':''}" id="mob-cafe-who-me" onclick="mobCafeSelectWho('me')">🩷 `+esc(nameMe)+`</button>
-        <button class="who-pay-btn ${cafeWho==='partner'?'active-partner':''}" id="mob-cafe-who-partner" onclick="mobCafeSelectWho('partner')">💜 `+esc(namePartner)+`</button>
-        <button class="who-pay-btn ${cafeWho==='pool'?'active-pool':''}" id="mob-cafe-who-pool" onclick="mobCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
-        <button class="who-pay-btn ${cafeWho==='other'?'active-other':''}" id="mob-cafe-who-other" onclick="mobCafeSelectWho('other')">👤 อื่นๆ</button>
-      </div>
-      <input class="inp-desc cafe-other-inp" type="text" id="mob-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">`
+      '<div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>'
+      +'<div class="who-pay-row">'
+      +'<button class="who-pay-btn'+(cafeWho==='me'?' active-may':'')+'" id="mob-cafe-who-me" onclick="mobCafeSelectWho(\'me\')">🩷 '+esc(nameMe)+'</button>'
+      +'<button class="who-pay-btn'+(cafeWho==='partner'?' active-partner':'')+'" id="mob-cafe-who-partner" onclick="mobCafeSelectWho(\'partner\')">💜 '+esc(namePartner)+'</button>'
+      +'<button class="who-pay-btn'+(cafeWho==='pool'?' active-pool':'')+'" id="mob-cafe-who-pool" onclick="mobCafeSelectWho(\'pool\')">🏦 ส่วนกลาง</button>'
+      +'<button class="who-pay-btn'+(cafeWho==='other'?' active-other':'')+'" id="mob-cafe-who-other" onclick="mobCafeSelectWho(\'other\')">👤 อื่นๆ</button>'
+      +'</div>'
+      +'<input class="inp-desc cafe-other-inp" type="text" id="mob-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">'
       :
       `<div class="type-row">
         <button class="type-btn active-split" id="mob-type-split" onclick="mobSelectType('split')">🍱 หารกัน</button>
@@ -1449,17 +1449,17 @@ function renderDeskDetail(){
         <div class="desk-box">
           <div class="desk-box-lbl">${isCafe?'☕ เพิ่มรายการ':'✏️ เพิ่มรายการ'}</div>
           <input class="desk-inp" type="text" id="desk-inp-desc" placeholder="${isCafe?'รายการอะไร?':'ใช้จ่ายอะไร?'}">
-          ${isCafe?`
-          <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
-          <div class="who-pay-row">
-            <button class="who-pay-btn ${deskCafeWho==='me'?'active-may':''}" id="desk-cafe-who-me" onclick="deskCafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
-            <button class="who-pay-btn ${deskCafeWho==='partner'?'active-partner':''}" id="desk-cafe-who-partner" onclick="deskCafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
-            <button class="who-pay-btn ${deskCafeWho==='pool'?'active-pool':''}" id="desk-cafe-who-pool" onclick="deskCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
-            <button class="who-pay-btn ${deskCafeWho==='other'?'active-other':''}" id="desk-cafe-who-other" onclick="deskCafeSelectWho('other')">👤 อื่นๆ</button>
-          </div>
-          <input class="desk-inp cafe-other-inp" type="text" id="desk-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">
-          `:`
-          <div class="desk-type-row">
+          ${isCafe?
+          '<div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>'
+          +'<div class="who-pay-row">'
+          +'<button class="who-pay-btn'+(deskCafeWho==='me'?' active-may':'')+'" id="desk-cafe-who-me" onclick="deskCafeSelectWho(\'me\')">🩷 '+esc(nameMe)+'</button>'
+          +'<button class="who-pay-btn'+(deskCafeWho==='partner'?' active-partner':'')+'" id="desk-cafe-who-partner" onclick="deskCafeSelectWho(\'partner\')">💜 '+esc(namePartner)+'</button>'
+          +'<button class="who-pay-btn'+(deskCafeWho==='pool'?' active-pool':'')+'" id="desk-cafe-who-pool" onclick="deskCafeSelectWho(\'pool\')">🏦 ส่วนกลาง</button>'
+          +'<button class="who-pay-btn'+(deskCafeWho==='other'?' active-other':'')+'" id="desk-cafe-who-other" onclick="deskCafeSelectWho(\'other\')">👤 อื่นๆ</button>'
+          +'</div>'
+          +'<input class="desk-inp cafe-other-inp" type="text" id="desk-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">'
+          :
+          `<div class="desk-type-row">
             <button class="desk-type-btn active-split" id="desk-type-split" onclick="deskSelectType('split')">🍱 หารกัน</button>
             <button class="desk-type-btn" id="desk-type-paid" onclick="deskSelectType('paid')">💸 จ่ายแทน</button>
             <button class="desk-type-btn" id="desk-type-pool" onclick="deskSelectType('pool')">🏦 กลาง</button>
@@ -1467,8 +1467,7 @@ function renderDeskDetail(){
           <div class="desk-who-row" id="desk-who-row">
             <button class="desk-who-btn active-me" id="desk-who-me" onclick="deskSelectWho('me')">🩷 ${esc(nameMe)}</button>
             <button class="desk-who-btn" id="desk-who-partner" onclick="deskSelectWho('partner')">💜 ${esc(namePartner)}</button>
-          </div>
-          `}
+          </div>`}
           <input class="desk-inp" type="number" id="desk-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
           <input class="desk-inp" type="date" id="desk-inp-date">
           <div style="height:1px;background:var(--border);margin:8px 0 7px;"></div>
