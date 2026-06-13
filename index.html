@@ -903,10 +903,10 @@ function renderMobDetail(){
       ${isCafe?
       `<div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
       <div class="who-pay-row">
-        <button class="who-pay-btn active-may" id="mob-cafe-who-me" onclick="mobCafeSelectWho('me')">🩷 `+esc(nameMe)+`</button>
-        <button class="who-pay-btn" id="mob-cafe-who-partner" onclick="mobCafeSelectWho('partner')">💜 `+esc(namePartner)+`</button>
-        <button class="who-pay-btn" id="mob-cafe-who-pool" onclick="mobCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
-        <button class="who-pay-btn" id="mob-cafe-who-other" onclick="mobCafeSelectWho('other')">👤 อื่นๆ</button>
+        <button class="who-pay-btn ${cafeWho==='me'?'active-may':''}" id="mob-cafe-who-me" onclick="mobCafeSelectWho('me')">🩷 `+esc(nameMe)+`</button>
+        <button class="who-pay-btn ${cafeWho==='partner'?'active-partner':''}" id="mob-cafe-who-partner" onclick="mobCafeSelectWho('partner')">💜 `+esc(namePartner)+`</button>
+        <button class="who-pay-btn ${cafeWho==='pool'?'active-pool':''}" id="mob-cafe-who-pool" onclick="mobCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
+        <button class="who-pay-btn ${cafeWho==='other'?'active-other':''}" id="mob-cafe-who-other" onclick="mobCafeSelectWho('other')">👤 อื่นๆ</button>
       </div>
       <input class="inp-desc cafe-other-inp" type="text" id="mob-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">`
       :
@@ -997,8 +997,7 @@ window.mobAddCafeEntry=()=>{
   if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
   // อ่านค่า who จาก active button แทนการใช้ state
   const whoMap={'mob-cafe-who-me':'me','mob-cafe-who-partner':'partner','mob-cafe-who-pool':'pool','mob-cafe-who-other':'other'};
-  let who='me';
-  Object.entries(whoMap).forEach(([id,val])=>{const b=document.getElementById(id);if(b&&(b.className.includes('active-')))who=val;});
+  let who=cafeWho;
   const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
   const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
   const bank=document.getElementById('mob-bank-sel')?.value||'';
@@ -1453,10 +1452,10 @@ function renderDeskDetail(){
           ${isCafe?`
           <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
           <div class="who-pay-row">
-            <button class="who-pay-btn active-may" id="desk-cafe-who-me" onclick="deskCafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
-            <button class="who-pay-btn" id="desk-cafe-who-partner" onclick="deskCafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
-            <button class="who-pay-btn" id="desk-cafe-who-pool" onclick="deskCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
-            <button class="who-pay-btn" id="desk-cafe-who-other" onclick="deskCafeSelectWho('other')">👤 อื่นๆ</button>
+            <button class="who-pay-btn ${deskCafeWho==='me'?'active-may':''}" id="desk-cafe-who-me" onclick="deskCafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
+            <button class="who-pay-btn ${deskCafeWho==='partner'?'active-partner':''}" id="desk-cafe-who-partner" onclick="deskCafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
+            <button class="who-pay-btn ${deskCafeWho==='pool'?'active-pool':''}" id="desk-cafe-who-pool" onclick="deskCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
+            <button class="who-pay-btn ${deskCafeWho==='other'?'active-other':''}" id="desk-cafe-who-other" onclick="deskCafeSelectWho('other')">👤 อื่นๆ</button>
           </div>
           <input class="desk-inp cafe-other-inp" type="text" id="desk-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">
           `:`
@@ -1549,8 +1548,7 @@ window.deskAddCafeEntry=()=>{
   if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
   if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
   const whoMap={'desk-cafe-who-me':'me','desk-cafe-who-partner':'partner','desk-cafe-who-pool':'pool','desk-cafe-who-other':'other'};
-  let who='me';
-  Object.entries(whoMap).forEach(([id,val])=>{const b=document.getElementById(id);if(b&&b.className.includes('active-'))who=val;});
+  let who=deskCafeWho;
   const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
   const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
   const bank=document.getElementById('desk-bank-sel')?.value||'';
