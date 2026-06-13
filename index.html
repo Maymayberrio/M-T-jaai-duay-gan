@@ -909,7 +909,7 @@ function renderMobDetail(){
         <button class="who-pay-btn" id="mob-cafe-who-other" onclick="mobCafeSelectWho('other')">👤 อื่นๆ</button>
       </div>
       <input class="inp-desc cafe-other-inp" type="text" id="mob-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">
-      `:\`
+      `:`
       <div class="type-row">
         <button class="type-btn active-split" id="mob-type-split" onclick="mobSelectType('split')">🍱 หารกัน</button>
         <button class="type-btn" id="mob-type-paid" onclick="mobSelectType('paid')">💸 จ่ายแทน</button>
@@ -919,7 +919,7 @@ function renderMobDetail(){
         <button class="who-btn active-me" id="mob-who-me" onclick="mobSelectWho('me')">🩷 ${esc(nameMe)}</button>
         <button class="who-btn" id="mob-who-partner" onclick="mobSelectWho('partner')">💜 ${esc(namePartner)}</button>
       </div>
-      \`}
+      `}
       <input class="inp-amt" type="number" id="mob-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
       <input class="inp-date" type="date" id="mob-inp-date">
       <div class="form-divider"></div>
@@ -929,7 +929,7 @@ function renderMobDetail(){
         <button class="pay-btn" id="mob-pay-credit" onclick="mobSelectPay('credit')">💳 บัตรเครดิต</button>
       </div>
       <div id="mob-bank-wrap" style="display:none">${bankSelectHTML('mob-bank-sel')}</div>
-      <button class="${isCafe?'btn-add-cafe':'btn-add'}" onclick="${isCafe?'mobAddCafeEntry()':'mobAddEntry()}">+ เพิ่มรายการ</button>
+      <button class="${isCafe?'btn-add-cafe':'btn-add'}" onclick="${isCafe?'mobAddCafeEntry()':'mobAddEntry()'}">+ เพิ่มรายการ</button>
     </div>
 
     <div class="card">
@@ -969,8 +969,8 @@ function renderMobDetail(){
     </div>
   `;
   setTodayDate('mob-inp-date');
-  mobSelectType(selectedType);
-  mobSelectWho(selectedWho);
+  if(!isCafe){mobSelectType(selectedType);mobSelectWho(selectedWho);}
+  else{cafeWho='me';}
 }
 
 window.mobSetTab=(tab)=>{activeTab=tab;renderMobDetail();};
