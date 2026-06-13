@@ -232,6 +232,16 @@ input,select{font-family:'Sarabun',sans-serif;}
   .desk-proj-item.cafe-dash{background:var(--orange-soft);border-color:var(--orange);}
   .desk-proj-amt.cafe{color:var(--orange-deep);}
 
+  /* CAFE FORM */
+  .who-pay-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+  .who-pay-btn{padding:7px 8px;font-size:10px;font-weight:700;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);cursor:pointer;}
+  .who-pay-btn.active-may{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep);}
+  .who-pay-btn.active-partner{background:var(--lav-soft);border-color:var(--lav);color:var(--lav-deep);}
+  .who-pay-btn.active-pool{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-deep);}
+  .who-pay-btn.active-other{background:#F3F4F6;border-color:#D1D5DB;color:#374151;}
+  .cafe-other-inp{width:100%;border:1.5px solid var(--orange);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--text);background:var(--bg);outline:none;margin-bottom:6px;}
+  .btn-add-cafe{width:100%;padding:9px;background:linear-gradient(135deg,#FFD4A0,#FFB347);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;}
+
   /* MAIN CONTENT */
   .desk-main{flex:1;overflow-y:auto;padding:.875rem;}
 
@@ -578,6 +588,8 @@ let deskActiveTab = 'pending';
 let selectedYear = new Date().getFullYear();
 let selectedMonth = null;
 let newProjCat = 'family';
+let cafeWho = 'me'; // สำหรับมือถือ
+let deskCafeWho = 'me'; // สำหรับคอม
 const isDesktop = () => window.innerWidth >= 768;
 const COLORS = ['pc-pink','pc-lav','pc-mint','pc-yellow','pc-peach'];
 const EMOJIS = ['🌸','🏖️','🏠','🍜','🎉','✈️','🎁','🍰','🎪','💫'];
@@ -865,6 +877,7 @@ function renderMobDetail(){
   const cont=document.getElementById('mob-detail-content');
   if(!currentProjId||!projects[currentProjId]){cont.innerHTML='';return;}
   const proj=projects[currentProjId];
+  const isCafe=proj.category==='cafe';
   const allEntries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
   const pendingEntries=allEntries.filter(e=>!e.cleared);
   const clearedEntries=allEntries.filter(e=>e.cleared);
@@ -894,8 +907,18 @@ function renderMobDetail(){
     </div>
 
     <div class="card">
-      <div class="card-title">✏️ เพิ่มรายการ</div>
-      <input class="inp-desc" type="text" id="mob-inp-desc" placeholder="ใช้จ่ายอะไร? เช่น ข้าวเที่ยง...">
+      <div class="card-title">${isCafe?'☕ เพิ่มรายการ':'✏️ เพิ่มรายการ'}</div>
+      <input class="inp-desc" type="text" id="mob-inp-desc" placeholder="${isCafe?'รายการอะไร? เช่น แป้งสาลี...':'ใช้จ่ายอะไร? เช่น ข้าวเที่ยง...'}">
+      ${isCafe?`
+      <div style="font-size:9px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
+      <div class="who-pay-row">
+        <button class="who-pay-btn active-may" id="mob-cafe-who-me" onclick="mobCafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
+        <button class="who-pay-btn" id="mob-cafe-who-partner" onclick="mobCafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
+        <button class="who-pay-btn" id="mob-cafe-who-pool" onclick="mobCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
+        <button class="who-pay-btn" id="mob-cafe-who-other" onclick="mobCafeSelectWho('other')">👤 อื่นๆ</button>
+      </div>
+      <input class="inp-desc cafe-other-inp" type="text" id="mob-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">
+      `:`
       <div class="type-row">
         <button class="type-btn active-split" id="mob-type-split" onclick="mobSelectType('split')">🍱 หารกัน</button>
         <button class="type-btn" id="mob-type-paid" onclick="mobSelectType('paid')">💸 จ่ายแทน</button>
@@ -905,6 +928,7 @@ function renderMobDetail(){
         <button class="who-btn active-me" id="mob-who-me" onclick="mobSelectWho('me')">🩷 ${esc(nameMe)}</button>
         <button class="who-btn" id="mob-who-partner" onclick="mobSelectWho('partner')">💜 ${esc(namePartner)}</button>
       </div>
+      `}
       <input class="inp-amt" type="number" id="mob-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
       <input class="inp-date" type="date" id="mob-inp-date">
       <div class="form-divider"></div>
@@ -914,7 +938,7 @@ function renderMobDetail(){
         <button class="pay-btn" id="mob-pay-credit" onclick="mobSelectPay('credit')">💳 บัตรเครดิต</button>
       </div>
       <div id="mob-bank-wrap" style="display:none">${bankSelectHTML('mob-bank-sel')}</div>
-      <button class="btn-add" onclick="mobAddEntry()">+ เพิ่มรายการ</button>
+      <button class="${isCafe?'btn-add-cafe':'btn-add'}" onclick="${isCafe?'mobAddCafeEntry()':'mobAddEntry()'}">+ เพิ่มรายการ</button>
     </div>
 
     <div class="card">
@@ -959,6 +983,41 @@ function renderMobDetail(){
 }
 
 window.mobSetTab=(tab)=>{activeTab=tab;renderMobDetail();};
+
+window.mobCafeSelectWho=(who)=>{
+  cafeWho=who;
+  ['me','partner','pool','other'].forEach(w=>{
+    const b=document.getElementById('mob-cafe-who-'+w);
+    if(!b)return;
+    const cls={me:'active-may',partner:'active-partner',pool:'active-pool',other:'active-other'};
+    b.className='who-pay-btn'+(who===w?' '+cls[w]:'');
+  });
+  const oi=document.getElementById('mob-cafe-other-name');
+  if(oi)oi.style.display=who==='other'?'block':'none';
+};
+
+window.mobAddCafeEntry=()=>{
+  if(!db||!currentProjId){showToast('ยังไม่ได้เชื่อมต่อ');return;}
+  const desc=document.getElementById('mob-inp-desc').value.trim();
+  const amt=parseFloat(document.getElementById('mob-inp-amt').value);
+  const dateVal=document.getElementById('mob-inp-date').value;
+  if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
+  if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  const bank=document.getElementById('mob-bank-sel')?.value||'';
+  const bankOther=document.getElementById('mob-bank-sel-other')?.value||'';
+  const otherName=document.getElementById('mob-cafe-other-name')?.value.trim()||'';
+  const entry={desc,amt,who:cafeWho,date:dateDisplay,ts:dateObj.getTime()};
+  if(cafeWho==='other'&&otherName)entry.otherName=otherName;
+  if(selectedPayMethod)entry.payMethod=selectedPayMethod;
+  if(bank)entry.bank=bank;
+  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  push(ref(db,'projects/'+currentProjId+'/entries'),entry);
+  document.getElementById('mob-inp-desc').value='';
+  document.getElementById('mob-inp-amt').value='';
+  showToast('เพิ่มแล้ว! ☕');
+};
 
 window.mobSelectType=(type)=>{
   selectedType=type;
@@ -1363,6 +1422,7 @@ function renderDeskDetail(){
   const cont=document.getElementById('desk-detail-content');
   if(!currentProjId||!projects[currentProjId]){cont.innerHTML='';return;}
   const proj=projects[currentProjId];
+  const isCafe=proj.category==='cafe';
   const allEntries=Object.entries(proj.entries||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
   const pendingEntries=allEntries.filter(e=>!e.cleared);
   const clearedEntries=allEntries.filter(e=>e.cleared);
@@ -1396,8 +1456,18 @@ function renderDeskDetail(){
     <div class="desk-detail-layout">
       <div class="desk-form-col">
         <div class="desk-box">
-          <div class="desk-box-lbl">✏️ เพิ่มรายการ</div>
-          <input class="desk-inp" type="text" id="desk-inp-desc" placeholder="ใช้จ่ายอะไร?">
+          <div class="desk-box-lbl">${isCafe?'☕ เพิ่มรายการ':'✏️ เพิ่มรายการ'}</div>
+          <input class="desk-inp" type="text" id="desk-inp-desc" placeholder="${isCafe?'รายการอะไร?':'ใช้จ่ายอะไร?'}">
+          ${isCafe?`
+          <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;">ใครสำรองจ่าย?</div>
+          <div class="who-pay-row">
+            <button class="who-pay-btn active-may" id="desk-cafe-who-me" onclick="deskCafeSelectWho('me')">🩷 ${esc(nameMe)}</button>
+            <button class="who-pay-btn" id="desk-cafe-who-partner" onclick="deskCafeSelectWho('partner')">💜 ${esc(namePartner)}</button>
+            <button class="who-pay-btn" id="desk-cafe-who-pool" onclick="deskCafeSelectWho('pool')">🏦 ส่วนกลาง</button>
+            <button class="who-pay-btn" id="desk-cafe-who-other" onclick="deskCafeSelectWho('other')">👤 อื่นๆ</button>
+          </div>
+          <input class="desk-inp cafe-other-inp" type="text" id="desk-cafe-other-name" placeholder="ระบุชื่อ..." style="display:none;">
+          `:`
           <div class="desk-type-row">
             <button class="desk-type-btn active-split" id="desk-type-split" onclick="deskSelectType('split')">🍱 หารกัน</button>
             <button class="desk-type-btn" id="desk-type-paid" onclick="deskSelectType('paid')">💸 จ่ายแทน</button>
@@ -1407,6 +1477,7 @@ function renderDeskDetail(){
             <button class="desk-who-btn active-me" id="desk-who-me" onclick="deskSelectWho('me')">🩷 ${esc(nameMe)}</button>
             <button class="desk-who-btn" id="desk-who-partner" onclick="deskSelectWho('partner')">💜 ${esc(namePartner)}</button>
           </div>
+          `}
           <input class="desk-inp" type="number" id="desk-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
           <input class="desk-inp" type="date" id="desk-inp-date">
           <div style="height:1px;background:var(--border);margin:8px 0 7px;"></div>
@@ -1416,7 +1487,7 @@ function renderDeskDetail(){
             <button class="desk-pay-btn" id="desk-pay-credit" onclick="deskSelectPay('credit')">💳 บัตรเครดิต</button>
           </div>
           <div id="desk-bank-wrap" style="display:none">${deskBankSelectHTML('desk-bank-sel')}</div>
-          <button class="desk-btn-add" onclick="deskAddEntry()">+ เพิ่มรายการ</button>
+          <button class="${isCafe?'btn-add-cafe':'desk-btn-add'}" onclick="${isCafe?'deskAddCafeEntry()':'deskAddEntry()'}">+ เพิ่มรายการ</button>
         </div>
       </div>
       <div class="desk-right-col">
@@ -1462,6 +1533,42 @@ function renderDeskDetail(){
 }
 
 window.deskSetTab=(tab)=>{deskActiveTab=tab;renderDeskDetail();};
+
+window.deskCafeSelectWho=(who)=>{
+  deskCafeWho=who;
+  ['me','partner','pool','other'].forEach(w=>{
+    const b=document.getElementById('desk-cafe-who-'+w);
+    if(!b)return;
+    const cls={me:'active-may',partner:'active-partner',pool:'active-pool',other:'active-other'};
+    b.className='who-pay-btn'+(who===w?' '+cls[w]:'');
+  });
+  const oi=document.getElementById('desk-cafe-other-name');
+  if(oi)oi.style.display=who==='other'?'block':'none';
+};
+
+window.deskAddCafeEntry=()=>{
+  if(!db||!currentProjId){showToast('ยังไม่ได้เชื่อมต่อ');return;}
+  const desc=document.getElementById('desk-inp-desc').value.trim();
+  const amt=parseFloat(document.getElementById('desk-inp-amt').value);
+  const dateVal=document.getElementById('desk-inp-date').value;
+  if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
+  if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  const bank=document.getElementById('desk-bank-sel')?.value||'';
+  const bankOther=document.getElementById('desk-bank-sel-other')?.value||'';
+  const otherName=document.getElementById('desk-cafe-other-name')?.value.trim()||'';
+  const entry={desc,amt,who:deskCafeWho,date:dateDisplay,ts:dateObj.getTime()};
+  if(deskCafeWho==='other'&&otherName)entry.otherName=otherName;
+  if(deskSelectedPayMethod)entry.payMethod=deskSelectedPayMethod;
+  if(bank)entry.bank=bank;
+  if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
+  push(ref(db,'projects/'+currentProjId+'/entries'),entry);
+  document.getElementById('desk-inp-desc').value='';
+  document.getElementById('desk-inp-amt').value='';
+  document.getElementById('desk-inp-desc').focus();
+  showToast('เพิ่มแล้ว! ☕');
+};
 
 window.deskSelectType=(type)=>{
   deskSelectedType=type;
