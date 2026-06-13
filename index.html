@@ -995,13 +995,17 @@ window.mobAddCafeEntry=()=>{
   const dateVal=document.getElementById('mob-inp-date').value;
   if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
   if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  // อ่านค่า who จาก active button แทนการใช้ state
+  const whoMap={'mob-cafe-who-me':'me','mob-cafe-who-partner':'partner','mob-cafe-who-pool':'pool','mob-cafe-who-other':'other'};
+  let who='me';
+  Object.entries(whoMap).forEach(([id,val])=>{const b=document.getElementById(id);if(b&&(b.className.includes('active-')))who=val;});
   const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
   const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
   const bank=document.getElementById('mob-bank-sel')?.value||'';
   const bankOther=document.getElementById('mob-bank-sel-other')?.value||'';
   const otherName=document.getElementById('mob-cafe-other-name')?.value.trim()||'';
-  const entry={desc,amt,who:cafeWho,date:dateDisplay,ts:dateObj.getTime()};
-  if(cafeWho==='other'&&otherName)entry.otherName=otherName;
+  const entry={desc,amt,who,date:dateDisplay,ts:dateObj.getTime()};
+  if(who==='other'&&otherName)entry.otherName=otherName;
   if(selectedPayMethod)entry.payMethod=selectedPayMethod;
   if(bank)entry.bank=bank;if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
   push(ref(db,'projects/'+currentProjId+'/entries'),entry);
@@ -1475,7 +1479,11 @@ function renderDeskDetail(){
             <button class="desk-pay-btn" id="desk-pay-credit" onclick="deskSelectPay('credit')">💳 บัตรเครดิต</button>
           </div>
           <div id="desk-bank-wrap" style="display:none">${deskBankSelectHTML('desk-bank-sel')}</div>
-          <button class="${isCafe?'btn-add-cafe':'desk-btn-add'}" onclick="${isCafe?'deskAddCafeEntry()':'deskAddEntry()'}">+ เพิ่มรายการ</button>
+          ${isCafe?
+            `<button class="btn-add-cafe" onclick="deskAddCafeEntry()">+ เพิ่มรายการ</button>`
+            :
+            `<button class="desk-btn-add" onclick="deskAddEntry()">+ เพิ่มรายการ</button>`
+          }
         </div>
       </div>
       <div class="desk-right-col">
@@ -1540,13 +1548,16 @@ window.deskAddCafeEntry=()=>{
   const dateVal=document.getElementById('desk-inp-date').value;
   if(!desc){showToast('ใส่ชื่อรายการด้วยนะ ☕');return;}
   if(isNaN(amt)||amt<=0){showToast('ใส่จำนวนเงินด้วยนะ');return;}
+  const whoMap={'desk-cafe-who-me':'me','desk-cafe-who-partner':'partner','desk-cafe-who-pool':'pool','desk-cafe-who-other':'other'};
+  let who='me';
+  Object.entries(whoMap).forEach(([id,val])=>{const b=document.getElementById(id);if(b&&b.className.includes('active-'))who=val;});
   const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
   const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
   const bank=document.getElementById('desk-bank-sel')?.value||'';
   const bankOther=document.getElementById('desk-bank-sel-other')?.value||'';
   const otherName=document.getElementById('desk-cafe-other-name')?.value.trim()||'';
-  const entry={desc,amt,who:deskCafeWho,date:dateDisplay,ts:dateObj.getTime()};
-  if(deskCafeWho==='other'&&otherName)entry.otherName=otherName;
+  const entry={desc,amt,who,date:dateDisplay,ts:dateObj.getTime()};
+  if(who==='other'&&otherName)entry.otherName=otherName;
   if(deskSelectedPayMethod)entry.payMethod=deskSelectedPayMethod;
   if(bank)entry.bank=bank;if(bank==='อื่นๆ'&&bankOther)entry.bankOther=bankOther;
   push(ref(db,'projects/'+currentProjId+'/entries'),entry);
