@@ -723,7 +723,7 @@ function saveSetting(){
 });
 
 /* ── HELPERS ── */
-function fmt(n){return '฿'+Math.round(n).toLocaleString('th-TH');}
+function fmt(n){return '฿'+Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function calcNet(entries){
@@ -961,7 +961,7 @@ function renderMobDetail(){
         <button class="who-btn active-me" id="mob-who-me" onclick="mobSelectWho('me')">🩷 `+esc(nameMe)+`</button>
         <button class="who-btn" id="mob-who-partner" onclick="mobSelectWho('partner')">💜 `+esc(namePartner)+`</button>
       </div>`}
-      <input class="inp-amt" type="number" id="mob-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
+      <input class="inp-amt" type="number" id="mob-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="0.01">
       <input class="inp-date" type="date" id="mob-inp-date">
       <div class="form-divider"></div>
       <div class="form-opt-lbl">วิธีจ่าย (ไม่บังคับ)</div>
@@ -1459,7 +1459,7 @@ window.exportYear=async(year)=>{
     doc.setFontSize(18);doc.setTextColor(196,96,138);doc.text('Jaai Duay Gan',14,18);
     doc.setFontSize(11);doc.setTextColor(100,100,100);doc.text(`${nameMe} & ${namePartner} — Summary ${year}`,14,25);
     // Overview cards
-    const cards=[['Total',`฿${Math.round(totalAll).toLocaleString()}`,'#FFF5CC'],[`${nameMe} paid`,`฿${Math.round(mePaidAll).toLocaleString()}`,'#E6FAF5'],[`${namePartner} paid`,`฿${Math.round(partnerPaidAll).toLocaleString()}`,'#F0ECFF'],[netOwed>0?`${namePartner} owes`:netOwed<0?`${nameMe} owes`:'Even',`฿${Math.round(Math.abs(netOwed)).toLocaleString()}`,'#FDE8F2']];
+    const cards=[['Total',`฿${Number(totalAll).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`,'#FFF5CC'],[`${nameMe} paid`,`฿${Number(mePaidAll).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,'#E6FAF5'],[`${namePartner} paid`,`฿${Number(partnerPaidAll).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,'#F0ECFF'],[netOwed>0?`${namePartner} owes`:netOwed<0?`${nameMe} owes`:'Even',`฿${Number(Math.abs(netOwed)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`,'#FDE8F2']];
     doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('OVERVIEW',14,34);
     doc.setDrawColor(242,224,236);doc.line(14,36,196,36);
     cards.forEach((c,i)=>{
@@ -1471,15 +1471,15 @@ window.exportYear=async(year)=>{
     });
     // By project
     let y=76;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY PROJECT',14,y);doc.line(14,y+2,196,y+2);
-    doc.autoTable({startY:y+4,head:[['Project','Items',nameMe,namePartner,'Total']],body:Object.entries(projStats).map(([n,s])=>[n,s.count,`฿${Math.round(s.mePaid).toLocaleString()}`,`฿${Math.round(s.partnerPaid).toLocaleString()}`,`฿${Math.round(s.total).toLocaleString()}`]),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[249,168,201],textColor:[61,37,53]},margin:{left:14,right:14}});
+    doc.autoTable({startY:y+4,head:[['Project','Items',nameMe,namePartner,'Total']],body:Object.entries(projStats).map(([n,s])=>[n,s.count,`฿${Number(s.mePaid).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,`฿${Number(s.partnerPaid).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,`฿${Number(s.total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`]),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[249,168,201],textColor:[61,37,53]},margin:{left:14,right:14}});
     // By month
     y=doc.lastAutoTable.finalY+8;doc.setFontSize(9);doc.setTextColor(180,154,170);doc.text('BY MONTH',14,y);doc.line(14,y+2,196,y+2);
-    doc.autoTable({startY:y+4,head:[['Month',nameMe,namePartner,'Total']],body:MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,`฿${Math.round(monthStats[i].mePaid).toLocaleString()}`,`฿${Math.round(monthStats[i].partnerPaid).toLocaleString()}`,`฿${Math.round(monthStats[i].total).toLocaleString()}`]:[n,'฿0','฿0','฿0']),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[212,197,249],textColor:[61,37,53]},margin:{left:14,right:14}});
+    doc.autoTable({startY:y+4,head:[['Month',nameMe,namePartner,'Total']],body:MONTH_NAMES_FULL.map((n,i)=>monthStats[i]?[n,`฿${Number(monthStats[i].mePaid).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,`฿${Number(monthStats[i].partnerPaid).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,`฿${Number(monthStats[i].total).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`]:[n,'฿0','฿0','฿0']),styles:{fontSize:9,cellPadding:2},headStyles:{fillColor:[212,197,249],textColor:[61,37,53]},margin:{left:14,right:14}});
     // Raw data — new page
     doc.addPage();
     doc.setFontSize(13);doc.setTextColor(196,96,138);doc.text('All Entries',14,16);
     doc.setFontSize(9);doc.setTextColor(100,100,100);doc.text(`${year} — ${allEntries.length} items`,14,22);
-    doc.autoTable({startY:26,head:[['Date','Project','Item','Type','Who','Amount','Bank','Status']],body:allEntries.map(e=>[e.date||'',e.projName,e.desc,e.type==='split'?'Split':e.type==='paid'?'Paid':'Pool',e.who==='me'?nameMe:e.who==='partner'?namePartner:'-',`฿${Math.round(e.amt).toLocaleString()}`,e.bank==='อื่นๆ'?(e.bankOther||'Other'):(e.bank||'-'),e.cleared?'Cleared':'Pending']),styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[244,114,168],textColor:'white'},margin:{left:14,right:14}});
+    doc.autoTable({startY:26,head:[['Date','Project','Item','Type','Who','Amount','Bank','Status']],body:allEntries.map(e=>[e.date||'',e.projName,e.desc,e.type==='split'?'Split':e.type==='paid'?'Paid':'Pool',e.who==='me'?nameMe:e.who==='partner'?namePartner:'-',`฿${Number(e.amt).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,",")}`,e.bank==='อื่นๆ'?(e.bankOther||'Other'):(e.bank||'-'),e.cleared?'Cleared':'Pending']),styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[244,114,168],textColor:'white'},margin:{left:14,right:14}});
     doc.setFontSize(8);doc.setTextColor(180,154,170);doc.text(`จ่ายด้วยกันนะ 🌸 — ปี ${year}`,14,doc.internal.pageSize.height-8);
     doc.save(`jaai-duay-gan-${year}.pdf`);
   }catch(err){console.error(err);}
@@ -1593,7 +1593,7 @@ function renderDeskDetail(){
             <button class="desk-who-btn active-me" id="desk-who-me" onclick="deskSelectWho('me')">🩷 ${esc(nameMe)}</button>
             <button class="desk-who-btn" id="desk-who-partner" onclick="deskSelectWho('partner')">💜 ${esc(namePartner)}</button>
           </div>`}
-          <input class="desk-inp" type="number" id="desk-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="1">
+          <input class="desk-inp" type="number" id="desk-inp-amt" placeholder="฿ จำนวนเงิน" min="0" step="0.01">
           <input class="desk-inp" type="date" id="desk-inp-date">
           <div style="height:1px;background:var(--border);margin:8px 0 7px;"></div>
           <div style="font-size:8px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;">วิธีจ่าย (ไม่บังคับ)</div>
