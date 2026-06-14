@@ -1233,17 +1233,41 @@ function renderDashboard(){
   /* summary side */
   const summaryTitle=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]:('ปี '+selectedYear);
   let summaryHtml='';
-  if(Math.abs(stats.net)>=1){
-    summaryHtml+=`<div class="dash-rrow dash-rrow-p"><div class="dash-rtxt">${stats.net>0?`💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}`:`💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}`}</div><div class="dash-ramt">${fmt(Math.abs(stats.net))}</div></div>`;
+
+  if(dashCat==='cafe'){
+    // คาเฟ่ — แสดงว่าส่วนกลางต้องจ่ายคืนใครบ้าง
+    const cafeProjs=Object.values(projects).filter(p=>p.category==='cafe');
+    const allCafeEntries=cafeProjs.flatMap(p=>Object.values(p.entries||{}));
+    const pendingCafe=allCafeEntries.filter(e=>!e.cleared);
+    const mePending=pendingCafe.filter(e=>e.who==='me').reduce((s,e)=>s+e.amt,0);
+    const partnerPending=pendingCafe.filter(e=>e.who==='partner').reduce((s,e)=>s+e.amt,0);
+    const otherNames=[...new Set(pendingCafe.filter(e=>e.who==='other').map(e=>e.otherName||'อื่นๆ'))];
+    const hasAnyPending=mePending>0||partnerPending>0||otherNames.length>0;
+    if(hasAnyPending){
+      summaryHtml+=`<div class="desk-box-lbl" style="margin-bottom:6px;">🏦 ส่วนกลางต้องโอนคืน</div>`;
+      if(mePending>0)summaryHtml+=`<div class="dash-rrow dash-rrow-p"><div class="dash-rtxt">🩷 ${esc(nameMe)}</div><div class="dash-ramt">${fmt(mePending)}</div></div>`;
+      if(partnerPending>0)summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">💜 ${esc(namePartner)}</div><div class="dash-ramt dash-ramt-l">${fmt(partnerPending)}</div></div>`;
+      otherNames.forEach(name=>{
+        const amt=pendingCafe.filter(e=>e.who==='other'&&(e.otherName||'อื่นๆ')===name).reduce((s,e)=>s+e.amt,0);
+        summaryHtml+=`<div class="dash-rrow" style="background:#F3F4F6;border-radius:9px;padding:9px 12px;"><div class="dash-rtxt">👤 ${esc(name)}</div><div style="font-size:15px;font-weight:800;color:#374151;">${fmt(amt)}</div></div>`;
+      });
+    } else {
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">🎉 เคลียร์หมดแล้ว!</div><div class="dash-ramt dash-ramt-m">ไม่มียอดค้าง</div></div>`;
+    }
+    summaryHtml+=`<div class="dash-rrow dash-rrow-l" style="margin-top:6px;"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
   } else {
-    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">🎉 เสมอกันพอดี!</div><div class="dash-ramt dash-ramt-m">ไม่มีใครต้องโอน</div></div>`;
-  }
-  summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
-  if(selectedMonth!==null){
-    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
-  } else {
-    const months=new Date().getMonth()+1;
-    summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อเดือน</div><div class="dash-ramt dash-ramt-m">${fmt(Math.round(stats.total/months))}</div></div>`;
+    if(Math.abs(stats.net)>=1){
+      summaryHtml+=`<div class="dash-rrow dash-rrow-p"><div class="dash-rtxt">${stats.net>0?`💸 ${esc(namePartner)} ต้องโอนให้ ${esc(nameMe)}`:`💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}`}</div><div class="dash-ramt">${fmt(Math.abs(stats.net))}</div></div>`;
+    } else {
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">🎉 เสมอกันพอดี!</div><div class="dash-ramt dash-ramt-m">ไม่มีใครต้องโอน</div></div>`;
+    }
+    summaryHtml+=`<div class="dash-rrow dash-rrow-l"><div class="dash-rtxt">รวม${selectedMonth!==null?'เดือนนี้':'ทั้งปี'}ใช้ไป</div><div class="dash-ramt dash-ramt-l">${fmt(stats.total)}</div></div>`;
+    if(selectedMonth!==null){
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อวัน</div><div class="dash-ramt dash-ramt-m">${fmt(stats.avgPerDay)}</div></div>`;
+    } else {
+      const months=new Date().getMonth()+1;
+      summaryHtml+=`<div class="dash-rrow dash-rrow-m"><div class="dash-rtxt">เฉลี่ยต่อเดือน</div><div class="dash-ramt dash-ramt-m">${fmt(Math.round(stats.total/months))}</div></div>`;
+    }
   }
   summaryHtml+=cmpHtml;
   document.getElementById('desk-dash-summary').innerHTML=`<div class="desk-box-lbl">✨ สรุป — ${summaryTitle}</div>`+summaryHtml;
