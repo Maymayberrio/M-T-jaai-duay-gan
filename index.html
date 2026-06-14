@@ -785,6 +785,13 @@ function getEntrySubText(e,isMob=true){
 }
 
 function getPillInfo(e){
+  if(!e.type){
+    // cafe entry
+    if(e.who==='me')return{cls:'pill-me',txt:nameMe+' สำรอง',entryCls:'entry-me',dotColor:'#B5E8D8'};
+    if(e.who==='partner')return{cls:'pill-partner',txt:namePartner+' สำรอง',entryCls:'entry-partner',dotColor:'#D4C5F9'};
+    if(e.who==='other')return{cls:'pill-pool',txt:e.otherName||'อื่นๆ',entryCls:'entry-pool',dotColor:'#FFD6B0'};
+    return{cls:'pill-pool',txt:'ส่วนกลาง',entryCls:'entry-pool',dotColor:'#FFE9A0'};
+  }
   if(e.type==='split'){
     return {cls:e.who==='me'?'pill-me':'pill-partner',txt:(e.who==='me'?nameMe:namePartner)+' จ่าย',entryCls:e.who==='me'?'entry-me':'entry-partner',dotColor:e.who==='me'?'#B5E8D8':'#D4C5F9'};
   } else if(e.type==='paid'){
@@ -881,8 +888,8 @@ function renderMobDetail(){
     else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
   });
   const net=partnerOwes-meOwes;
-  const mePaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='me').reduce((s,e)=>s+e.amt,0);
-  const partnerPaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='partner').reduce((s,e)=>s+e.amt,0);
+  const mePaid=pendingEntries.filter(e=>e.who==='me'&&(e.type==='split'||e.type==='paid'||!e.type)).reduce((s,e)=>s+e.amt,0);
+  const partnerPaid=pendingEntries.filter(e=>e.who==='partner'&&(e.type==='split'||e.type==='paid'||!e.type)).reduce((s,e)=>s+e.amt,0);
   const mePct=total>0?Math.round((mePaid/total)*100):50;
 
   let resultClass='result-box result-balanced',resultHtml='<span>🎉 เสมอกันพอดีเลย!</span><span class="result-amount">ไม่มีใครต้องโอน</span>';
@@ -1426,8 +1433,8 @@ function renderDeskDetail(){
     else if(e.type==='paid'){if(e.who==='me')partnerOwes+=e.amt;else meOwes+=e.amt;}
   });
   const net=partnerOwes-meOwes;
-  const mePaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='me').reduce((s,e)=>s+e.amt,0);
-  const partnerPaid=pendingEntries.filter(e=>(e.type==='split'||e.type==='paid')&&e.who==='partner').reduce((s,e)=>s+e.amt,0);
+  const mePaid=pendingEntries.filter(e=>e.who==='me'&&(e.type==='split'||e.type==='paid'||!e.type)).reduce((s,e)=>s+e.amt,0);
+  const partnerPaid=pendingEntries.filter(e=>e.who==='partner'&&(e.type==='split'||e.type==='paid'||!e.type)).reduce((s,e)=>s+e.amt,0);
   const mePct=total>0?Math.round((mePaid/total)*100):50;
 
   let resultClass='result-box result-balanced',resultHtml='<span>🎉 เสมอกันพอดีเลย!</span><span class="result-amount">ไม่มีใครต้องโอน</span>';
