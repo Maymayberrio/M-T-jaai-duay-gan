@@ -1277,7 +1277,7 @@ function renderDashboard(){
     stats.entries.sort((a,b)=>(b.ts||0)-(a.ts||0)):
     (()=>{
       const arr=[];
-      Object.entries(projects).forEach(([pid,p])=>{
+      Object.entries(projects).filter(([,p])=>dashCat==='cafe'?p.category==='cafe':p.category!=='cafe').forEach(([pid,p])=>{
         Object.entries(p.entries||{}).forEach(([k,e])=>{
           arr.push({...e,key:k,projId:pid,projName:p.name||'โปรเจคใหม่'});
         });
