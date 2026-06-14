@@ -1001,6 +1001,7 @@ function renderMobDetail(){
       <div class="bar-track"><div class="bar-fill" style="width:${mePct}%"></div></div>
       <div class="${resultClass}">${resultHtml}</div>
       `}
+      ${pendingEntries.length>0?`<button onclick="clearAllEntries('${currentProjId}')" style="width:100%;padding:11px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);color:white;border:none;border-radius:var(--radius-xs);font-size:14px;font-weight:600;margin-top:8px;cursor:pointer;">✅ เคลียร์ทั้งหมด (${pendingEntries.length} รายการ)</button>`:''}
     </div>
   `;
   setTodayDate('mob-inp-date');
@@ -1608,6 +1609,7 @@ function renderDeskDetail(){
           <div class="bar-track"><div class="bar-fill" style="width:${mePct}%"></div></div>
           <div class="${resultClass}" style="font-size:13px;padding:12px;">${resultHtml}</div>
           `}
+          ${pendingEntries.length>0?`<button onclick="clearAllEntries('${currentProjId}')" style="width:100%;padding:9px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;margin-top:8px;cursor:pointer;">✅ เคลียร์ทั้งหมด (${pendingEntries.length} รายการ)</button>`:''}
         </div>
         <div class="desk-box">
           <div class="tabs-row">
@@ -1769,6 +1771,15 @@ window.updateProjectName=(id,name)=>{if(db)update(ref(db,'projects/'+id),{name})
 window.clearEntry=(projId,key)=>{
   update(ref(db,'projects/'+projId+'/entries/'+key),{cleared:true});
   showToast('เคลียร์แล้ว ✅');
+};
+
+window.clearAllEntries=(projId)=>{
+  if(!db||!projects[projId])return;
+  const pending=Object.entries(projects[projId].entries||{}).filter(([,e])=>!e.cleared);
+  if(pending.length===0){showToast('ไม่มีรายการค้างอยู่');return;}
+  if(!confirm(`เคลียร์ทั้งหมด ${pending.length} รายการ?`))return;
+  pending.forEach(([k])=>update(ref(db,'projects/'+projId+'/entries/'+k),{cleared:true}));
+  showToast('เคลียร์ทั้งหมดแล้ว ✅');
 };
 
 window.deleteEntry=(projId,key)=>{
