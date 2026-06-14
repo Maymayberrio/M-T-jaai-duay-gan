@@ -898,6 +898,27 @@ function renderMobDetail(){
     else{resultClass='result-box result-me-owes';resultHtml=`<span>💸 ${esc(nameMe)} ต้องโอนให้ ${esc(namePartner)}</span><span class="result-amount">${fmt(Math.abs(net))}</span>`;}
   }
 
+  let mobCafeSummaryHtml='';
+  if(isCafe){
+    const cafeTotal=allEntries.reduce((s,e)=>s+e.amt,0);
+    const meTotal=allEntries.filter(e=>e.who==='me').reduce((s,e)=>s+e.amt,0);
+    const partnerTotal=allEntries.filter(e=>e.who==='partner').reduce((s,e)=>s+e.amt,0);
+    const poolTotal=allEntries.filter(e=>e.who==='pool').reduce((s,e)=>s+e.amt,0);
+    const others=[...new Set(allEntries.filter(e=>e.who==='other').map(e=>e.otherName||'อื่นๆ'))];
+    const otherRows=others.map(name=>{
+      const amt=allEntries.filter(e=>e.who==='other'&&(e.otherName||'อื่นๆ')===name).reduce((s,e)=>s+e.amt,0);
+      return `<div style="display:flex;justify-content:space-between;align-items:center;background:#F3F4F6;border-radius:8px;padding:8px 10px;margin-bottom:5px;"><div><div style="font-size:10px;font-weight:700;color:var(--text);">👤 ${esc(name)}</div><div style="font-size:8px;color:#6B7280;">สำรองจ่าย</div></div><div style="font-size:13px;font-weight:700;color:#374151;">${fmt(amt)}</div></div>`;
+    }).join('');
+    const totalOwed=meTotal+partnerTotal+others.reduce((s,name)=>s+allEntries.filter(e=>e.who==='other'&&(e.otherName||'อื่นๆ')===name).reduce((ss,e)=>ss+e.amt,0),0);
+    mobCafeSummaryHtml=
+      `<div style="background:var(--yellow-soft);border-radius:8px;padding:9px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;"><div style="font-size:9px;color:var(--yellow-deep);text-transform:uppercase;letter-spacing:.5px;">รวมทั้งหมด</div><div style="font-size:15px;font-weight:700;color:var(--text);">${fmt(cafeTotal)}</div></div>`
+      +(meTotal>0?`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--pink-soft);border-radius:8px;padding:8px 10px;margin-bottom:5px;"><div><div style="font-size:10px;font-weight:700;color:var(--text);">🩷 ${esc(nameMe)}</div><div style="font-size:8px;color:var(--pink-deep);">สำรองจ่าย</div></div><div style="font-size:13px;font-weight:700;color:var(--pink-deep);">${fmt(meTotal)}</div></div>`:'')
+      +(partnerTotal>0?`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--lav-soft);border-radius:8px;padding:8px 10px;margin-bottom:5px;"><div><div style="font-size:10px;font-weight:700;color:var(--text);">💜 ${esc(namePartner)}</div><div style="font-size:8px;color:var(--lav-deep);">สำรองจ่าย</div></div><div style="font-size:13px;font-weight:700;color:var(--lav-deep);">${fmt(partnerTotal)}</div></div>`:'')
+      +otherRows
+      +(poolTotal>0?`<div style="display:flex;justify-content:space-between;align-items:center;background:var(--orange-soft);border-radius:8px;padding:8px 10px;margin-bottom:8px;"><div><div style="font-size:10px;font-weight:700;color:var(--text);">🏦 ส่วนกลางจ่ายเอง</div><div style="font-size:8px;color:var(--orange-deep);">ไม่ต้องคืนใคร</div></div><div style="font-size:13px;font-weight:700;color:var(--orange-deep);">${fmt(poolTotal)}</div></div>`:'')
+      +(totalOwed>0?`<div style="background:var(--yellow-soft);border-radius:8px;padding:9px;text-align:center;"><div style="font-size:9px;color:var(--yellow-deep);margin-bottom:2px;">ส่วนกลางต้องโอนคืนรวม</div><div style="font-size:16px;font-weight:700;color:var(--text);">${fmt(totalOwed)}</div></div>`:'');
+  }
+
   cont.innerHTML=`
     <div class="proj-detail-header">
       <input class="proj-name-input" type="text" value="${esc(proj.name||'โปรเจคใหม่')}" onchange="updateProjectName('${currentProjId}',this.value)">
@@ -968,6 +989,7 @@ function renderMobDetail(){
 
     <div class="card">
       <div class="card-title">✨ สรุปยอด</div>
+      ${isCafe?mobCafeSummaryHtml:`
       <div class="metrics">
         <div class="metric metric-total"><div class="metric-label">รวม</div><div class="metric-val">${fmt(total)}</div></div>
         <div class="metric metric-me"><div class="metric-label">${esc(nameMe)}</div><div class="metric-val">${fmt(mePaid)}</div></div>
@@ -976,6 +998,7 @@ function renderMobDetail(){
       <div class="bar-row"><span>${esc(nameMe)} ${mePct}%</span><span>${esc(namePartner)} ${100-mePct}%</span></div>
       <div class="bar-track"><div class="bar-fill" style="width:${mePct}%"></div></div>
       <div class="${resultClass}">${resultHtml}</div>
+      `}
     </div>
   `;
   setTodayDate('mob-inp-date');
