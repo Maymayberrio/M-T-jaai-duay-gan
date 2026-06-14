@@ -514,6 +514,7 @@ input,select{font-family:'Sarabun',sans-serif;}
 
       <!-- DASHBOARD VIEW -->
       <div id="desk-view-dashboard" style="display:none;">
+        <div id="desk-dash-header" style="margin-bottom:.875rem;"></div>
         <div id="desk-export-banner" style="display:none;"></div>
         <div class="dash-scards" id="desk-dash-cards"></div>
         <div class="dash-mid">
@@ -1153,6 +1154,16 @@ function calcMonthStats(year,month,cat='family'){
 }
 
 function renderDashboard(){
+  /* header */
+  const headerEl=document.getElementById('desk-dash-header');
+  if(headerEl){
+    if(dashCat==='cafe'){
+      headerEl.innerHTML=`<div style="background:linear-gradient(135deg,#FFF5E6,#FDE8F2);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;"><span style="font-size:22px;">☕</span><div><div style="font-size:15px;font-weight:700;color:var(--text);">Dashboard ร้านคาเฟ่</div><div style="font-size:11px;color:var(--orange-deep);">ค่าใช้จ่ายและยอดที่ส่วนกลางต้องคืน</div></div></div>`;
+    } else {
+      headerEl.innerHTML=`<div style="background:linear-gradient(135deg,#FDE8F2,#F0ECFF);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;"><span style="font-size:22px;">🏠</span><div><div style="font-size:15px;font-weight:700;color:var(--text);">Dashboard ครอบครัว</div><div style="font-size:11px;color:var(--pink-deep);">ค่าใช้จ่ายและยอดคงค้าง</div></div></div>`;
+    }
+  }
+
   /* year tabs */
   const years=getYears();
   if(!years.includes(selectedYear)){selectedYear=years[2];selectedMonth=null;}
