@@ -1932,8 +1932,9 @@ window.deskAddEntry=()=>{
 ═══════════════════════════ */
 window.exportCafeMonthlyExcel=(year,month)=>{
   const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
-  const rows=[['โปรเจค','วันที่','รายการ','ใครสำรอง','ยอด']];
-  let grandTotal=0;
+  let grandTotal=0,transferTotal=0,creditTotal=0;
+  let meTotal=0,partnerTotal=0,poolTotal=0;
+  const rawRows=[['โปรเจค','วันที่','รายการ','ใครสำรอง','วิธีจ่าย','ธนาคาร','ยอด']];
   cafeProjs.forEach(([,p])=>{
     const entries=Object.values(p.entries||{}).filter(e=>{
       if(!e.ts)return false;
@@ -1943,17 +1944,42 @@ window.exportCafeMonthlyExcel=(year,month)=>{
     if(!entries.length)return;
     entries.forEach(e=>{
       const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
-      rows.push([p.name||'โปรเจคใหม่',e.date||'',e.desc,whoTxt,e.amt]);
+      const payTxt=e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'ไม่ระบุ';
+      const bankTxt=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'');
+      rawRows.push([p.name||'โปรเจคใหม่',e.date||'',e.desc,whoTxt,payTxt,bankTxt,e.amt]);
       grandTotal+=e.amt;
+      if(e.payMethod==='transfer')transferTotal+=e.amt;
+      else if(e.payMethod==='credit')creditTotal+=e.amt;
+      if(e.who==='me')meTotal+=e.amt;
+      else if(e.who==='partner')partnerTotal+=e.amt;
+      else if(e.who==='pool')poolTotal+=e.amt;
     });
     const projTotal=entries.reduce((s,e)=>s+e.amt,0);
-    rows.push(['รวม '+(p.name||''),'','','',projTotal]);
-    rows.push([]);
+    rawRows.push(['รวม '+(p.name||''),'','','','','',projTotal]);
+    rawRows.push([]);
   });
-  rows.push(['รวมทั้งหมด','','','',grandTotal]);
+  rawRows.push(['รวมทั้งหมด','','','','','',grandTotal]);
+
+  // Sheet 1: Summary
+  const sumRows=[
+    [`รายงานรายจ่าย — ${MONTH_NAMES_FULL[month]} ${year}`],
+    ['ร้านคาเฟ่ • จ่ายด้วยกันนะ'],
+    [],
+    ['ภาพรวม',''],
+    ['รวมทั้งหมด',grandTotal],
+    [`${nameMe} สำรองจ่าย`,meTotal],
+    [`${namePartner} สำรองจ่าย`,partnerTotal],
+    ['ส่วนกลางจ่ายเอง',poolTotal],
+    [],
+    ['แยกตามวิธีจ่าย',''],
+    ['โอนจ่าย',transferTotal],
+    ['บัตรเครดิต',creditTotal],
+    ['ไม่ระบุ',grandTotal-transferTotal-creditTotal],
+  ];
+
   const wb=XLSX.utils.book_new();
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  XLSX.utils.book_append_sheet(wb,ws,MONTH_NAMES_FULL[month]+' '+year);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumRows),'Summary');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rawRows),'รายการทั้งหมด');
   XLSX.writeFile(wb,`cafe-report-${year}-${String(month+1).padStart(2,'0')}.xlsx`);
   showToast('Export Excel แล้ว! 📊');
 };
@@ -1963,13 +1989,17 @@ window.exportCafeMonthlyPDF=async(year,month)=>{
     const {jsPDF}=window.jspdf;
     const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     doc.setFont('helvetica');
+
+    // header
     doc.setFontSize(16);doc.setTextColor(196,112,32);
     doc.text(`Cafe Report — ${MONTH_NAMES_FULL[month]} ${year}`,14,16);
     doc.setFontSize(10);doc.setTextColor(100,100,100);
     doc.text('jaai-duay-gan',14,23);
-    let y=30;
+
+    // คำนวณ summary
     const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
-    let grandTotal=0;
+    let grandTotal=0,transferTotal=0,creditTotal=0,meTotal=0,partnerTotal=0;
+    const projList=[];
     cafeProjs.forEach(([,p])=>{
       const entries=Object.values(p.entries||{}).filter(e=>{
         if(!e.ts)return false;
@@ -1979,28 +2009,61 @@ window.exportCafeMonthlyPDF=async(year,month)=>{
       if(!entries.length)return;
       const projTotal=entries.reduce((s,e)=>s+e.amt,0);
       grandTotal+=projTotal;
+      entries.forEach(e=>{
+        if(e.payMethod==='transfer')transferTotal+=e.amt;
+        else if(e.payMethod==='credit')creditTotal+=e.amt;
+        if(e.who==='me')meTotal+=e.amt;
+        else if(e.who==='partner')partnerTotal+=e.amt;
+      });
+      projList.push({name:p.name||'โปรเจคใหม่',entries,projTotal});
+    });
+
+    // summary cards
+    const fmt2=(n)=>`฿${Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`;
+    const cards=[
+      ['รวมทั้งหมด',fmt2(grandTotal),'#FFF5E6'],
+      ['โอนจ่าย',fmt2(transferTotal),'#FDE8F2'],
+      ['บัตรเครดิต',fmt2(creditTotal),'#E6FAF5'],
+    ];
+    cards.forEach((c,i)=>{
+      const x=14+(i*61);
+      doc.setFillColor(parseInt(c[2].slice(1,3),16),parseInt(c[2].slice(3,5),16),parseInt(c[2].slice(5,7),16));
+      doc.roundedRect(x,28,57,14,2,2,'F');
+      doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text(c[0],x+3,34);
+      doc.setFontSize(11);doc.setTextColor(61,37,53);doc.text(c[1],x+3,41);
+    });
+
+    // project tables
+    let y=48;
+    projList.forEach(p=>{
+      if(y>250){doc.addPage();y=14;}
       doc.setFontSize(10);doc.setTextColor(196,112,32);
-      doc.text((p.name||'โปรเจคใหม่'),14,y);
-      doc.setDrawColor(255,179,71);doc.line(14,y+1,196,y+1);y+=6;
+      doc.text(p.name,14,y);
+      doc.setDrawColor(255,179,71);doc.line(14,y+1,196,y+1);y+=5;
       doc.autoTable({
         startY:y,
-        head:[['Date','Item','Who','Amount']],
-        body:entries.map(e=>{
-          const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'Pool':(e.otherName||'Other');
-          return[e.date||'',e.desc,whoTxt,`฿${Number(e.amt).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`];
+        head:[['วันที่','รายการ','สำรองจ่าย','วิธีจ่าย','ยอด']],
+        body:p.entries.map(e=>{
+          const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+          const bankTxt=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'');
+          const payTxt=e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'ไม่ระบุ';
+          return[e.date||'',e.desc,whoTxt,`${bankTxt?bankTxt+' ':''}${payTxt}`,fmt2(e.amt)];
         }),
-        foot:[['','','Total',`฿${Number(projTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`]],
+        foot:[['','','','รวม '+p.name,fmt2(p.projTotal)]],
         styles:{fontSize:9,cellPadding:2},
         headStyles:{fillColor:[255,179,71],textColor:[61,37,53]},
         footStyles:{fillColor:[255,245,230],textColor:[196,112,32],fontStyle:'bold'},
+        columnStyles:{4:{halign:'right'}},
         margin:{left:14,right:14}
       });
       y=doc.lastAutoTable.finalY+8;
     });
+
+    // grand total
     doc.setFillColor(255,245,230);doc.roundedRect(14,y,182,10,2,2,'F');
     doc.setFontSize(11);doc.setTextColor(61,37,53);
-    doc.text('Grand Total',16,y+7);
-    doc.text(`฿${Number(grandTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`,196,y+7,{align:'right'});
+    doc.text('รวมทั้งหมด',16,y+7);
+    doc.text(fmt2(grandTotal),196,y+7,{align:'right'});
     doc.setFontSize(8);doc.setTextColor(180,154,170);
     doc.text(`jaai-duay-gan — ${MONTH_NAMES_FULL[month]} ${year}`,14,doc.internal.pageSize.height-8);
     doc.save(`cafe-report-${year}-${String(month+1).padStart(2,'0')}.pdf`);
