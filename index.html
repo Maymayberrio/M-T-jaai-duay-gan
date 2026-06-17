@@ -541,6 +541,7 @@ input,select{font-family:'Sarabun',sans-serif;}
           <div class="desk-box-lbl" id="desk-recent-label">🧾 รายการล่าสุด</div>
           <div id="desk-recent-entries"></div>
         </div>
+        <div id="desk-cafe-monthly" style="display:none;margin-top:.875rem;"></div>
       </div>
 
       <!-- PROJECT DETAIL VIEW -->
@@ -596,7 +597,8 @@ let activeTab = 'pending'; // 'pending' | 'cleared'
 let deskActiveTab = 'pending';
 let selectedYear = new Date().getFullYear();
 let selectedMonth = null;
-let dashCat = 'family'; // 'family' หรือ 'cafe'
+let dashCat = 'family';
+let selectedCafeMonth = new Date().getMonth(); // 'family' หรือ 'cafe'
 let newProjCat = 'family';
 let cafeWho = 'me';
 let deskCafeWho = 'me';
@@ -1327,6 +1329,17 @@ function renderDashboard(){
     }).join('');
 
   checkExportBanner();
+
+  /* cafe monthly report */
+  const cafeMonthlyEl=document.getElementById('desk-cafe-monthly');
+  if(cafeMonthlyEl){
+    if(dashCat==='cafe'){
+      cafeMonthlyEl.style.display='block';
+      renderCafeMonthlyReport();
+    } else {
+      cafeMonthlyEl.style.display='none';
+    }
+  }
 }
 
 function renderChart(){
@@ -1360,6 +1373,93 @@ function renderChart(){
 window.selectYear=(y)=>{selectedYear=y;selectedMonth=null;renderDashboard();};
 window.selectMonth=(m)=>{selectedMonth=selectedMonth===m?null:m;renderDashboard();};
 window.clearMonth=()=>{selectedMonth=null;renderDashboard()};
+
+window.selectCafeMonth=(m)=>{selectedCafeMonth=m;renderCafeMonthlyReport();};
+
+function renderCafeMonthlyReport(){
+  const el=document.getElementById('desk-cafe-monthly');
+  if(!el)return;
+  const year=selectedYear;
+  const month=selectedCafeMonth;
+  const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
+
+  // คำนวณ summary
+  let grandTotal=0;
+  const projData=cafeProjs.map(([pid,p])=>{
+    const entries=Object.values(p.entries||{}).filter(e=>{
+      if(!e.ts)return false;
+      const d=new Date(e.ts);
+      return d.getFullYear()===year&&d.getMonth()===month;
+    }).sort((a,b)=>(a.ts||0)-(b.ts||0));
+    const total=entries.reduce((s,e)=>s+e.amt,0);
+    grandTotal+=total;
+    return {pid,name:p.name||'โปรเจคใหม่',emoji:p.emoji||'☕',entries,total};
+  }).filter(p=>p.entries.length>0);
+
+  // month tabs
+  const monthTabsHtml=MONTH_NAMES.map((m,i)=>`
+    <button onclick="selectCafeMonth(${i})" style="padding:5px 10px;font-size:11px;font-weight:700;border:1.5px solid ${i===month?'var(--orange)':'var(--border)'};border-radius:8px;background:${i===month?'var(--orange-soft)':'var(--surface)'};color:${i===month?'var(--orange-deep)':'var(--muted)'};cursor:pointer;">${m}</button>
+  `).join('');
+
+  // project rows
+  const projRowsHtml=projData.length===0?
+    `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px;">ไม่มีรายการในเดือนนี้</div>`:
+    projData.map(p=>`
+      <div class="desk-box" style="margin-bottom:.75rem;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">${p.emoji} ${esc(p.name)}</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px;">
+          <thead>
+            <tr style="color:var(--muted);">
+              <th style="text-align:left;padding:4px 0;font-weight:600;">วันที่</th>
+              <th style="text-align:left;padding:4px 0;font-weight:600;">รายการ</th>
+              <th style="text-align:left;padding:4px 0;font-weight:600;">ใครสำรอง</th>
+              <th style="text-align:right;padding:4px 0;font-weight:600;">ยอด</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${p.entries.map(e=>{
+              const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+              const whoCls=e.who==='me'?'background:var(--pink-soft);color:var(--pink-deep);':e.who==='partner'?'background:var(--lav-soft);color:var(--lav-deep);':e.who==='pool'?'background:var(--orange-soft);color:var(--orange-deep);':'background:#F3F4F6;color:#374151;';
+              return `<tr style="border-top:1px solid var(--border);">
+                <td style="padding:6px 0;color:var(--muted);">${e.date||''}</td>
+                <td style="padding:6px 0;">${esc(e.desc)}</td>
+                <td style="padding:6px 0;"><span style="font-size:10px;${whoCls}padding:2px 8px;border-radius:99px;">${esc(whoTxt)}</span></td>
+                <td style="padding:6px 0;text-align:right;font-weight:700;">${fmt(e.amt)}</td>
+              </tr>`;
+            }).join('')}
+            <tr style="border-top:1px solid var(--border);background:var(--bg);">
+              <td colspan="3" style="padding:6px 0;font-weight:700;font-size:11px;">รวม ${esc(p.name)}</td>
+              <td style="padding:6px 0;text-align:right;font-weight:700;">${fmt(p.total)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `).join('');
+
+  el.innerHTML=`
+    <div class="desk-box" style="margin-bottom:.875rem;">
+      <div class="desk-box-lbl" style="margin-bottom:10px;">📋 รายงานรายเดือน — ${MONTH_NAMES_FULL[month]} ${year}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;">${monthTabsHtml}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.875rem;">
+      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวมทั้งหมด</div><div class="dash-sc-val">${fmt(grandTotal)}</div></div>
+      <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">${Object.keys(projData).length} โปรเจค</div><div class="dash-sc-val">${projData.length}</div></div>
+      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">รายการทั้งหมด</div><div class="dash-sc-val">${projData.reduce((s,p)=>s+p.entries.length,0)}</div></div>
+    </div>
+    ${projRowsHtml}
+    ${grandTotal>0?`
+    <div class="desk-box" style="display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">รวมทั้งหมด — ${MONTH_NAMES_FULL[month]} ${year}</div>
+        <div style="font-size:18px;font-weight:700;color:var(--text);">${fmt(grandTotal)}</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="exportCafeMonthlyExcel(${year},${month})" style="padding:8px 14px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">📊 Export Excel</button>
+        <button onclick="exportCafeMonthlyPDF(${year},${month})" style="padding:8px 14px;background:linear-gradient(135deg,#F472A8,#C4608A);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">📄 Export PDF</button>
+      </div>
+    </div>`:''}
+  `;
+}
 
 function checkExportBanner(){
   const years=getYears();
@@ -1769,6 +1869,84 @@ window.deskAddEntry=()=>{
 /* ═══════════════════════════
    SHARED ACTIONS
 ═══════════════════════════ */
+window.exportCafeMonthlyExcel=(year,month)=>{
+  const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
+  const rows=[['โปรเจค','วันที่','รายการ','ใครสำรอง','ยอด']];
+  let grandTotal=0;
+  cafeProjs.forEach(([,p])=>{
+    const entries=Object.values(p.entries||{}).filter(e=>{
+      if(!e.ts)return false;
+      const d=new Date(e.ts);
+      return d.getFullYear()===year&&d.getMonth()===month;
+    }).sort((a,b)=>(a.ts||0)-(b.ts||0));
+    if(!entries.length)return;
+    entries.forEach(e=>{
+      const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+      rows.push([p.name||'โปรเจคใหม่',e.date||'',e.desc,whoTxt,e.amt]);
+      grandTotal+=e.amt;
+    });
+    const projTotal=entries.reduce((s,e)=>s+e.amt,0);
+    rows.push(['รวม '+(p.name||''),'','','',projTotal]);
+    rows.push([]);
+  });
+  rows.push(['รวมทั้งหมด','','','',grandTotal]);
+  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb,ws,MONTH_NAMES_FULL[month]+' '+year);
+  XLSX.writeFile(wb,`cafe-report-${year}-${String(month+1).padStart(2,'0')}.xlsx`);
+  showToast('Export Excel แล้ว! 📊');
+};
+
+window.exportCafeMonthlyPDF=async(year,month)=>{
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    doc.setFont('helvetica');
+    doc.setFontSize(16);doc.setTextColor(196,112,32);
+    doc.text(`Cafe Report — ${MONTH_NAMES_FULL[month]} ${year}`,14,16);
+    doc.setFontSize(10);doc.setTextColor(100,100,100);
+    doc.text('jaai-duay-gan',14,23);
+    let y=30;
+    const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
+    let grandTotal=0;
+    cafeProjs.forEach(([,p])=>{
+      const entries=Object.values(p.entries||{}).filter(e=>{
+        if(!e.ts)return false;
+        const d=new Date(e.ts);
+        return d.getFullYear()===year&&d.getMonth()===month;
+      }).sort((a,b)=>(a.ts||0)-(b.ts||0));
+      if(!entries.length)return;
+      const projTotal=entries.reduce((s,e)=>s+e.amt,0);
+      grandTotal+=projTotal;
+      doc.setFontSize(10);doc.setTextColor(196,112,32);
+      doc.text((p.name||'โปรเจคใหม่'),14,y);
+      doc.setDrawColor(255,179,71);doc.line(14,y+1,196,y+1);y+=6;
+      doc.autoTable({
+        startY:y,
+        head:[['Date','Item','Who','Amount']],
+        body:entries.map(e=>{
+          const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'Pool':(e.otherName||'Other');
+          return[e.date||'',e.desc,whoTxt,`฿${Number(e.amt).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`];
+        }),
+        foot:[['','','Total',`฿${Number(projTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`]],
+        styles:{fontSize:9,cellPadding:2},
+        headStyles:{fillColor:[255,179,71],textColor:[61,37,53]},
+        footStyles:{fillColor:[255,245,230],textColor:[196,112,32],fontStyle:'bold'},
+        margin:{left:14,right:14}
+      });
+      y=doc.lastAutoTable.finalY+8;
+    });
+    doc.setFillColor(255,245,230);doc.roundedRect(14,y,182,10,2,2,'F');
+    doc.setFontSize(11);doc.setTextColor(61,37,53);
+    doc.text('Grand Total',16,y+7);
+    doc.text(`฿${Number(grandTotal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`,196,y+7,{align:'right'});
+    doc.setFontSize(8);doc.setTextColor(180,154,170);
+    doc.text(`jaai-duay-gan — ${MONTH_NAMES_FULL[month]} ${year}`,14,doc.internal.pageSize.height-8);
+    doc.save(`cafe-report-${year}-${String(month+1).padStart(2,'0')}.pdf`);
+    showToast('Export PDF แล้ว! 📄');
+  }catch(err){console.error(err);showToast('Export ไม่สำเร็จ');}
+};
+
 window.archiveProject=(id)=>{
   if(!confirm('เก็บโปรเจคนี้ไว้หลังบ้าน?'))return;
   update(ref(db,'projects/'+id),{archived:true});
