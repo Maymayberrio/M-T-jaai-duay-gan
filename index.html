@@ -1932,9 +1932,9 @@ window.deskAddEntry=()=>{
 ═══════════════════════════ */
 window.exportCafeMonthlyExcel=(year,month)=>{
   const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
-  let grandTotal=0,transferTotal=0,creditTotal=0;
-  let meTotal=0,partnerTotal=0,poolTotal=0;
-  const rawRows=[['โปรเจค','วันที่','รายการ','ใครสำรอง','วิธีจ่าย','ธนาคาร','ยอด']];
+  let grandTotal=0,transferTotal=0,creditTotal=0,meTotal=0,partnerTotal=0,poolTotal=0;
+  const projList=[];
+
   cafeProjs.forEach(([,p])=>{
     const entries=Object.values(p.entries||{}).filter(e=>{
       if(!e.ts)return false;
@@ -1942,45 +1942,90 @@ window.exportCafeMonthlyExcel=(year,month)=>{
       return d.getFullYear()===year&&d.getMonth()===month;
     }).sort((a,b)=>(a.ts||0)-(b.ts||0));
     if(!entries.length)return;
+    const projTotal=entries.reduce((s,e)=>s+e.amt,0);
+    grandTotal+=projTotal;
     entries.forEach(e=>{
-      const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
-      const payTxt=e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'ไม่ระบุ';
-      const bankTxt=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'');
-      rawRows.push([p.name||'โปรเจคใหม่',e.date||'',e.desc,whoTxt,payTxt,bankTxt,e.amt]);
-      grandTotal+=e.amt;
       if(e.payMethod==='transfer')transferTotal+=e.amt;
       else if(e.payMethod==='credit')creditTotal+=e.amt;
       if(e.who==='me')meTotal+=e.amt;
       else if(e.who==='partner')partnerTotal+=e.amt;
       else if(e.who==='pool')poolTotal+=e.amt;
     });
-    const projTotal=entries.reduce((s,e)=>s+e.amt,0);
-    rawRows.push(['รวม '+(p.name||''),'','','','','',projTotal]);
-    rawRows.push([]);
+    projList.push({name:p.name||'โปรเจคใหม่',entries,projTotal});
   });
-  rawRows.push(['รวมทั้งหมด','','','','','',grandTotal]);
 
-  // Sheet 1: Summary
-  const sumRows=[
-    [`รายงานรายจ่าย — ${MONTH_NAMES_FULL[month]} ${year}`],
-    ['ร้านคาเฟ่ • จ่ายด้วยกันนะ'],
-    [],
-    ['ภาพรวม',''],
-    ['รวมทั้งหมด',grandTotal],
-    [`${nameMe} สำรองจ่าย`,meTotal],
-    [`${namePartner} สำรองจ่าย`,partnerTotal],
-    ['ส่วนกลางจ่ายเอง',poolTotal],
-    [],
-    ['แยกตามวิธีจ่าย',''],
-    ['โอนจ่าย',transferTotal],
-    ['บัตรเครดิต',creditTotal],
-    ['ไม่ระบุ',grandTotal-transferTotal-creditTotal],
-  ];
+  const fmt2=(n)=>`฿${Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}`;
 
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumRows),'Summary');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rawRows),'รายการทั้งหมด');
-  XLSX.writeFile(wb,`cafe-report-${year}-${String(month+1).padStart(2,'0')}.xlsx`);
+  // project rows HTML
+  const projRowsHtml=projList.map(p=>`
+    <tr><td colspan="7" style="background:#FFF5E6;color:#C47020;font-weight:bold;font-size:13px;padding:8px 10px;border-bottom:2px solid #FFB347;">${p.name}</td></tr>
+    <tr style="background:#FFB347;color:#3D2535;font-weight:bold;">
+      <td style="padding:6px 8px;">วันที่</td>
+      <td style="padding:6px 8px;">รายการ</td>
+      <td style="padding:6px 8px;">ใครสำรอง</td>
+      <td style="padding:6px 8px;">วิธีจ่าย</td>
+      <td style="padding:6px 8px;">ธนาคาร</td>
+      <td style="padding:6px 8px;text-align:right;">ยอด</td>
+    </tr>
+    ${p.entries.map((e,i)=>{
+      const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
+      const payTxt=e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'ไม่ระบุ';
+      const bankTxt=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'-');
+      const bg=i%2===0?'#FFFFFF':'#FFF8F0';
+      return `<tr style="background:${bg};">
+        <td style="padding:5px 8px;color:#888;">${e.date||''}</td>
+        <td style="padding:5px 8px;">${esc(e.desc)}</td>
+        <td style="padding:5px 8px;">${whoTxt}</td>
+        <td style="padding:5px 8px;">${payTxt}</td>
+        <td style="padding:5px 8px;">${bankTxt}</td>
+        <td style="padding:5px 8px;text-align:right;font-weight:bold;">${fmt2(e.amt)}</td>
+      </tr>`;
+    }).join('')}
+    <tr style="background:#FFF5E6;">
+      <td colspan="5" style="padding:6px 8px;font-weight:bold;">รวม ${esc(p.name)}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:bold;color:#C47020;">${fmt2(p.projTotal)}</td>
+    </tr>
+    <tr><td colspan="7" style="padding:4px;"></td></tr>
+  `).join('');
+
+  const html=`
+    <html><head><meta charset="UTF-8"></head><body>
+    <table style="font-family:Arial,sans-serif;font-size:12px;border-collapse:collapse;width:100%;">
+      <tr><td colspan="7" style="background:#C47020;color:white;font-size:16px;font-weight:bold;padding:12px 14px;">รายงานรายจ่าย — ${MONTH_NAMES_FULL[month]} ${year}</td></tr>
+      <tr><td colspan="7" style="background:#FFF5E6;color:#C47020;padding:6px 14px;font-size:11px;">ร้านคาเฟ่ • จ่ายด้วยกันนะ</td></tr>
+      <tr><td colspan="7" style="padding:6px;"></td></tr>
+
+      <tr><td colspan="7" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">ภาพรวม</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">รวมทั้งหมด</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(grandTotal)}</td></tr>
+      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">${esc(nameMe)} สำรองจ่าย</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(meTotal)}</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">${esc(namePartner)} สำรองจ่าย</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(partnerTotal)}</td></tr>
+      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">ส่วนกลางจ่ายเอง</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(poolTotal)}</td></tr>
+      <tr><td colspan="7" style="padding:4px;"></td></tr>
+
+      <tr><td colspan="7" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">แยกตามวิธีจ่าย</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">โอนจ่าย</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(transferTotal)}</td></tr>
+      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">บัตรเครดิต</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(creditTotal)}</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">ไม่ระบุ</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(grandTotal-transferTotal-creditTotal)}</td></tr>
+      <tr><td colspan="7" style="padding:10px;"></td></tr>
+
+      <tr><td colspan="7" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">รายการทั้งหมด</td></tr>
+      ${projRowsHtml}
+
+      <tr style="background:#FFF5CC;">
+        <td colspan="5" style="padding:8px 10px;font-weight:bold;font-size:13px;">รวมทั้งหมด</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:bold;font-size:13px;color:#C47020;">${fmt2(grandTotal)}</td>
+      </tr>
+    </table>
+    </body></html>
+  `;
+
+  const blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`cafe-report-${year}-${String(month+1).padStart(2,'0')}.xls`;
+  a.click();
+  URL.revokeObjectURL(url);
   showToast('Export Excel แล้ว! 📊');
 };
 
