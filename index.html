@@ -1376,6 +1376,12 @@ window.clearMonth=()=>{selectedMonth=null;renderDashboard()};
 
 window.selectCafeMonth=(m)=>{selectedCafeMonth=m;renderCafeMonthlyReport();};
 
+let cafeFilterPay='all';
+let cafeFilterBank='all';
+
+window.setCafeFilterPay=(v)=>{cafeFilterPay=v;cafeFilterBank='all';renderCafeMonthlyReport();};
+window.setCafeFilterBank=(v)=>{cafeFilterBank=v;renderCafeMonthlyReport();};
+
 function renderCafeMonthlyReport(){
   const el=document.getElementById('desk-cafe-monthly');
   if(!el)return;
@@ -1383,28 +1389,73 @@ function renderCafeMonthlyReport(){
   const month=selectedCafeMonth;
   const cafeProjs=Object.entries(projects).filter(([,p])=>p.category==='cafe'&&!p.archived);
 
-  // คำนวณ summary
-  let grandTotal=0;
+  // ดึง entries ทั้งหมดของเดือนนี้
+  let allMonthEntries=[];
   const projData=cafeProjs.map(([pid,p])=>{
     const entries=Object.values(p.entries||{}).filter(e=>{
       if(!e.ts)return false;
       const d=new Date(e.ts);
       return d.getFullYear()===year&&d.getMonth()===month;
     }).sort((a,b)=>(a.ts||0)-(b.ts||0));
-    const total=entries.reduce((s,e)=>s+e.amt,0);
-    grandTotal+=total;
-    return {pid,name:p.name||'โปรเจคใหม่',emoji:p.emoji||'☕',entries,total};
+    allMonthEntries=[...allMonthEntries,...entries];
+    return {pid,name:p.name||'โปรเจคใหม่',emoji:p.emoji||'☕',entries};
   }).filter(p=>p.entries.length>0);
 
+  // หา banks ที่มีตาม pay filter
+  const filteredForBank=allMonthEntries.filter(e=>{
+    if(cafeFilterPay==='all')return e.bank;
+    if(cafeFilterPay==='transfer')return e.payMethod==='transfer';
+    if(cafeFilterPay==='credit')return e.payMethod==='credit';
+    if(cafeFilterPay==='none')return !e.payMethod;
+    return true;
+  });
+  const availableBanks=[...new Set(filteredForBank.map(e=>e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):e.bank).filter(Boolean))];
+
+  // filter function
+  const filterEntry=(e)=>{
+    const matchPay=cafeFilterPay==='all'?true:cafeFilterPay==='transfer'?e.payMethod==='transfer':cafeFilterPay==='credit'?e.payMethod==='credit':!e.payMethod;
+    const eBank=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):e.bank||'';
+    const matchBank=cafeFilterBank==='all'?true:eBank===cafeFilterBank;
+    return matchPay&&matchBank;
+  };
+
   // month tabs
-  const monthTabsHtml=MONTH_NAMES.map((m,i)=>`
-    <button onclick="selectCafeMonth(${i})" style="padding:5px 10px;font-size:11px;font-weight:700;border:1.5px solid ${i===month?'var(--orange)':'var(--border)'};border-radius:8px;background:${i===month?'var(--orange-soft)':'var(--surface)'};color:${i===month?'var(--orange-deep)':'var(--muted)'};cursor:pointer;">${m}</button>
-  `).join('');
+  const monthTabsHtml=MONTH_NAMES.map((m,i)=>
+    `<button onclick="selectCafeMonth(${i})" style="padding:5px 10px;font-size:11px;font-weight:700;border:1.5px solid ${i===month?'var(--orange)':'var(--border)'};border-radius:8px;background:${i===month?'var(--orange-soft)':'var(--surface)'};color:${i===month?'var(--orange-deep)':'var(--muted)'};cursor:pointer;">${m}</button>`
+  ).join('');
+
+  // filter UI
+  const payFilterHtml=`
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+      <span style="font-size:11px;color:var(--muted);min-width:60px;">วิธีจ่าย</span>
+      ${['all','transfer','credit','none'].map(v=>{
+        const lbl=v==='all'?'ทั้งหมด':v==='transfer'?'โอนจ่าย':v==='credit'?'บัตรเครดิต':'ไม่ระบุ';
+        const active=cafeFilterPay===v;
+        return `<button onclick="setCafeFilterPay('${v}')" style="padding:4px 11px;font-size:11px;font-weight:700;border:1.5px solid ${active?'var(--orange)':'var(--border)'};border-radius:8px;background:${active?'var(--orange-soft)':'var(--surface)'};color:${active?'var(--orange-deep)':'var(--muted)'};cursor:pointer;">${lbl}</button>`;
+      }).join('')}
+    </div>
+    ${cafeFilterPay!=='none'&&availableBanks.length>0?`
+    <div style="display:flex;gap:6px;align-items:center;">
+      <span style="font-size:11px;color:var(--muted);min-width:60px;">ธนาคาร</span>
+      ${['all',...availableBanks].map(v=>{
+        const active=cafeFilterBank===v;
+        return `<button onclick="setCafeFilterBank('${v}')" style="padding:4px 11px;font-size:11px;font-weight:700;border:1.5px solid ${active?'var(--orange)':'var(--border)'};border-radius:8px;background:${active?'var(--orange-soft)':'var(--surface)'};color:${active?'var(--orange-deep)':'var(--muted)'};cursor:pointer;">${v==='all'?'ทั้งหมด':v}</button>`;
+      }).join('')}
+    </div>`:''}
+  `;
 
   // project rows
+  let grandTotal=0;
+  let grandCount=0;
   const projRowsHtml=projData.length===0?
     `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px;">ไม่มีรายการในเดือนนี้</div>`:
-    projData.map(p=>`
+    projData.map(p=>{
+      const filtered=p.entries.filter(filterEntry);
+      if(!filtered.length)return'';
+      const projTotal=filtered.reduce((s,e)=>s+e.amt,0);
+      grandTotal+=projTotal;
+      grandCount+=filtered.length;
+      return `
       <div class="desk-box" style="margin-bottom:.75rem;">
         <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">${p.emoji} ${esc(p.name)}</div>
         <table style="width:100%;border-collapse:collapse;font-size:11px;">
@@ -1413,44 +1464,54 @@ function renderCafeMonthlyReport(){
               <th style="text-align:left;padding:4px 0;font-weight:600;">วันที่</th>
               <th style="text-align:left;padding:4px 0;font-weight:600;">รายการ</th>
               <th style="text-align:left;padding:4px 0;font-weight:600;">ใครสำรอง</th>
+              <th style="text-align:left;padding:4px 0;font-weight:600;">วิธีจ่าย</th>
               <th style="text-align:right;padding:4px 0;font-weight:600;">ยอด</th>
             </tr>
           </thead>
           <tbody>
-            ${p.entries.map(e=>{
+            ${filtered.map(e=>{
               const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
               const whoCls=e.who==='me'?'background:var(--pink-soft);color:var(--pink-deep);':e.who==='partner'?'background:var(--lav-soft);color:var(--lav-deep);':e.who==='pool'?'background:var(--orange-soft);color:var(--orange-deep);':'background:#F3F4F6;color:#374151;';
+              const bankTxt=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'');
+              const payTxt=e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'';
+              const payCls=e.payMethod==='transfer'?'background:#E8F4FF;color:var(--blue-deep);':e.payMethod==='credit'?'background:#E6FAF5;color:var(--mint-deep);':'background:#F3F4F6;color:var(--muted);';
+              const payDisplay=payTxt?`${bankTxt?bankTxt+' ':''}${payTxt}`:'ไม่ระบุ';
               return `<tr style="border-top:1px solid var(--border);">
                 <td style="padding:6px 0;color:var(--muted);">${e.date||''}</td>
                 <td style="padding:6px 0;">${esc(e.desc)}</td>
                 <td style="padding:6px 0;"><span style="font-size:10px;${whoCls}padding:2px 8px;border-radius:99px;">${esc(whoTxt)}</span></td>
+                <td style="padding:6px 0;"><span style="font-size:10px;${payCls}padding:2px 8px;border-radius:99px;">${payDisplay}</span></td>
                 <td style="padding:6px 0;text-align:right;font-weight:700;">${fmt(e.amt)}</td>
               </tr>`;
             }).join('')}
             <tr style="border-top:1px solid var(--border);background:var(--bg);">
-              <td colspan="3" style="padding:6px 0;font-weight:700;font-size:11px;">รวม ${esc(p.name)}</td>
-              <td style="padding:6px 0;text-align:right;font-weight:700;">${fmt(p.total)}</td>
+              <td colspan="4" style="padding:6px 0;font-weight:700;font-size:11px;">รวม ${esc(p.name)}</td>
+              <td style="padding:6px 0;text-align:right;font-weight:700;">${fmt(projTotal)}</td>
             </tr>
           </tbody>
         </table>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
+
+  const payName=cafeFilterPay==='all'?'ทั้งหมด':cafeFilterPay==='transfer'?'โอนจ่าย':cafeFilterPay==='credit'?'บัตรเครดิต':'ไม่ระบุ';
+  const bankName=cafeFilterBank==='all'?'':`• ${cafeFilterBank}`;
 
   el.innerHTML=`
     <div class="desk-box" style="margin-bottom:.875rem;">
       <div class="desk-box-lbl" style="margin-bottom:10px;">📋 รายงานรายเดือน — ${MONTH_NAMES_FULL[month]} ${year}</div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap;">${monthTabsHtml}</div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;">${monthTabsHtml}</div>
+      ${payFilterHtml}
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.875rem;">
-      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวมทั้งหมด</div><div class="dash-sc-val">${fmt(grandTotal)}</div></div>
-      <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">${Object.keys(projData).length} โปรเจค</div><div class="dash-sc-val">${projData.length}</div></div>
-      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">รายการทั้งหมด</div><div class="dash-sc-val">${projData.reduce((s,p)=>s+p.entries.length,0)}</div></div>
+      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวม${payName}${bankName}</div><div class="dash-sc-val">${fmt(grandTotal)}</div></div>
+      <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">โปรเจค</div><div class="dash-sc-val">${projData.length}</div></div>
+      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">รายการ</div><div class="dash-sc-val">${grandCount}</div></div>
     </div>
-    ${projRowsHtml}
+    ${projRowsHtml||`<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px;">ไม่มีรายการที่ตรงกับ filter นี้</div>`}
     ${grandTotal>0?`
     <div class="desk-box" style="display:flex;align-items:center;justify-content:space-between;">
       <div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">รวมทั้งหมด — ${MONTH_NAMES_FULL[month]} ${year}</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">รวม${payName}${bankName} — ${MONTH_NAMES_FULL[month]} ${year}</div>
         <div style="font-size:18px;font-weight:700;color:var(--text);">${fmt(grandTotal)}</div>
       </div>
       <div style="display:flex;gap:8px;">
