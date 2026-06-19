@@ -1958,7 +1958,7 @@ window.exportCafeMonthlyExcel=(year,month)=>{
 
   // project rows HTML
   const projRowsHtml=projList.map(p=>`
-    <tr><td colspan="7" style="background:#FFF5E6;color:#C47020;font-weight:bold;font-size:13px;padding:8px 10px;border-bottom:2px solid #FFB347;">${p.name}</td></tr>
+    <tr><td colspan="8" style="background:#FFF5E6;color:#C47020;font-weight:bold;font-size:13px;padding:8px 10px;border-bottom:2px solid #FFB347;">${p.name}</td></tr>
     <tr style="background:#FFB347;color:#3D2535;font-weight:bold;">
       <td style="padding:6px 8px;">วันที่</td>
       <td style="padding:6px 8px;">รายการ</td>
@@ -1966,11 +1966,14 @@ window.exportCafeMonthlyExcel=(year,month)=>{
       <td style="padding:6px 8px;">วิธีจ่าย</td>
       <td style="padding:6px 8px;">ธนาคาร</td>
       <td style="padding:6px 8px;text-align:right;">ยอด</td>
+      <td style="padding:6px 8px;text-align:center;">Status</td>
     </tr>
     ${p.entries.map((e,i)=>{
       const whoTxt=e.who==='me'?nameMe:e.who==='partner'?namePartner:e.who==='pool'?'ส่วนกลาง':(e.otherName||'อื่นๆ');
       const payTxt=e.payMethod==='transfer'?'โอนจ่าย':e.payMethod==='credit'?'บัตรเครดิต':'ไม่ระบุ';
       const bankTxt=e.bank==='อื่นๆ'?(e.bankOther||'อื่นๆ'):(e.bank||'-');
+      const statusTxt=e.cleared?'เคลียร์แล้ว':'ค้างอยู่';
+      const statusStyle=e.cleared?'color:#16A34A;':'color:#DC2626;';
       const bg=i%2===0?'#FFFFFF':'#FFF8F0';
       return `<tr style="background:${bg};">
         <td style="padding:5px 8px;color:#888;">${e.date||''}</td>
@@ -1979,41 +1982,44 @@ window.exportCafeMonthlyExcel=(year,month)=>{
         <td style="padding:5px 8px;">${payTxt}</td>
         <td style="padding:5px 8px;">${bankTxt}</td>
         <td style="padding:5px 8px;text-align:right;font-weight:bold;">${fmt2(e.amt)}</td>
+        <td style="padding:5px 8px;text-align:center;font-weight:bold;${statusStyle}">${statusTxt}</td>
       </tr>`;
     }).join('')}
     <tr style="background:#FFF5E6;">
       <td colspan="5" style="padding:6px 8px;font-weight:bold;">รวม ${esc(p.name)}</td>
       <td style="padding:6px 8px;text-align:right;font-weight:bold;color:#C47020;">${fmt2(p.projTotal)}</td>
+      <td></td>
     </tr>
-    <tr><td colspan="7" style="padding:4px;"></td></tr>
+    <tr><td colspan="8" style="padding:4px;"></td></tr>
   `).join('');
 
   const html=`
     <html><head><meta charset="UTF-8"></head><body>
     <table style="font-family:Arial,sans-serif;font-size:12px;border-collapse:collapse;width:100%;">
-      <tr><td colspan="7" style="background:#C47020;color:white;font-size:16px;font-weight:bold;padding:12px 14px;">รายงานรายจ่าย — ${MONTH_NAMES_FULL[month]} ${year}</td></tr>
-      <tr><td colspan="7" style="background:#FFF5E6;color:#C47020;padding:6px 14px;font-size:11px;">ร้านคาเฟ่ • จ่ายด้วยกันนะ</td></tr>
-      <tr><td colspan="7" style="padding:6px;"></td></tr>
+      <tr><td colspan="8" style="background:#C47020;color:white;font-size:16px;font-weight:bold;padding:12px 14px;">รายงานรายจ่าย — ${MONTH_NAMES_FULL[month]} ${year}</td></tr>
+      <tr><td colspan="8" style="background:#FFF5E6;color:#C47020;padding:6px 14px;font-size:11px;">ร้านคาเฟ่ • จ่ายด้วยกันนะ</td></tr>
+      <tr><td colspan="8" style="padding:6px;"></td></tr>
 
-      <tr><td colspan="7" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">ภาพรวม</td></tr>
-      <tr><td colspan="3" style="padding:5px 10px;color:#888;">รวมทั้งหมด</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(grandTotal)}</td></tr>
-      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">${esc(nameMe)} สำรองจ่าย</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(meTotal)}</td></tr>
-      <tr><td colspan="3" style="padding:5px 10px;color:#888;">${esc(namePartner)} สำรองจ่าย</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(partnerTotal)}</td></tr>
-      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">ส่วนกลางจ่ายเอง</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(poolTotal)}</td></tr>
-      <tr><td colspan="7" style="padding:4px;"></td></tr>
+      <tr><td colspan="8" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">ภาพรวม</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">รวมทั้งหมด</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(grandTotal)}</td></tr>
+      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">${esc(nameMe)} สำรองจ่าย</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(meTotal)}</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">${esc(namePartner)} สำรองจ่าย</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(partnerTotal)}</td></tr>
+      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">ส่วนกลางจ่ายเอง</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(poolTotal)}</td></tr>
+      <tr><td colspan="8" style="padding:4px;"></td></tr>
 
-      <tr><td colspan="7" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">แยกตามวิธีจ่าย</td></tr>
-      <tr><td colspan="3" style="padding:5px 10px;color:#888;">โอนจ่าย</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(transferTotal)}</td></tr>
-      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">บัตรเครดิต</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(creditTotal)}</td></tr>
-      <tr><td colspan="3" style="padding:5px 10px;color:#888;">ไม่ระบุ</td><td colspan="3" style="padding:5px 10px;font-weight:bold;">${fmt2(grandTotal-transferTotal-creditTotal)}</td></tr>
-      <tr><td colspan="7" style="padding:10px;"></td></tr>
+      <tr><td colspan="8" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">แยกตามวิธีจ่าย</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">โอนจ่าย</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(transferTotal)}</td></tr>
+      <tr style="background:#FFF8F0;"><td colspan="3" style="padding:5px 10px;color:#888;">บัตรเครดิต</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(creditTotal)}</td></tr>
+      <tr><td colspan="3" style="padding:5px 10px;color:#888;">ไม่ระบุ</td><td colspan="4" style="padding:5px 10px;font-weight:bold;">${fmt2(grandTotal-transferTotal-creditTotal)}</td></tr>
+      <tr><td colspan="8" style="padding:10px;"></td></tr>
 
-      <tr><td colspan="7" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">รายการทั้งหมด</td></tr>
+      <tr><td colspan="8" style="background:#F5F5F5;font-weight:bold;padding:6px 10px;color:#555;">รายการทั้งหมด</td></tr>
       ${projRowsHtml}
 
       <tr style="background:#FFF5CC;">
         <td colspan="5" style="padding:8px 10px;font-weight:bold;font-size:13px;">รวมทั้งหมด</td>
         <td style="padding:8px 10px;text-align:right;font-weight:bold;font-size:13px;color:#C47020;">${fmt2(grandTotal)}</td>
+        <td></td>
       </tr>
     </table>
     </body></html>
