@@ -2248,7 +2248,32 @@ window.clearAllEntries=(projId)=>{
   if(!db||!projects[projId])return;
   const pending=Object.entries(projects[projId].entries||{}).filter(([,e])=>!e.cleared);
   if(pending.length===0){showToast('ไม่มีรายการค้างอยู่');return;}
-  if(!confirm(`เคลียร์ทั้งหมด ${pending.length} รายการ?`))return;
+
+  const existing=document.getElementById('clear-all-dialog');
+  if(existing)existing.remove();
+
+  const dialog=document.createElement('div');
+  dialog.id='clear-all-dialog';
+  dialog.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  dialog.innerHTML=`
+    <div style="background:white;border-radius:16px;padding:24px;width:280px;box-shadow:0 8px 32px rgba(0,0,0,.2);text-align:center;">
+      <div style="font-size:32px;margin-bottom:10px;">✅</div>
+      <div style="font-size:15px;font-weight:700;color:#3D2535;margin-bottom:6px;">เคลียร์ทั้งหมด?</div>
+      <div style="font-size:12px;color:#B89AAA;margin-bottom:20px;">รายการค้างอยู่ <strong style="color:#3D2535;">${pending.length} รายการ</strong> จะถูกเคลียร์ทั้งหมดค่ะ</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('clear-all-dialog').remove()" style="flex:1;padding:10px;background:#F9F0F5;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#B89AAA;cursor:pointer;">ยกเลิก</button>
+        <button onclick="doClearAll('${projId}')" style="flex:1;padding:10px;background:linear-gradient(135deg,#A8D8C8,#7BC4A8);border:none;border-radius:10px;font-size:13px;font-weight:700;color:white;cursor:pointer;">เคลียร์เลย!</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  dialog.addEventListener('click',function(e){if(e.target===dialog)dialog.remove();});
+};
+
+window.doClearAll=(projId)=>{
+  const dialog=document.getElementById('clear-all-dialog');
+  if(dialog)dialog.remove();
+  const pending=Object.entries(projects[projId].entries||{}).filter(([,e])=>!e.cleared);
   pending.forEach(([k])=>update(ref(db,'projects/'+projId+'/entries/'+k),{cleared:true}));
   showToast('เคลียร์ทั้งหมดแล้ว ✅');
 };
