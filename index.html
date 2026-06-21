@@ -1006,12 +1006,12 @@ function renderMobDetail(){
             <span class="pill ${e.cleared?'pill-cleared':pi.cls}">${e.cleared?'✅ เคลียร์':pi.txt}</span>
             ${!e.cleared?`<button class="btn-clear-entry" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
             <div class="entry-menu-wrap">
-              <button class="entry-menu-btn" onclick="toggleEntryMenu('mob-menu-${e.key}')">⋯</button>
-              <div class="entry-menu-dropdown" id="mob-menu-${e.key}">
+              <button id="btn-mob-menu-${e.key}" class="entry-menu-btn" onclick="toggleEntryMenu('mob-menu-${e.key}',event)">⋯</button>
+              <template id="tmpl-mob-menu-${e.key}">
                 <button class="entry-menu-item" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt});closeAllMenus()">✏️ แก้ไข</button>
                 <button class="entry-menu-item" onclick="moveEntryMenu('${currentProjId}','${e.key}');closeAllMenus()">↗ ย้ายโปรเจค</button>
                 <button class="entry-menu-item danger" onclick="deleteEntry('${currentProjId}','${e.key}');closeAllMenus()">✕ ลบ</button>
-              </div>
+              </template>
             </div>
           </div>`;
         }).join('')}
@@ -1818,12 +1818,12 @@ function renderDeskDetail(){
               <span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅':pi.txt}</span>
               ${!e.cleared?`<button class="desk-btn-clear" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
               <div class="entry-menu-wrap">
-                <button class="entry-menu-btn" onclick="toggleEntryMenu('desk-menu-${e.key}')">⋯</button>
-                <div class="entry-menu-dropdown" id="desk-menu-${e.key}">
+                <button id="btn-desk-menu-${e.key}" class="entry-menu-btn" onclick="toggleEntryMenu('desk-menu-${e.key}',event)">⋯</button>
+                <template id="tmpl-desk-menu-${e.key}">
                   <button class="entry-menu-item" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt});closeAllMenus()">✏️ แก้ไข</button>
                   <button class="entry-menu-item" onclick="moveEntryMenu('${currentProjId}','${e.key}');closeAllMenus()">↗ ย้ายโปรเจค</button>
                   <button class="entry-menu-item danger" onclick="deleteEntry('${currentProjId}','${e.key}');closeAllMenus()">✕ ลบ</button>
-                </div>
+                </template>
               </div>
             </div>`;
           }).join('')}
@@ -2259,15 +2259,23 @@ window.deleteEntry=(projId,key)=>{
 };
 
 window.closeAllMenus=()=>{
-  document.querySelectorAll('.entry-menu-dropdown.open').forEach(el=>el.classList.remove('open'));
+  const m=document.getElementById('floating-menu');
+  if(m)m.remove();
 };
 
-window.toggleEntryMenu=(id)=>{
-  const el=document.getElementById(id);
-  if(!el)return;
-  const isOpen=el.classList.contains('open');
+window.toggleEntryMenu=(id,event)=>{
+  if(event)event.stopPropagation();
+  const btn=document.getElementById('btn-'+id);
+  if(!btn)return;
   closeAllMenus();
-  if(!isOpen)el.classList.add('open');
+  const existing=document.getElementById('floating-menu');
+  if(existing)existing.remove();
+  const rect=btn.getBoundingClientRect();
+  const menu=document.createElement('div');
+  menu.id='floating-menu';
+  menu.style.cssText=`position:fixed;top:${rect.bottom+4}px;right:${window.innerWidth-rect.right}px;background:white;border:1.5px solid #F2E0EC;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:9999;min-width:130px;padding:4px;`;
+  menu.innerHTML=document.getElementById('tmpl-'+id).innerHTML;
+  document.body.appendChild(menu);
 };
 
 // ปิด dropdown เมื่อคลิกที่อื่น
