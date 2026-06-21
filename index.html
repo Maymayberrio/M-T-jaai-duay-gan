@@ -171,6 +171,15 @@ input,select{font-family:'Sarabun',sans-serif;}
 .btn-edit:hover{opacity:1;}
 .btn-del{background:none;border:none;color:var(--muted);font-size:14px;padding:2px 4px;opacity:.5;flex-shrink:0;}
 .btn-del:hover{opacity:1;color:var(--pink-deep);}
+.entry-menu-wrap{position:relative;flex-shrink:0;}
+.entry-menu-btn{background:none;border:none;color:var(--muted);font-size:16px;padding:2px 6px;opacity:.6;cursor:pointer;line-height:1;}
+.entry-menu-btn:hover{opacity:1;}
+.entry-menu-dropdown{position:absolute;right:0;top:100%;background:white;border:1.5px solid var(--border);border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:999;min-width:130px;padding:4px;display:none;}
+.entry-menu-dropdown.open{display:block;}
+.entry-menu-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;font-size:12px;color:var(--text);cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.entry-menu-item:hover{background:var(--bg);}
+.entry-menu-item.danger{color:#E24B4A;}
+.entry-menu-item.danger:hover{background:#FEE2E2;}
 .btn-clear-entry{background:none;border:1px solid var(--pink);border-radius:6px;font-size:9px;color:var(--pink-deep);padding:2px 6px;flex-shrink:0;}
 .empty-state{text-align:center;padding:2rem 0;color:var(--muted);}
 .empty-state .big{font-size:28px;display:block;margin-bottom:8px;}
@@ -996,8 +1005,14 @@ function renderMobDetail(){
             <div class="entry-amt">${fmt(e.amt)}</div>
             <span class="pill ${e.cleared?'pill-cleared':pi.cls}">${e.cleared?'✅ เคลียร์':pi.txt}</span>
             ${!e.cleared?`<button class="btn-clear-entry" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
-            <button class="btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})">✏️</button>
-            <button class="btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button>
+            <div class="entry-menu-wrap">
+              <button class="entry-menu-btn" onclick="toggleEntryMenu('mob-menu-${e.key}')">⋯</button>
+              <div class="entry-menu-dropdown" id="mob-menu-${e.key}">
+                <button class="entry-menu-item" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt});closeAllMenus()">✏️ แก้ไข</button>
+                <button class="entry-menu-item" onclick="moveEntryMenu('${currentProjId}','${e.key}');closeAllMenus()">↗ ย้ายโปรเจค</button>
+                <button class="entry-menu-item danger" onclick="deleteEntry('${currentProjId}','${e.key}');closeAllMenus()">✕ ลบ</button>
+              </div>
+            </div>
           </div>`;
         }).join('')}
       </div>
@@ -1802,8 +1817,14 @@ function renderDeskDetail(){
               <div class="desk-entry-amt">${fmt(e.amt)}</div>
               <span class="pill ${e.cleared?'pill-cleared':pi.cls}" style="font-size:9px;padding:2px 7px;">${e.cleared?'✅':pi.txt}</span>
               ${!e.cleared?`<button class="desk-btn-clear" onclick="clearEntry('${currentProjId}','${e.key}')">เคลียร์</button>`:''}
-              <button class="desk-btn-edit" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt})">✏️</button>
-              <button class="desk-btn-del" onclick="deleteEntry('${currentProjId}','${e.key}')">✕</button>
+              <div class="entry-menu-wrap">
+                <button class="entry-menu-btn" onclick="toggleEntryMenu('desk-menu-${e.key}')">⋯</button>
+                <div class="entry-menu-dropdown" id="desk-menu-${e.key}">
+                  <button class="entry-menu-item" onclick="editEntry('${currentProjId}','${e.key}','${esc(e.desc)}',${e.amt});closeAllMenus()">✏️ แก้ไข</button>
+                  <button class="entry-menu-item" onclick="moveEntryMenu('${currentProjId}','${e.key}');closeAllMenus()">↗ ย้ายโปรเจค</button>
+                  <button class="entry-menu-item danger" onclick="deleteEntry('${currentProjId}','${e.key}');closeAllMenus()">✕ ลบ</button>
+                </div>
+              </div>
             </div>`;
           }).join('')}
         </div>
@@ -2235,6 +2256,42 @@ window.clearAllEntries=(projId)=>{
 window.deleteEntry=(projId,key)=>{
   if(!confirm('ลบรายการนี้?'))return;
   remove(ref(db,'projects/'+projId+'/entries/'+key));
+};
+
+window.closeAllMenus=()=>{
+  document.querySelectorAll('.entry-menu-dropdown.open').forEach(el=>el.classList.remove('open'));
+};
+
+window.toggleEntryMenu=(id)=>{
+  const el=document.getElementById(id);
+  if(!el)return;
+  const isOpen=el.classList.contains('open');
+  closeAllMenus();
+  if(!isOpen)el.classList.add('open');
+};
+
+// ปิด dropdown เมื่อคลิกที่อื่น
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.entry-menu-wrap'))closeAllMenus();
+});
+
+window.moveEntryMenu=(projId,key)=>{
+  const currentProj=projects[projId];
+  if(!currentProj)return;
+  const isCafe=currentProj.category==='cafe';
+  const targets=Object.entries(projects).filter(([id,p])=>id!==projId&&(isCafe?p.category==='cafe':p.category!=='cafe')&&!p.archived);
+  if(!targets.length){showToast('ไม่มีโปรเจคอื่นที่จะย้ายไปค่ะ');return;}
+  const names=targets.map(([id,p])=>`${p.emoji||'📁'} ${p.name||'โปรเจคใหม่'}`);
+  const choice=prompt(`ย้ายไปโปรเจค:\n${names.map((n,i)=>`${i+1}. ${n}`).join('\n')}\n\nพิมพ์เลข 1-${targets.length}`);
+  if(!choice)return;
+  const idx=parseInt(choice)-1;
+  if(isNaN(idx)||idx<0||idx>=targets.length){showToast('เลือกไม่ถูกต้องค่ะ');return;}
+  const [targetId]=targets[idx];
+  const entry=currentProj.entries?.[key];
+  if(!entry)return;
+  push(ref(db,'projects/'+targetId+'/entries'),entry);
+  remove(ref(db,'projects/'+projId+'/entries/'+key));
+  showToast('ย้ายแล้ว ↗');
 };
 
 window.editEntry=(projId,key,oldDesc,oldAmt)=>{
