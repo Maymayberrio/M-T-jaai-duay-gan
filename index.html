@@ -2330,12 +2330,112 @@ window.doMoveEntry=(projId,key,targetId)=>{
 };
 
 window.editEntry=(projId,key,oldDesc,oldAmt)=>{
-  const newDesc=prompt('แก้ชื่อรายการ:',oldDesc);if(newDesc===null)return;
-  const newAmtStr=prompt('แก้จำนวนเงิน:',oldAmt);if(newAmtStr===null)return;
-  const newAmt=parseFloat(newAmtStr);
-  if(!newDesc.trim()){showToast('ชื่อห้ามว่าง');return;}
-  if(isNaN(newAmt)||newAmt<=0){showToast('จำนวนเงินไม่ถูกต้อง');return;}
-  update(ref(db,'projects/'+projId+'/entries/'+key),{desc:newDesc.trim(),amt:newAmt});
+  const entry=projects[projId]?.entries?.[key];
+  if(!entry)return;
+  const isCafe=projects[projId]?.category==='cafe';
+
+  const existing=document.getElementById('edit-entry-dialog');
+  if(existing)existing.remove();
+
+  const dialog=document.createElement('div');
+  dialog.id='edit-entry-dialog';
+  dialog.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+  const BANKS=['KBANK','BBL','SCB','UOB','BAY','Kept','อื่นๆ'];
+  const bankOpts=BANKS.map(b=>`<option value="${b}"${entry.bank===b?' selected':''}>${b}</option>`).join('');
+
+  // แปลงวันที่จาก display เป็น input value
+  let dateVal='';
+  if(entry.ts){const d=new Date(entry.ts);dateVal=d.toISOString().split('T')[0];}
+
+  dialog.innerHTML=`
+    <div style="background:white;border-radius:16px;padding:20px;min-width:280px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+      <div style="font-size:14px;font-weight:700;color:#3D2535;margin-bottom:3px;">✏️ แก้ไขรายการ</div>
+      <div style="font-size:11px;color:#B89AAA;margin-bottom:14px;">${esc(projects[projId]?.name||'')}</div>
+
+      <div style="margin-bottom:10px;">
+        <div style="font-size:10px;color:#B89AAA;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">ชื่อรายการ</div>
+        <input id="edit-desc" type="text" value="${esc(entry.desc||'')}" style="width:100%;border:1.5px solid #F2E0EC;border-radius:10px;padding:9px 12px;font-size:13px;font-family:Sarabun,sans-serif;color:#3D2535;background:#FFF8FB;outline:none;box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <div style="font-size:10px;color:#B89AAA;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">จำนวนเงิน (฿)</div>
+        <input id="edit-amt" type="number" value="${entry.amt||''}" min="0" step="0.01" style="width:100%;border:1.5px solid #F2E0EC;border-radius:10px;padding:9px 12px;font-size:13px;font-family:Sarabun,sans-serif;color:#3D2535;background:#FFF8FB;outline:none;box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <div style="font-size:10px;color:#B89AAA;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">วันที่</div>
+        <input id="edit-date" type="date" value="${dateVal}" style="width:100%;border:1.5px solid #F2E0EC;border-radius:10px;padding:9px 12px;font-size:13px;font-family:Sarabun,sans-serif;color:#3D2535;background:#FFF8FB;outline:none;box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <div style="font-size:10px;color:#B89AAA;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">วิธีจ่าย</div>
+        <div style="display:flex;gap:6px;">
+          <button id="epay-none" onclick="setEditPay('')" style="flex:1;padding:7px 4px;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;border:1.5px solid ${!entry.payMethod?'#F9A8C9':'#F2E0EC'};background:${!entry.payMethod?'#FDE8F2':'white'};color:${!entry.payMethod?'#C4608A':'#B89AAA'};">ไม่ระบุ</button>
+          <button id="epay-transfer" onclick="setEditPay('transfer')" style="flex:1;padding:7px 4px;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;border:1.5px solid ${entry.payMethod==='transfer'?'#F9A8C9':'#F2E0EC'};background:${entry.payMethod==='transfer'?'#FDE8F2':'white'};color:${entry.payMethod==='transfer'?'#C4608A':'#B89AAA'};">โอนจ่าย</button>
+          <button id="epay-credit" onclick="setEditPay('credit')" style="flex:1;padding:7px 4px;font-size:11px;font-weight:700;border-radius:8px;cursor:pointer;border:1.5px solid ${entry.payMethod==='credit'?'#F9A8C9':'#F2E0EC'};background:${entry.payMethod==='credit'?'#FDE8F2':'white'};color:${entry.payMethod==='credit'?'#C4608A':'#B89AAA'};">บัตรเครดิต</button>
+        </div>
+      </div>
+
+      <div id="edit-bank-wrap" style="margin-bottom:14px;display:${entry.payMethod?'block':'none'};">
+        <div style="font-size:10px;color:#B89AAA;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">ธนาคาร</div>
+        <select id="edit-bank" style="width:100%;border:1.5px solid #F9A8C9;border-radius:10px;padding:9px 12px;font-size:13px;font-family:Sarabun,sans-serif;color:#3D2535;background:#FFF8FB;outline:none;box-sizing:border-box;">
+          <option value="">เลือกธนาคาร...</option>
+          ${bankOpts}
+        </select>
+        <input id="edit-bank-other" type="text" placeholder="ระบุธนาคาร..." value="${entry.bankOther||''}" style="display:${entry.bank==='อื่นๆ'?'block':'none'};width:100%;border:1.5px solid #F9A8C9;border-radius:10px;padding:9px 12px;font-size:13px;font-family:Sarabun,sans-serif;color:#3D2535;background:#FFF8FB;outline:none;box-sizing:border-box;margin-top:6px;">
+      </div>
+
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('edit-entry-dialog').remove()" style="flex:1;padding:10px;background:#F9F0F5;border:none;border-radius:10px;font-size:13px;font-weight:700;color:#B89AAA;cursor:pointer;">ยกเลิก</button>
+        <button onclick="saveEditEntry('${projId}','${key}')" style="flex:1;padding:10px;background:linear-gradient(135deg,#F472A8,#C4608A);border:none;border-radius:10px;font-size:13px;font-weight:700;color:white;cursor:pointer;">บันทึก</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  dialog.addEventListener('click',function(e){if(e.target===dialog)dialog.remove();});
+
+  document.getElementById('edit-bank')?.addEventListener('change',function(){
+    document.getElementById('edit-bank-other').style.display=this.value==='อื่นๆ'?'block':'none';
+  });
+};
+
+window.setEditPay=(v)=>{
+  ['none','transfer','credit'].forEach(t=>{
+    const btn=document.getElementById('epay-'+t);
+    if(!btn)return;
+    const active=(v===''&&t==='none')||(v===t);
+    btn.style.border=active?'1.5px solid #F9A8C9':'1.5px solid #F2E0EC';
+    btn.style.background=active?'#FDE8F2':'white';
+    btn.style.color=active?'#C4608A':'#B89AAA';
+  });
+  const bw=document.getElementById('edit-bank-wrap');
+  if(bw)bw.style.display=v?'block':'none';
+  window._editPay=v;
+};
+
+window.saveEditEntry=(projId,key)=>{
+  const desc=document.getElementById('edit-desc')?.value.trim();
+  const amt=parseFloat(document.getElementById('edit-amt')?.value);
+  const dateVal=document.getElementById('edit-date')?.value;
+  const bank=document.getElementById('edit-bank')?.value||'';
+  const bankOther=document.getElementById('edit-bank-other')?.value.trim()||'';
+  const payMethod=window._editPay!==undefined?window._editPay:(projects[projId]?.entries?.[key]?.payMethod||'');
+
+  if(!desc){showToast('ชื่อห้ามว่าง');return;}
+  if(isNaN(amt)||amt<=0){showToast('จำนวนเงินไม่ถูกต้อง');return;}
+
+  const dateObj=dateVal?new Date(dateVal+'T12:00:00'):new Date();
+  const dateDisplay=dateObj.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+
+  const updates={desc,amt,date:dateDisplay,ts:dateObj.getTime()};
+  if(payMethod!==undefined)updates.payMethod=payMethod;
+  if(bank)updates.bank=bank;
+  if(bank==='อื่นๆ'&&bankOther)updates.bankOther=bankOther;
+
+  update(ref(db,'projects/'+projId+'/entries/'+key),updates);
+  document.getElementById('edit-entry-dialog')?.remove();
+  window._editPay=undefined;
   showToast('แก้ไขแล้ว 🌸');
 };
 
