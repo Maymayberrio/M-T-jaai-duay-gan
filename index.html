@@ -1395,14 +1395,11 @@ function renderPieChart(){
   const el=document.getElementById('desk-pie-chart');
   if(!el)return;
 
-  // คำนวณยอดแต่ละโปรเจค
   const projTotals=Object.entries(projects).filter(([,p])=>dashCat==='cafe'?p.category==='cafe':p.category!=='cafe').map(([id,p])=>{
     const total=Object.values(p.entries||{}).filter(e=>{
       if(!e.ts)return false;
       const d=new Date(e.ts);
-      const matchYear=d.getFullYear()===selectedYear;
-      const matchMonth=selectedMonth===null||d.getMonth()===selectedMonth;
-      return matchYear&&matchMonth;
+      return d.getFullYear()===selectedYear&&(selectedMonth===null||d.getMonth()===selectedMonth);
     }).reduce((s,e)=>s+e.amt,0);
     return{id,name:p.name||'โปรเจคใหม่',emoji:p.emoji||'📁',total};
   }).filter(p=>p.total>0).sort((a,b)=>b.total-a.total);
@@ -1414,47 +1411,52 @@ function renderPieChart(){
   const COLORS=['#F9A8C9','#B5E8D8','#D4C5F9','#FFE9A0','#FFB347','#90C8F0','#A8D8C8','#F0C8A8'];
   const titleLbl=selectedMonth!==null?MONTH_NAMES_FULL[selectedMonth]+' '+selectedYear:'ปี '+selectedYear;
 
-  // สร้าง SVG pie chart
+  // สร้าง SVG pie
+  const cx=100,cy=100,r=90,ir=52;
   let startAngle=-Math.PI/2;
-  const cx=60,cy=60,r=50,ir=28;
   const paths=projTotals.map((p,i)=>{
     const angle=(p.total/grand)*2*Math.PI;
     const endAngle=startAngle+angle;
     const x1=cx+r*Math.cos(startAngle),y1=cy+r*Math.sin(startAngle);
     const x2=cx+r*Math.cos(endAngle),y2=cy+r*Math.sin(endAngle);
     const large=angle>Math.PI?1:0;
-    const color=COLORS[i%COLORS.length];
-    const path=`<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z" fill="${color}"/>`;
+    const path=`<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${COLORS[i%COLORS.length]}"/>`;
     startAngle=endAngle;
-    return{path,color};
-  }).map(p=>p.path).join('');
+    return path;
+  }).join('');
 
   // legend
   const legendHtml=projTotals.map((p,i)=>{
     const pct=Math.round((p.total/grand)*100);
-    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;">
-      <div style="display:flex;align-items:center;gap:6px;min-width:0;">
+    const bg=i%2===0?'background:var(--bg);':'';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;${bg}border-radius:8px;padding:7px 10px;">
+      <div style="display:flex;align-items:center;gap:7px;min-width:0;">
         <div style="width:9px;height:9px;border-radius:50%;background:${COLORS[i%COLORS.length]};flex-shrink:0;"></div>
-        <span style="font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.emoji} ${esc(p.name)}</span>
+        <span style="font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.emoji} ${esc(p.name)}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-        <span style="font-size:11px;color:var(--muted);">${fmt(p.total)}</span>
-        <span style="font-size:11px;font-weight:700;color:var(--text);min-width:30px;text-align:right;">${pct}%</span>
+      <div style="text-align:right;flex-shrink:0;margin-left:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text);">${pct}%</div>
+        <div style="font-size:9px;color:var(--muted);">${fmt(p.total)}</div>
       </div>
     </div>`;
   }).join('');
 
   el.innerHTML=`
-    <div class="desk-box">
-      <div class="desk-box-lbl">🥧 สัดส่วนแต่ละโปรเจค — ${titleLbl}</div>
-      <div style="display:flex;align-items:center;gap:20px;">
-        <svg width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0;">
-          ${paths}
-          <circle cx="${cx}" cy="${cy}" r="${ir}" fill="white"/>
-          <text x="${cx}" y="${cy-4}" text-anchor="middle" style="font-size:10px;fill:var(--text);font-weight:700;font-family:Sarabun,sans-serif;">${fmt(grand)}</text>
-          <text x="${cx}" y="${cy+10}" text-anchor="middle" style="font-size:9px;fill:var(--muted);font-family:Sarabun,sans-serif;">รวม</text>
-        </svg>
-        <div style="flex:1;min-width:0;">${legendHtml}</div>
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px;">
+      <div class="desk-box" style="display:flex;flex-direction:column;">
+        <div class="desk-box-lbl">🥧 สัดส่วนแต่ละโปรเจค — ${titleLbl}</div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0;">
+          <svg width="220" height="220" viewBox="0 0 200 200">
+            ${paths}
+            <circle cx="${cx}" cy="${cy}" r="${ir}" fill="white"/>
+            <text x="${cx}" y="${cy-6}" text-anchor="middle" style="font-size:13px;fill:var(--text);font-weight:700;font-family:Sarabun,sans-serif;">${fmt(grand)}</text>
+            <text x="${cx}" y="${cy+11}" text-anchor="middle" style="font-size:10px;fill:var(--muted);font-family:Sarabun,sans-serif;">รวมทั้งหมด</text>
+          </svg>
+        </div>
+      </div>
+      <div class="desk-box" style="display:flex;flex-direction:column;gap:4px;">
+        <div class="desk-box-lbl" style="margin-bottom:4px;">✨ แต่ละโปรเจค</div>
+        ${legendHtml}
       </div>
     </div>
   `;
