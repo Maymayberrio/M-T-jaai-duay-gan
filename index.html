@@ -2281,13 +2281,40 @@ window.moveEntryMenu=(projId,key)=>{
   const isCafe=currentProj.category==='cafe';
   const targets=Object.entries(projects).filter(([id,p])=>id!==projId&&(isCafe?p.category==='cafe':p.category!=='cafe')&&!p.archived);
   if(!targets.length){showToast('ไม่มีโปรเจคอื่นที่จะย้ายไปค่ะ');return;}
-  const names=targets.map(([id,p])=>`${p.emoji||'📁'} ${p.name||'โปรเจคใหม่'}`);
-  const choice=prompt(`ย้ายไปโปรเจค:\n${names.map((n,i)=>`${i+1}. ${n}`).join('\n')}\n\nพิมพ์เลข 1-${targets.length}`);
-  if(!choice)return;
-  const idx=parseInt(choice)-1;
-  if(isNaN(idx)||idx<0||idx>=targets.length){showToast('เลือกไม่ถูกต้องค่ะ');return;}
-  const [targetId]=targets[idx];
-  const entry=currentProj.entries?.[key];
+
+  // สร้าง dialog
+  const existing=document.getElementById('move-entry-dialog');
+  if(existing)existing.remove();
+
+  const dialog=document.createElement('div');
+  dialog.id='move-entry-dialog';
+  dialog.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  dialog.innerHTML=`
+    <div style="background:white;border-radius:16px;padding:20px;min-width:260px;max-width:320px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2);">
+      <div style="font-size:14px;font-weight:700;color:#3D2535;margin-bottom:4px;">↗ ย้ายไปโปรเจค</div>
+      <div style="font-size:11px;color:#B89AAA;margin-bottom:14px;">เลือกโปรเจคปลายทางค่ะ</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">
+        ${targets.map(([id,p])=>`
+          <button onclick="doMoveEntry('${projId}','${key}','${id}')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:1.5px solid #F2E0EC;background:white;cursor:pointer;text-align:left;width:100%;">
+            <span style="font-size:18px;">${p.emoji||'📁'}</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#3D2535;">${p.name||'โปรเจคใหม่'}</div>
+              <div style="font-size:10px;color:#B89AAA;">${Object.keys(p.entries||{}).length} รายการ</div>
+            </div>
+          </button>
+        `).join('')}
+      </div>
+      <button onclick="document.getElementById('move-entry-dialog').remove()" style="width:100%;padding:10px;background:#F9F9F9;border:none;border-radius:10px;font-size:13px;color:#B89AAA;cursor:pointer;">ยกเลิก</button>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  dialog.addEventListener('click',function(e){if(e.target===dialog)dialog.remove();});
+};
+
+window.doMoveEntry=(projId,key,targetId)=>{
+  const dialog=document.getElementById('move-entry-dialog');
+  if(dialog)dialog.remove();
+  const entry=projects[projId]?.entries?.[key];
   if(!entry)return;
   push(ref(db,'projects/'+targetId+'/entries'),entry);
   remove(ref(db,'projects/'+projId+'/entries/'+key));
