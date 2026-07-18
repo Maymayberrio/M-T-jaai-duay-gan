@@ -1218,10 +1218,10 @@ function renderDashboard(){
     const partnerPending=pendingCafe.filter(e=>e.who==='partner').reduce((s,e)=>s+e.amt,0);
     const totalOwed=mePending+partnerPending+[...new Set(pendingCafe.filter(e=>e.who==='other').map(e=>e.otherName||'อื่นๆ'))].reduce((s,name)=>s+pendingCafe.filter(e=>e.who==='other'&&(e.otherName||'อื่นๆ')===name).reduce((ss,e)=>ss+e.amt,0),0);
     document.getElementById('desk-dash-cards').innerHTML=`
-      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">รวมทั้งหมด</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
+      <div class="dash-sc dash-sc-y"><div class="dash-sc-lbl">ต้องโอนรวม</div><div class="dash-sc-val">${fmt(totalOwed)}</div><div class="dash-sc-sub">ส่วนกลางค้างอยู่</div></div>
       <div class="dash-sc dash-sc-m"><div class="dash-sc-lbl">${esc(nameMe)} ค้าง</div><div class="dash-sc-val">${fmt(mePending)}</div><div class="dash-sc-sub">ยังไม่เคลียร์</div></div>
       <div class="dash-sc dash-sc-l"><div class="dash-sc-lbl">${esc(namePartner)} ค้าง</div><div class="dash-sc-val">${fmt(partnerPending)}</div><div class="dash-sc-sub">ยังไม่เคลียร์</div></div>
-      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">ต้องโอนรวม</div><div class="dash-sc-val">${fmt(totalOwed)}</div><div class="dash-sc-sub">ส่วนกลางค้างอยู่</div></div>
+      <div class="dash-sc dash-sc-p"><div class="dash-sc-lbl">รวมทั้งหมด</div><div class="dash-sc-val">${fmt(stats.total)}</div><div class="dash-sc-sub">${subLbl}</div></div>
     `;
   } else {
     let debtTxt='เสมอกัน',debtColor='var(--mint-deep)';
